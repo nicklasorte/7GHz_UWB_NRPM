@@ -1,0 +1,64 @@
+WARNING: package sun.awt.X11 not in java.desktop
+WARNING: package sun.awt.X11 not in java.desktop
+P.528 table: 7560 entries, modes LOS/diff/tropo = 5385/540/1635 (1 s elapsed)
+Single drone at 121.92 m in the dish azimuth: free space vs P.528 (km):
+    el_deg    long_fs_km    long_p528_p50_km    long_p528_p1_km    short_fs_km    short_p528_p50_km    short_p528_p1_km
+    ______    __________    ________________    _______________    ___________    _________________    ________________
+
+       5         1.71             1.71                  2             1.35              1.35                 1.41      
+      13         0.62             0.62               0.65             0.52              0.52                 0.52      
+
+Dish tracking statistics (Aqua, Terra, Landsat 8, Landsat 9; 30 days, el >= 5 deg):
+         site          frac_tracking    frac_trk_below_6deg    tracking_min_per_day
+    _______________    _____________    ___________________    ____________________
+
+    "WG1 Wallops"          0.1108            0.082939                 159.55       
+    "AS1 Fairbanks"       0.23248            0.066912                 334.76       
+
+WG1 Wallops, 1e-02 /km^2 done (20 s)
+WG1 Wallops, 1e-01 /km^2 done (31 s)
+WG1 Wallops, 1e+00 /km^2 done (52 s)
+AS1 Fairbanks, 1e-02 /km^2 done (53 s)
+AS1 Fairbanks, 1e-01 /km^2 done (66 s)
+AS1 Fairbanks, 1e+00 /km^2 done (88 s)
+Aggregate drones, P.528 loss and real pointing:
+         site          active_density_per_km2    margin_long_dB    margin_short_dB    r_req_long_km    r_req_short_km    pct_trk_time_above_short    minutes_per_year_above_short    resolution_min_per_year
+    _______________    ______________________    ______________    _______________    _____________    ______________    ________________________    ____________________________    _______________________
+
+    "WG1 Wallops"               0.01                -36.787            -17.603              0                 0                   0.001                        0.58277                       0.58277        
+    "WG1 Wallops"                0.1                -25.275            -4.6482              0                 0                   0.003                         1.7483                       0.58277        
+    "WG1 Wallops"                  1                -13.734             17.261              0               0.8                   0.035                         20.397                        2.9139        
+    "AS1 Fairbanks"             0.01                -36.818            -14.691              0                 0                       0                              0                        1.2227        
+    "AS1 Fairbanks"              0.1                -25.302           -0.35961              0                 0                   0.004                         4.8909                        1.2227        
+    "AS1 Fairbanks"                1                -13.802             3.5871              0               0.9                    0.02                         24.455                        6.1136        
+
+handheld outdoor baseline done (112 s)
+indoor baseline done (261 s)
+Ground UWB baseline at WG1 (urban densities, an upper bound for a rural site):
+        population        active_density_per_km2    margin_long_dB    margin_short_dB    minutes_per_year_above_short
+    __________________    ______________________    ______________    _______________    ____________________________
+
+    "handheld outdoor"               7                 -12.499             -13.49                     0              
+    "indoor"                       500                 -10.477            -23.212                     0              
+
+Mitigation menu at 0.1 /km^2 done (349 s)
+Mitigation menu at 1.0 /km^2 done (899 s)
+Mitigation menu at WG1:
+    active_density_per_km2                      mitigation                      margin_short_r0_dB    geofence_km    minutes_per_year_above_short    resolution_min_per_year
+    ______________________    ______________________________________________    __________________    ___________    ____________________________    _______________________
+
+             0.1              "Baseline"                                             -4.6482                0                   1.7483                       0.58277        
+             0.1              "Altitude cap 30 m"                                    -5.8434                0                  0.58277                       0.58277        
+             0.1              "Downward antenna, -5 dB (CEPT -46.3 dBm/MHz)"         -9.6482                0                  0.58277                       0.58277        
+             0.1              "EIRP cap -64.3 dBm/MHz (ECC aircraft MetSat)"         -27.648                0                        0                       0.58277        
+             0.1              "Duty cycle 1% instead of 5% (density x0.2)"           -10.042                0                  0.58277                       0.58277        
+             0.1              "Altitude cap 30 m + downward antenna"                 -10.843                0                  0.58277                       0.58277        
+               1              "Baseline"                                              9.9386              0.7                   16.318                        1.1655        
+               1              "Altitude cap 30 m"                                     11.503              0.2                   11.655                        1.1655        
+               1              "Downward antenna, -5 dB (CEPT -46.3 dBm/MHz)"          4.9386              0.6                   6.9933                        1.1655        
+               1              "EIRP cap -64.3 dBm/MHz (ECC aircraft MetSat)"         -13.061                0                        0                        1.1655        
+               1              "Duty cycle 1% instead of 5% (density x0.2)"           -3.0555                0                   2.3311                        1.1655        
+               1              "Altitude cap 30 m + downward antenna"                  6.5031              0.1                   5.8277                        1.1655        
+
+Reference allowance: ITU-R SA.1027-6 short-term 0.005% of time = 26.3 minutes per year.
+Done in 902 s. Outputs in /private/tmp/ns/7GHz_UWB_NRPM/matlab/../output
