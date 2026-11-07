@@ -204,9 +204,11 @@ function test_f699_continuity(tc)
 lambda = physconst('LightSpeed') / 8160e6; dl = 2.4 / lambda;
 gmax = 10*log10(0.6*(pi*dl)^2); g1 = 2 + 15*log10(dl);
 phi_m = 20/dl*sqrt(gmax - g1);
-for b = [phi_m, 100/dl, 48]
+for b = [phi_m, 100/dl]
     verifyEqual(tc, f699_gain_rev1(b - 1e-9, 2.4, 8160, 0.6), f699_gain_rev1(b + 1e-9, 2.4, 8160, 0.6), 'AbsTol', 1e-3);
 end
+% At 48 deg the Recommendation's rounded constants leave a 0.03 dB step (52 - 25 log10 48 = 9.97 vs 10).
+verifyEqual(tc, f699_gain_rev1(48 - 1e-9, 2.4, 8160, 0.6), f699_gain_rev1(48 + 1e-9, 2.4, 8160, 0.6), 'AbsTol', 0.05);
 verifyEqual(tc, f699_gain_rev1(0, 2.4, 8160, 0.6), gmax, 'AbsTol', 1e-12);
 verifyError(tc, @() f699_gain_rev1(1, 11.3, 8160, 0.6), 'f699_gain_rev1:largeAntenna');
 end
@@ -264,8 +266,9 @@ function test_footprint_matches_mc(tc)
 % so the Poisson footprint prediction matches the aggregate Monte Carlo.
 p = tc.TestData.p; F = fs_interp();
 ps.tracking = true(50, 1); ps.az_deg = linspace(0, 350, 50)'; ps.el_deg = linspace(5, 40, 50)';
-pop = struct('name', "t", 'density_per_km2', 0.05, 'h_min_m', 10, 'h_max_m', 120, 'r_max_km', 20, ...
-    'eirp_offset_dB', 0, 'extra_loss_db', 0, 'clutter', false);
+% EIRP raised 40 dB (negative offset) so single-device exceedances are common enough to count.
+pop = struct('name', "t", 'density_per_km2', 0.005, 'h_min_m', 10, 'h_max_m', 120, 'r_max_km', 20, ...
+    'eirp_offset_dB', -40, 'extra_loss_db', 0, 'clutter', false);
 o = aggregate_drone_mc_rev4(p, pop, ps, F, 8160, 'n_iter', 2e5, 'chunk', 2e4, 'r_edges_km', [0 1 5]);
 fp = exceedance_footprint_rev1(p, pop, ps, F, 8160, 'n', 1e6);
 verifyGreaterThan(tc, o.ci.frac(2), 0);
