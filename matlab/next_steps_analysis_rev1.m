@@ -137,7 +137,7 @@ exportgraphics(fig7, fullfile(out_dir, 'fig7_mitigation_menu.png'), 'Resolution'
 
 save(fullfile(out_dir, 'results_next_steps_rev1.mat'), 'cmp', 'pass_tbl', 'agg_tbl', 'base_tbl', 'mit_tbl', 'tbl', 'mc', 'sites');
 for s = 1:numel(sites)
-    pss = ps{s}; pss = rmfield(pss, {'t', 'az_deg', 'el_deg', 'tracking', 'sat_idx'}); %#ok<NASGU> saved below
+    pss = rmfield(ps{s}, {'t', 'az_deg', 'el_deg', 'tracking', 'sat_idx'});
     save(fullfile(out_dir, sprintf('pass_summary_site%d_rev1.mat', s)), 'pss');
 end
 fprintf('Done in %.0f s. Outputs in %s\n', toc(t_start), out_dir);
