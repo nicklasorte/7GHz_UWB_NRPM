@@ -21,7 +21,11 @@ function fp = exceedance_footprint_rev1(p, pop, ps, F, f_mhz, opts)
 %   by many devices. The check uses an analytical step (Poisson thinning)
 %   that the aggregate code does not, so it is a partial independent check.
 %
-%   Name-value options: n (default 2e6), seed, pattern ("multiple").
+%   Name-value options: n (default 2e6), seed, pattern ("multiple"),
+%   r_sample_km (default pop.r_max_km). A smaller r_sample_km samples only
+%   the inner disk, where single-device exceedances occur, so far fewer
+%   samples resolve a tiny footprint. fp.r_hit_max_km reports the farthest
+%   hit; it must sit well inside r_sample_km for the area to be complete.
 arguments
     p struct
     pop struct
@@ -31,7 +35,9 @@ arguments
     opts.n (1,1) double {mustBeInteger, mustBePositive} = 2e6
     opts.seed (1,1) double = p.mc.seed + 1
     opts.pattern (1,1) string = "multiple"
+    opts.r_sample_km (1,1) double {mustBePositive} = pop.r_max_km
 end
+r_s = min(opts.r_sample_km, pop.r_max_km);
 crit = eess_criteria_rev1(f_mhz, p);
 eirp_ref_dBm = uwb_power_in_band_rev1(f_mhz, p.crit.ref_bw_MHz, p.uwb);
 const_dB = eirp_ref_dBm - pop.eirp_offset_dB - p.uwb.pol_loss_dB - p.es.site_shield_dB - pop.extra_loss_db;
@@ -46,7 +52,7 @@ if pop.clutter, f_clut = f_mhz / 1000; end
 
 rs = RandStream('Threefry', 'Seed', opts.seed);
 n = opts.n;
-dev.r_km = pop.r_max_km * sqrt(rand(rs, n, 1));
+dev.r_km = r_s * sqrt(rand(rs, n, 1));
 dev.az_rad = 2 * pi * rand(rs, n, 1);
 dev.h_m = pop.h_min_m + (pop.h_max_m - pop.h_min_m) * rand(rs, n, 1);
 dev.p_time = 1 + 98 * rand(rs, n, 1);
@@ -62,7 +68,8 @@ fp.n = n;
 fp.p1_short = k_s / n;
 fp.p1_long = k_l / n;
 fp.p1_short_ci = clopper(k_s, n);
-fp.area_disk_km2 = pi * pop.r_max_km^2;
+fp.area_disk_km2 = pi * r_s^2;
+fp.r_sample_km = r_s;
 fp.area_short_km2 = fp.area_disk_km2 * fp.p1_short;
 fp.area_long_km2 = fp.area_disk_km2 * fp.p1_long;
 fp.area_short_ci_km2 = fp.area_disk_km2 * fp.p1_short_ci;
@@ -70,6 +77,10 @@ fp.pred_frac_short = 1 - exp(-pop.density_per_km2 * fp.area_short_km2);
 fp.pred_frac_short_ci = 1 - exp(-pop.density_per_km2 * fp.area_short_ci_km2);
 hit = i_dBm > crit.short_dBm;
 fp.r_km_of_hits = dev.r_km(hit);                     % where single-device exceedances happen
+fp.r_hit_max_km = max([0; fp.r_km_of_hits]);
+if fp.r_hit_max_km > 0.8 * r_s
+    warning('exceedance_footprint_rev1:edge', 'Hits reach %.2f km of the %.2f km sampling disk; enlarge r_sample_km.', fp.r_hit_max_km, r_s);
+end
 fp.crit = crit;
 end
 

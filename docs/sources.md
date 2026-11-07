@@ -61,3 +61,21 @@ Public sources only. Each entry notes what the analysis takes from it.
 | [ECC Report 64 (2005)](https://docdb.cept.org/document/174) | European generic UWB study; coverage of 8 GHz EESS not verified. |
 | [FiRa Consortium, *UWB Simulation Report* (2025)](https://www.firaconsortium.org/sites/default/files/2025-11/FiRa%20Ultra-Wideband%20Simulation%20Report.pdf) | ECC Report 327 Table 18 activity factors (0.25%-5%); industry SEAMCAT study of FSS earth stations and radars. |
 | [Ely, Fuller, Shaver, *UWB Electromagnetic Interference to Aircraft Radios* (NASA Langley, about 2002)](https://ntrs.nasa.gov/api/citations/20030007914/downloads/20030007914.pdf) | Field evidence of UWB effects on aviation receivers near -41 dBm EIRP. |
+
+## Added for the site-specific example (CCNY) and Rev 1
+
+| Source | Used for |
+| --- | --- |
+| [NASA GSFC Direct Readout Laboratory, X-band station list](https://directreadout.sci.gsfc.nasa.gov/x-band.html) | CCNY NOAA-CREST station location, 40.820 N, 73.950 W (entry 154); other U.S. direct-readout sites near large cities. |
+| [CUNY CREST, Satellite Receiving Station](https://crest.cuny.edu/hires/research/facilities/satellite-receiving-station) | 2.4 m X-band antenna in a radome; Terra, Aqua, and Suomi NPP reception. |
+| [ITU-R F.699-5 (05/2000)](https://www.itu.int/dms_pubrec/itu-r/rec/f/R-REC-F.699-5-200005-S!!PDF-E.pdf) | Reference pattern for D/lambda <= 100 (recommends 2.2), used for the 2.4 m dish. |
+| [FAA, *Small Unmanned Aircraft Systems Survey Report 2025*](https://www.faa.gov/data_research/aviation/aerospace_forecasts/Small-Unmanned-Aircraft-Systems-Survey-Report-2025.pdf) | 2025 flights (57,836,452) and flight hours (21,676,799), Table 1; flights by state, Table 6 (New York 1,366,899); flight altitudes of about 190-230 ft AGL, Tables 2-3. |
+| [FAA, Drones by the numbers](https://www.faa.gov/node/54496) | Registrations as of November 2025: 453,635 commercial, 371,334 recreational flyers, 481,760 certificated remote pilots. |
+| [FAA Aerospace Forecast FY2021-2041, UAS chapter](https://www.faa.gov/sites/faa.gov/files/data_research/aviation/aerospace_forecasts/Unmanned_Aircraft_Systems.pdf) | Recreational ownership maps to population centers; fleet forecast. |
+| [Census Bureau QuickFacts, New York](https://www.census.gov/quickfacts/fact/table/NY,US/PST045225) | New York state population, July 1, 2025 (V2025): 20,002,427. |
+| [Census Bureau, Vintage 2025 national and state estimates](https://www.census.gov/newsroom/press-kits/2026/national-state-population-estimates.html); [WorldAtlas summary](https://www.worldatlas.com/society/how-many-people-are-in-the-us.html) | U.S. population 341.8 million on July 1, 2025 (exact table value to confirm). |
+| [NYC Department of City Planning, *Population Estimates and Trends* (March 2026)](https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/population/population-estimates/new-york-city-population-estimates-and-trends-march-2026.pdf) | New York City 8,584,629 and Manhattan 1,664,862 (Census V2025, July 1, 2025). |
+| [NYS DOH, Vital Statistics 2020, Table 2](https://healthweb-back.health.ny.gov/statistics/vital_statistics/2020/table02.htm) | Land area: New York City 300.45 sq mi, Manhattan 22.66 sq mi. |
+| [ECC Report 327 (2021), PDF](https://docdb.cept.org/download/3511) | Executive-summary separation distances used in the consistency check (single entry 300-3600 m; fixed outdoor 100 m; vehicles 700 m EESS, 400 m MetSat); Table 1 densities. Section 5.5 earth station parameters weren't retrievable. |
+| [UL test report 12791034-E2V3 for Apple AirTag, FCC ID BCGA2187 (2020)](https://fcc.report/FCC-ID/BCGA2187/5130980.pdf) | Measured channel 9 average EIRP -41.84 to -43.45 dBm/MHz, peak -0.6 to -4.08 dBm/50 MHz, -10 dB bandwidth 525.5 MHz; transmissions cease within 10 s without a response. |
+| [NTIA reference implementation of P.2108 (v1.1)](https://github.com/NTIA/p2108); [MATLAB port](https://github.com/nicklasorte/itu_p2108) | Validated clutter model for the ground UWB baseline. |

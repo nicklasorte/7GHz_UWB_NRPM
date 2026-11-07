@@ -157,7 +157,7 @@ tl = tiledlayout(fig2, 1, 2, 'TileSpacing', 'compact');
 for k = 1:2
     crit = eess_criteria_rev1(links(k).f_mhz, p);
     pct = [crit.long_pct crit.short_pct];
-    fp{k} = exceedance_footprint_rev1(p, setfield(drone, 'density_per_km2', 1), ps{k}, F{k}, links(k).f_mhz, 'n', 4e6); %#ok<SFLD>
+    fp{k} = exceedance_footprint_rev1(p, setfield(drone, 'density_per_km2', 1), ps{k}, F{k}, links(k).f_mhz, 'n', 4e6, 'r_sample_km', 3); %#ok<SFLD> exceedances need L - G < 69 dB: within about 1.3 km
     ax = nexttile(tl); hold(ax, 'on'); set(ax, 'YScale', 'log'); grid(ax, 'on');
     for c = 1:numel(cases)
         pop = drone; pop.density_per_km2 = cases(c).density;
@@ -199,8 +199,9 @@ agg_tbl = cell2table(agg_rows, 'VariableNames', {'link', 'case', 'active_per_km2
 disp('Aggregate drones at CCNY (no geofence; margins positive = criterion exceeded; 95% intervals):'); disp(agg_tbl);
 writetable(agg_tbl, fullfile(out_dir, 'aggregate_drones.csv'));
 fp_tbl = table([links.name]', cellfun(@(s) s.p1_short, fp)', cellfun(@(s) s.area_short_km2, fp)', ...
-    cellfun(@(s) s.area_short_ci_km2(1), fp)', cellfun(@(s) s.area_short_ci_km2(2), fp)', cellfun(@(s) s.area_long_km2, fp)', ...
-    'VariableNames', {'link', 'p1_short', 'area_short_km2', 'area_short_lo_km2', 'area_short_hi_km2', 'area_long_km2'});
+    cellfun(@(s) s.area_short_ci_km2(1), fp)', cellfun(@(s) s.area_short_ci_km2(2), fp)', ...
+    cellfun(@(s) s.r_hit_max_km, fp)', 'VariableNames', {'link', 'p1_short', 'area_short_km2', 'area_short_lo_km2', ...
+    'area_short_hi_km2', 'r_hit_max_km'});   % long-term footprint omitted: it extends past the 3 km sampling disk
 disp('Single-device exceedance footprint (averaged over passes, heights, and P.528 time):'); disp(fp_tbl);
 writetable(fp_tbl, fullfile(out_dir, 'footprint.csv'));
 
@@ -209,11 +210,12 @@ hand = struct('name', "handheld outdoor", 'density_per_km2', 7, 'h_min_m', 1.5, 
     'r_max_km', 20, 'eirp_offset_dB', 0, 'extra_loss_db', 0, 'clutter', true);
 indoor = struct('name', "indoor", 'density_per_km2', 500, 'h_min_m', 1.5, 'h_max_m', 1.5, ...
     'r_max_km', 5, 'eirp_offset_dB', 0, 'extra_loss_db', 17, 'clutter', true);
+hand.n_iter = 2e4; indoor.n_iter = 5e3;   % 39,000 indoor devices per iteration: 5e3 iterations resolve the 20% level
 base_rows = {};
 for k = 1:2
     crit = eess_criteria_rev1(links(k).f_mhz, p);
     for pop = [hand indoor]
-        o = aggregate_drone_mc_rev4(p, pop, ps{k}, F{k}, links(k).f_mhz, 'n_iter', 2e4, 'chunk', 50, ...
+        o = aggregate_drone_mc_rev4(p, pop, ps{k}, F{k}, links(k).f_mhz, 'n_iter', pop.n_iter, 'chunk', 50, ...
             'pct_exceed', [crit.long_pct crit.short_pct], 'r_edges_km', edges);
         base_rows(end+1, :) = {links(k).name, pop.name, pop.density_per_km2, o.ci.level_db(1) - crit.long_dBm, ...
             o.ci.level_db_lo(1) - crit.long_dBm, o.ci.level_db_hi(1) - crit.long_dBm, ...
@@ -249,8 +251,8 @@ ps_wg1 = pass_statistics_rev1(wg1);
 swap_rows = {};
 crit = eess_criteria_rev1(8160, p_wg1);
 for pop = [hand indoor]
-    o3 = aggregate_drone_mc_rev3(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', 2e4, 'chunk', 50);
-    o4 = aggregate_drone_mc_rev4(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', 2e4, 'chunk', 50);
+    o3 = aggregate_drone_mc_rev3(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', pop.n_iter, 'chunk', 50);
+    o4 = aggregate_drone_mc_rev4(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', pop.n_iter, 'chunk', 50);
     swap_rows(end+1, :) = {pop.name, o3.pct_dBm(1, 1) - crit.long_dBm, o4.ci.level_db(1) - crit.long_dBm, ...
         o4.ci.level_db_lo(1) - crit.long_dBm, o4.ci.level_db_hi(1) - crit.long_dBm}; %#ok<SAGROW> two rows
 end
