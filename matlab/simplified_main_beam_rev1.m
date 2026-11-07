@@ -100,7 +100,7 @@ disp(excess_tbl);
 
 %% Figure 4: boresight interference vs distance
 d = logspace(-1, 2, 400);
-fig4 = figure('Visible', 'off');
+fig4 = figure('Visible', 'off'); theme(fig4, 'light');
 cols = lines(n_v);
 for k = 1:n_v
     e10 = uwb_power_in_band_rev1(v.f_MHz(k), ref_bw, p.uwb);

@@ -42,7 +42,7 @@ f_sweep = 7700:2:8400;
 uwb_flat = p.uwb; uwb_flat.mask_type = "flat";
 e_mask = uwb_power_in_band_rev1(f_sweep, p.crit.ref_bw_MHz, p.uwb);
 e_flat = uwb_power_in_band_rev1(f_sweep, p.crit.ref_bw_MHz, uwb_flat);
-fig1 = figure('Visible', 'off');
+fig1 = figure('Visible', 'off'); theme(fig1, 'light');
 plot(f_sweep, e_mask, 'LineWidth', 1.5); hold on;
 plot(f_sweep, e_flat, '--', 'LineWidth', 1.2);
 yl = [-55 -25]; ylim(yl);
@@ -67,7 +67,7 @@ se_tbl_short = array2table([alt_m, se.sep_short_km], 'VariableNames', ...
 disp('Single hovering drone in ES azimuth, long-term criterion (km):'); disp(se_tbl);
 disp('Single drone, short-term criterion (km):'); disp(se_tbl_short);
 
-fig2 = figure('Visible', 'off');
+fig2 = figure('Visible', 'off'); theme(fig2, 'light');
 for e = 1:numel(el_p)
     semilogx(se.d_km, squeeze(se.i_dBm(end, e, :)), 'LineWidth', 1.3); hold on;
 end
@@ -83,7 +83,7 @@ exportgraphics(fig2, fullfile(out_dir, 'fig2_single_entry.png'), 'Resolution', 2
 n_d = numel(dens);
 r_req = NaN(n_d, 3);   % [long, short, governing]
 m0 = NaN(n_d, 2);      % margin at zero exclusion [long, short]
-fig3 = figure('Visible', 'off'); tiledlayout(1, 2);
+fig3 = figure('Visible', 'off'); theme(fig3, 'light'); tiledlayout(1, 2);
 ax1 = nexttile; hold(ax1, 'on'); ax2 = nexttile; hold(ax2, 'on');
 mc_long = cell(n_d, 1); mc_short = cell(n_d, 1);
 for k = 1:n_d
