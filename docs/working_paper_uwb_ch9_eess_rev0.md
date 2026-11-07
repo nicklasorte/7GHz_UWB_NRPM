@@ -97,6 +97,8 @@ EESS s-E                                 [8025 =================================
                                          Aqua 8160, Terra/Landsat 8212.5
 ```
 
+![Figure 1: UWB channel 9 EIRP in a 10 MHz reference bandwidth across 7.7-8.4 GHz, IEEE mask and FCC envelope, with the MetSat and EESS bands shaded.](figures/fig1_uwb_eirp_vs_freq.png)
+
 ## What NASA is likely concerned about
 
 Two space-to-Earth bands fall inside channel 9 at the full in-channel power:
@@ -244,6 +246,8 @@ All distances use the in-channel EIRP of -31.3 dBm per 10 MHz and 3 dB polarizat
 | NASA NEN | 30.3 dB | 38.6 dB |
 | Landsat at EROS | 29.3 dB | 37.5 dB |
 
+![Figure 2: Interference from one UWB drone on boresight versus distance for the three victim systems, with the ITU-R criteria and the Part 107 boresight limits.](figures/fig4_main_beam_distance.png)
+
 ## Interpretation
 
 The free-space main-beam distance is a bound, not a prediction. It answers how far away a drone could be and still matter if it were on boresight. For drones that stay at or below 400 ft, boresight coupling happens only inside a ring of about 1.3 km during low-elevation passes, and inside that ring the excess is large. For drones above 400 ft, under waiver or a future rule, the bound becomes reachable: a drone at 1 km altitude is on a 5° boresight at about 11 km, inside every long-term distance in the table.
@@ -262,6 +266,8 @@ One drone hovers in the dish azimuth at a set altitude while the dish points at 
 | 60 m | 0.96 km | 0.34 km | 0.14 km |
 | 121.92 m | 1.71 km | 0.63 km | 0.25 km |
 
+![Figure 3: One drone at 121.92 m in the dish azimuth, SA.509-3 single-entry pattern, NEN 11.3 m antenna, 8100 MHz, for three pointing elevations.](figures/fig2_single_entry.png)
+
 At 7800 MHz (MetSat, same antenna), the long-term separation at 121.92 m is 1.53 km at 5°.
 
 ## Aggregate Monte Carlo
@@ -274,6 +280,8 @@ Each Monte Carlo iteration draws a Poisson number of active drones, uniform in a
 | 0.01 | 0 km | -37.7 dB | -10.4 dB | -41.3 dBm/MHz |
 | 0.1 | 0.3 km | -26.6 dB | +4.0 dB | -45.3 dBm/MHz |
 | 1 | 1.3 km | -15.3 dB | +15.0 dB | -56.3 dBm/MHz |
+
+![Figure 4: Aggregate interference minus criterion versus geofence radius for four active drone densities; long term (left) and short term (right).](figures/fig3_aggregate_margin_vs_radius.png)
 
 Negative margin means the criterion is met. The short-term criterion governs at every density. The aggregate runs use the 1 ms average EIRP; using in-packet power for the short-term test adds up to 7.3 dB to the short-term margins.
 
@@ -323,25 +331,25 @@ These are options for the analysis, not policy recommendations.
 
 # Appendix A: Code crosswalk
 
-All code is at commit `{SHA}` of `nicklasorte/7GHz_UWB_NRPM`. Equations map to code as follows:
+All code is at commit `1f608cf176d4833fd5dc30196deb00d098b909f5` of `nicklasorte/7GHz_UWB_NRPM`. Equations map to code as follows:
 
 | Equation or step | Code |
 | --- | --- |
-| Main-beam distance, Equation 3 | [`main_beam_distance_rev1.m` L23]({BASE}/matlab/main_beam_distance_rev1.m#L23) |
-| Boresight height, Equation 4 | [`main_beam_distance_rev1.m` L25]({BASE}/matlab/main_beam_distance_rev1.m#L25) |
-| G0, phi0, phi2 (ITU-R SA.509-3) | [`sa509_gain_rev1.m` L26-L28]({BASE}/matlab/sa509_gain_rev1.m#L26-L28) |
-| UWB EIRP in a victim bandwidth (mask integration, SM.337 FDR) | [`uwb_power_in_band_rev1.m` L35-L37]({BASE}/matlab/uwb_power_in_band_rev1.m#L35-L37) |
-| Slant range and elevation on a 4/3 Earth | [`air_to_ground_geometry_rev1.m` L24-L25]({BASE}/matlab/air_to_ground_geometry_rev1.m#L24-L25) |
-| Off-axis angle | [`uwb_to_es_interference_rev1.m` L21]({BASE}/matlab/uwb_to_es_interference_rev1.m#L21) |
-| Free-space loss and link budget, Equations 1-2 | [`uwb_to_es_interference_rev1.m` L26-L29]({BASE}/matlab/uwb_to_es_interference_rev1.m#L26-L29) |
-| In-packet boost and peak cap | [`uwb_pulse_metrics_rev1.m` L38]({BASE}/matlab/uwb_pulse_metrics_rev1.m#L38) |
-| Regulatory peak envelope | [`uwb_pulse_metrics_rev1.m` L41]({BASE}/matlab/uwb_pulse_metrics_rev1.m#L41) |
-| First-order peak-to-average | [`uwb_pulse_metrics_rev1.m` L51]({BASE}/matlab/uwb_pulse_metrics_rev1.m#L51) |
-| Tsys from G/T | [`victim_systems_rev1.m` L83]({BASE}/matlab/victim_systems_rev1.m#L83) |
-| Poisson drone count | [`aggregate_drone_mc_rev1.m` L52]({BASE}/matlab/aggregate_drone_mc_rev1.m#L52) |
-| Aggregate for every geofence radius | [`aggregate_drone_mc_rev1.m` L75]({BASE}/matlab/aggregate_drone_mc_rev1.m#L75) |
-| Percentile of exceedance | [`aggregate_drone_mc_rev1.m` L83]({BASE}/matlab/aggregate_drone_mc_rev1.m#L83) |
-| Required radius | [`required_exclusion_radius_rev1.m` L16]({BASE}/matlab/required_exclusion_radius_rev1.m#L16) |
+| Main-beam distance, Equation 3 | [`main_beam_distance_rev1.m` L23](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/main_beam_distance_rev1.m#L23) |
+| Boresight height, Equation 4 | [`main_beam_distance_rev1.m` L25](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/main_beam_distance_rev1.m#L25) |
+| G0, phi0, phi2 (ITU-R SA.509-3) | [`sa509_gain_rev1.m` L26-L28](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/sa509_gain_rev1.m#L26-L28) |
+| UWB EIRP in a victim bandwidth (mask integration, SM.337 FDR) | [`uwb_power_in_band_rev1.m` L35-L37](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/uwb_power_in_band_rev1.m#L35-L37) |
+| Slant range and elevation on a 4/3 Earth | [`air_to_ground_geometry_rev1.m` L24-L25](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/air_to_ground_geometry_rev1.m#L24-L25) |
+| Off-axis angle | [`uwb_to_es_interference_rev1.m` L21](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/uwb_to_es_interference_rev1.m#L21) |
+| Free-space loss and link budget, Equations 1-2 | [`uwb_to_es_interference_rev1.m` L26-L29](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/uwb_to_es_interference_rev1.m#L26-L29) |
+| In-packet boost and peak cap | [`uwb_pulse_metrics_rev1.m` L38](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/uwb_pulse_metrics_rev1.m#L38) |
+| Regulatory peak envelope | [`uwb_pulse_metrics_rev1.m` L41](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/uwb_pulse_metrics_rev1.m#L41) |
+| First-order peak-to-average | [`uwb_pulse_metrics_rev1.m` L51](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/uwb_pulse_metrics_rev1.m#L51) |
+| Tsys from G/T | [`victim_systems_rev1.m` L83](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/victim_systems_rev1.m#L83) |
+| Poisson drone count | [`aggregate_drone_mc_rev1.m` L52](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/aggregate_drone_mc_rev1.m#L52) |
+| Aggregate for every geofence radius | [`aggregate_drone_mc_rev1.m` L75](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/aggregate_drone_mc_rev1.m#L75) |
+| Percentile of exceedance | [`aggregate_drone_mc_rev1.m` L83](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/aggregate_drone_mc_rev1.m#L83) |
+| Required radius | [`required_exclusion_radius_rev1.m` L16](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/required_exclusion_radius_rev1.m#L16) |
 
 Call graph:
 
