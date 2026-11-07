@@ -79,14 +79,15 @@ for s = 1:numel(sites)
         [r_l, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(1, :), o.crit.long_dBm);
         [r_s, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(2, :), o.crit.short_dBm);
         risk_min = o.frac_exceed_short(1) * ps{s}.frac_tracking * min_per_year;
+        res_min = ps{s}.frac_tracking * min_per_year / n_iter_by_dens(k);    % one iteration's worth of time
         agg_rows(end+1, :) = {sites(s).name, dens(k), o.pct_dBm(1,1) - o.crit.long_dBm, o.pct_dBm(2,1) - o.crit.short_dBm, ...
-            r_l, r_s, 100 * o.frac_exceed_short(1), risk_min}; %#ok<SAGROW> six rows
+            r_l, r_s, 100 * o.frac_exceed_short(1), risk_min, res_min}; %#ok<SAGROW> six rows
         mc{s, k} = rmfield_safe(o);
         fprintf('%s, %.0e /km^2 done (%.0f s)\n', sites(s).name, dens(k), toc(t_start));
     end
 end
 agg_tbl = cell2table(agg_rows, 'VariableNames', {'site','active_density_per_km2','margin_long_dB','margin_short_dB', ...
-    'r_req_long_km','r_req_short_km','pct_trk_time_above_short','minutes_per_year_above_short'});
+    'r_req_long_km','r_req_short_km','pct_trk_time_above_short','minutes_per_year_above_short','resolution_min_per_year'});
 disp('Aggregate drones, P.528 loss and real pointing:'); disp(agg_tbl);
 
 %% 5. Handheld and indoor UWB baseline at WG1 (the environment that exists today)
@@ -107,32 +108,41 @@ end
 base_tbl = cell2table(base_rows, 'VariableNames', {'population','active_density_per_km2','margin_long_dB','margin_short_dB','minutes_per_year_above_short'});
 disp('Ground UWB baseline at WG1 (urban densities, an upper bound for a rural site):'); disp(base_tbl);
 
-%% 6. Mitigation menu at WG1, drones at 0.1 active per km^2
+%% 6. Mitigation menu at WG1, drones at 0.1 and 1 active per km^2
 cases = {
-    "Baseline",                                   drone,                                         0
-    "Altitude cap 30 m",                          setfield(drone, 'h_max_m', 30),                0 %#ok<SFLD>
-    "Downward antenna, -5 dB (CEPT -46.3 dBm/MHz)", setfield(drone, 'eirp_offset_dB', 5),         0 %#ok<SFLD>
-    "EIRP cap -64.3 dBm/MHz (ECC aircraft MetSat)", setfield(drone, 'eirp_offset_dB', 23),        0 %#ok<SFLD>
-    "Duty cycle 1% instead of 5% (density x0.2)", drone,                                         1
-    "Altitude cap 30 m + downward antenna",       setfield(setfield(drone, 'h_max_m', 30), 'eirp_offset_dB', 5), 0 %#ok<SFLD>
+    "Baseline",                                     drone,                                         0
+    "Altitude cap 30 m",                            setfield(drone, 'h_max_m', 30),                0 %#ok<SFLD>
+    "Downward antenna, -5 dB (CEPT -46.3 dBm/MHz)", setfield(drone, 'eirp_offset_dB', 5),          0 %#ok<SFLD>
+    "EIRP cap -64.3 dBm/MHz (ECC aircraft MetSat)", setfield(drone, 'eirp_offset_dB', 23),         0 %#ok<SFLD>
+    "Duty cycle 1% instead of 5% (density x0.2)",   drone,                                         1
+    "Altitude cap 30 m + downward antenna",         setfield(setfield(drone, 'h_max_m', 30), 'eirp_offset_dB', 5), 0 %#ok<SFLD>
     };
+dens_m = [0.1 1];
+n_iter_m = [1e5 5e4];
 mit_rows = {};
-for j = 1:size(cases, 1)
-    pop = cases{j, 2};
-    pop.density_per_km2 = 0.1 * (1 - 0.8 * cases{j, 3});
-    o = aggregate_drone_mc_rev2(p, pop, ps{1}, F, f, 'n_iter', 1e5);
-    [r_l, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(1, :), o.crit.long_dBm);
-    [r_s, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(2, :), o.crit.short_dBm);
-    mit_rows(end+1, :) = {cases{j, 1}, o.pct_dBm(2,1) - o.crit.short_dBm, max(r_l, r_s), ...
-        o.frac_exceed_short(1) * ps{1}.frac_tracking * min_per_year}; %#ok<SAGROW> six rows
+for m = 1:numel(dens_m)
+    for j = 1:size(cases, 1)
+        pop = cases{j, 2};
+        pop.density_per_km2 = dens_m(m) * (1 - 0.8 * cases{j, 3});
+        o = aggregate_drone_mc_rev2(p, pop, ps{1}, F, f, 'n_iter', n_iter_m(m));
+        [r_l, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(1, :), o.crit.long_dBm);
+        [r_s, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(2, :), o.crit.short_dBm);
+        mit_rows(end+1, :) = {dens_m(m), cases{j, 1}, o.pct_dBm(2,1) - o.crit.short_dBm, max(r_l, r_s), ...
+            o.frac_exceed_short(1) * ps{1}.frac_tracking * min_per_year, ps{1}.frac_tracking * min_per_year / n_iter_m(m)}; %#ok<SAGROW> twelve rows
+    end
+    fprintf('Mitigation menu at %.1f /km^2 done (%.0f s)\n', dens_m(m), toc(t_start));
 end
-mit_tbl = cell2table(mit_rows, 'VariableNames', {'mitigation','margin_short_r0_dB','geofence_km','minutes_per_year_above_short'});
-disp('Mitigation menu at WG1, 0.1 active drones per km^2:'); disp(mit_tbl);
+mit_tbl = cell2table(mit_rows, 'VariableNames', {'active_density_per_km2','mitigation','margin_short_r0_dB','geofence_km', ...
+    'minutes_per_year_above_short','resolution_min_per_year'});
+disp('Mitigation menu at WG1:'); disp(mit_tbl);
 fprintf('Reference allowance: ITU-R SA.1027-6 short-term 0.005%% of time = %.1f minutes per year.\n', 0.005 / 100 * min_per_year);
 
 fig7 = figure('Visible', 'off'); theme(fig7, 'light');
-barh(categorical(mit_tbl.mitigation, mit_tbl.mitigation), mit_tbl.geofence_km); grid on;
-xlabel('Geofence radius needed (km)'); title('Mitigation menu, WG1, 0.1 active drones per km^2 (P.528, real passes)');
+hi = mit_tbl.active_density_per_km2 == 1;
+barh(categorical(mit_tbl.mitigation(hi), mit_tbl.mitigation(hi)), mit_tbl.margin_short_r0_dB(hi)); grid on;
+xline(0, 'k-', 'Short-term criterion');
+xlabel('Short-term margin with no geofence (dB; negative = criterion met)');
+title('Mitigation menu, WG1, 1 active drone per km^2 (P.528, real passes)');
 exportgraphics(fig7, fullfile(out_dir, 'fig7_mitigation_menu.png'), 'Resolution', 200);
 
 save(fullfile(out_dir, 'results_next_steps_rev1.mat'), 'cmp', 'pass_tbl', 'agg_tbl', 'base_tbl', 'mit_tbl', 'tbl', 'mc', 'sites');
