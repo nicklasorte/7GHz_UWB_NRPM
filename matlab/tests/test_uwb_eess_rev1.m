@@ -5,6 +5,9 @@ end
 
 function setupOnce(tc)
 addpath(fullfile(fileparts(fileparts(mfilename('fullpath')))));
+sib = fullfile(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))));
+if isfolder(fullfile(sib, 'itu_p2108', 'src')), addpath(fullfile(sib, 'itu_p2108', 'src')); end
+if isfolder(fullfile(sib, 'itu_p528', 'src')), addpath(fullfile(sib, 'itu_p528', 'src')); end
 tc.TestData.p = uwb_eess_params_rev1();
 end
 
@@ -183,4 +186,107 @@ if ~isempty(pool)
     q = aggregate_drone_mc_rev3(p, pop, ps, F, 8100, 'n_iter', 6000, 'chunk', 1000, 'pct_exceed', 20, 'parallel_flag', 1);
     verifyEqual(tc, q.pct_dBm, s.pct_dBm);
 end
+end
+
+%% rev4 additions: small-antenna pattern, tail intervals, validated clutter, footprint, density
+
+function F = fs_interp()
+% Free-space interpolant so these tests run without itu_p528.
+d = [0.02 0.1 1 10 100]; h = [1 50 300]; pp = [1 50 99];
+[D, H, P] = ndgrid(d, h, pp);
+lambda = physconst('LightSpeed') / 8160e6;
+L = 20*log10(4*pi*sqrt((D*1000).^2 + (H - 10).^2)/lambda) + 0.05*(P - 50);
+F = griddedInterpolant({log10(d), h, pp}, L, 'linear', 'nearest');
+end
+
+function test_f699_continuity(tc)
+% ITU-R F.699-5 segments join at phi_m, 100 lambda/D, and 48 deg for a 2.4 m dish at 8160 MHz.
+lambda = physconst('LightSpeed') / 8160e6; dl = 2.4 / lambda;
+gmax = 10*log10(0.6*(pi*dl)^2); g1 = 2 + 15*log10(dl);
+phi_m = 20/dl*sqrt(gmax - g1);
+for b = [phi_m, 100/dl, 48]
+    verifyEqual(tc, f699_gain_rev1(b - 1e-9, 2.4, 8160, 0.6), f699_gain_rev1(b + 1e-9, 2.4, 8160, 0.6), 'AbsTol', 1e-3);
+end
+verifyEqual(tc, f699_gain_rev1(0, 2.4, 8160, 0.6), gmax, 'AbsTol', 1e-12);
+verifyError(tc, @() f699_gain_rev1(1, 11.3, 8160, 0.6), 'f699_gain_rev1:largeAntenna');
+end
+
+function test_es_gain_dispatch(tc)
+[g, src] = es_gain_rev1(1, 11.3, 8160, 0.6, "single");
+verifyEqual(tc, g, sa509_gain_rev1(1, 11.3, 8160, 0.6, "single"));
+verifySubstring(tc, src, "SA.509");
+[g, src] = es_gain_rev1(1, 2.4, 8160, 0.6);
+verifyEqual(tc, g, f699_gain_rev1(1, 2.4, 8160, 0.6));
+verifySubstring(tc, src, "F.699");
+end
+
+function test_tail_ci_coverage(tc)
+% On exponential samples the 95% order-statistic interval covers the true
+% 99.9th percentile in about 95% of repeats, and Clopper-Pearson covers p.
+rs = RandStream('Threefry', 'Seed', 7);
+truth_db = 10*log10(-log(1e-3));
+hit = 0; hitf = 0; nrep = 400;
+for k = 1:nrep
+    x = -log(rand(rs, 2e4, 1));
+    ci = mc_tail_ci_rev1(x, 0.1, -log(1e-3), 0.95);
+    hit = hit + (ci.level_db_lo <= truth_db && truth_db <= ci.level_db_hi);
+    hitf = hitf + (ci.frac_lo <= 1e-3 && 1e-3 <= ci.frac_hi);
+end
+verifyGreaterThan(tc, hit/nrep, 0.92);
+verifyGreaterThan(tc, hitf/nrep, 0.92);
+end
+
+function test_rev4_reproducible_and_clutter_port(tc)
+tc.assumeNotEmpty(which('p2108_terrestrial_rev1'), 'itu_p2108 not on the path; filtered.');
+p = tc.TestData.p; F = fs_interp();
+ps.tracking = true(20, 1); ps.az_deg = linspace(0, 340, 20)'; ps.el_deg = linspace(5, 40, 20)';
+pop = struct('name', "t", 'density_per_km2', 2, 'h_min_m', 1.5, 'h_max_m', 1.5, 'r_max_km', 5, ...
+    'eirp_offset_dB', 0, 'extra_loss_db', 0, 'clutter', true);
+a = aggregate_drone_mc_rev4(p, pop, ps, F, 8160, 'n_iter', 2000, 'chunk', 500, 'pct_exceed', [20 50]);
+b = aggregate_drone_mc_rev4(p, pop, ps, F, 8160, 'n_iter', 2000, 'chunk', 500, 'pct_exceed', [20 50]);
+verifyEqual(tc, a.pct_dBm, b.pct_dBm);
+verifyTrue(tc, all(diff(a.frac_exceed_long) <= 0));
+verifyLessThanOrEqual(tc, a.ci.level_db_lo(1), a.ci.level_db(1));
+verifyGreaterThanOrEqual(tc, a.ci.level_db_hi(1), a.ci.level_db(1));
+% device physics: clutter adds exactly the validated P.2108 loss
+dev = struct('r_km', [0.1; 1; 3], 'az_rad', [0; 1; 2], 'h_m', [1.5; 1.5; 1.5], 'p_time', [50; 50; 50], 'p_loc', [10; 50; 90]);
+pt = struct('el_rad', deg2rad([5; 5; 5]), 'az_rad', [0; 0; 0]);
+geo = struct('ae_km', 8494.67, 'r1_km', 8494.67 + 0.01);
+ant = struct('diam_m', 11.3, 'f_mhz', 8160, 'eff', 0.6, 'pattern', "multiple");
+i0 = device_interference_rev1(dev, pt, geo, F, ant, -30);
+i1 = device_interference_rev1(dev, pt, geo, F, ant, -30, 8.16);
+expect = p2108_terrestrial_rev1(8.16, max(dev.r_km, 0.25), dev.p_loc, q_inverse="exact");
+verifyEqual(tc, 10*log10(i0 ./ i1), expect, 'AbsTol', 1e-9);
+end
+
+function test_footprint_matches_mc(tc)
+% With sparse drones the short-term exceedance comes from single devices,
+% so the Poisson footprint prediction matches the aggregate Monte Carlo.
+p = tc.TestData.p; F = fs_interp();
+ps.tracking = true(50, 1); ps.az_deg = linspace(0, 350, 50)'; ps.el_deg = linspace(5, 40, 50)';
+pop = struct('name', "t", 'density_per_km2', 0.05, 'h_min_m', 10, 'h_max_m', 120, 'r_max_km', 20, ...
+    'eirp_offset_dB', 0, 'extra_loss_db', 0, 'clutter', false);
+o = aggregate_drone_mc_rev4(p, pop, ps, F, 8160, 'n_iter', 2e5, 'chunk', 2e4, 'r_edges_km', [0 1 5]);
+fp = exceedance_footprint_rev1(p, pop, ps, F, 8160, 'n', 1e6);
+verifyGreaterThan(tc, o.ci.frac(2), 0);
+verifyEqual(tc, fp.pred_frac_short, o.ci.frac(2), 'RelTol', 0.25);
+end
+
+function test_density_chain(tc)
+% Each step of the FAA/Census chain reproduces its hand calculation.
+d = drone_density_faa_rev1(10000, 'peak_factor', 1, 'equipped_frac', 1, 'activity', 1);
+u = d.Properties.UserData;
+verifyEqual(tc, u.airborne_us_avg, 21676799/8760, 'RelTol', 1e-12);
+verifyEqual(tc, u.state_ratio, (1366899/20002427)/(57836452/341.8e6), 'RelTol', 1e-12);
+verifyEqual(tc, d.active_uwb_per_km2, 21676799/8760/341.8e6*u.state_ratio*10000, 'RelTol', 1e-12);
+end
+
+function test_link_budget_sums(tc)
+% The interference row equals EIRP minus losses plus gain from the other rows.
+p = tc.TestData.p; F = fs_interp();
+lb = link_budget_walkthrough_rev1(p, F, 8160, 121.92, 1.2, 5, 0, 50);
+val = @(s) lb.value(strcmp(string(lb.step), s));
+i_calc = val("UWB EIRP in the reference bandwidth at f") - val("EIRP reduction toward the station") ...
+    - val("Polarization mismatch") - val("ITU-R P.528-5 basic transmission loss") + val("Dish gain toward the drone");
+verifyEqual(tc, val("Interference at the antenna output"), i_calc, 'AbsTol', 1e-9);
 end
