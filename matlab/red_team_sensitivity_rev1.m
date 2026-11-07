@@ -36,7 +36,7 @@ c(end+1,:) = {"Four UWB radios per drone, +6 dB",    f0,   h_part107,   3,  -6, 
 c(end+1,:) = {"In-packet power on short term, +7.3 dB", f0, h_part107,  3,   0,           NaN,          "ieee802154", boost};
 c(end+1,:) = {"Apportioned criterion, I/N = -20 dB", f0,   h_part107,   3,   0,           in_m20_dBW,   "ieee802154", 0};
 c(end+1,:) = {"Structure exception, 243.84 m AGL",   f0,   h_structure, 3,   0,           NaN,          "ieee802154", 0};
-c(end+1,:) = {"8350 MHz, IEEE mask (-18 dBr)",       8350, h_part107,   3,   0,           NaN,          "ieee802154", 0};
+c(end+1,:) = {"8350 MHz, IEEE mask (-10 dBr)",       8350, h_part107,   3,   0,           NaN,          "ieee802154", 0};
 c(end+1,:) = {"8350 MHz, FCC envelope (flat)",       8350, h_part107,   3,   0,           NaN,          "flat",       0};
 c(end+1,:) = {"Combined skeptic case",               f0,   h_structure, 0,  -9,           in_m20_dBW,   "ieee802154", boost};
 

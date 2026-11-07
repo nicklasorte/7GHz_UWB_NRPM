@@ -117,14 +117,14 @@ This paper analyzes one representative receiver for each case, plus Landsat beca
 | Receiver bandwidth | 30 MHz assigned | [CONFIRM] | 375 MHz |
 | Data rate and coding | 15 Mbps (25 Mbps from NOAA-21); QPSK; RS(255,223) + rate-1/2 convolutional | [CONFIRM] | 384 Mbps; rate-7/8 LDPC |
 | Antenna diameter | 3 m (reference) | 11.3 m | 10 m |
-| Main-beam gain G0 (derived, eta = 0.6) | 45.6 dBi | 57.5 dBi | 56.5 dBi |
-| G/T | 22.7 dB/K at 5° | [CONFIRM] | [CONFIRM] |
-| System noise temperature | 194 K (derived from G/T and G0) | [CONFIRM] | [CONFIRM] |
-| Polarization | RHCP | RHCP [CONFIRM] | [CONFIRM] |
+| Main-beam gain G0 | 45.6 dBi (derived, eta = 0.6) | 57.5 dBi published for 11.3 m (SG1); 57.48 dBi derived | 56.5 dBi (derived, eta = 0.6) |
+| G/T | 22.7 dB/K at 5° | 35.2 dB/K (AS1, Fairbanks), 34.5 dB/K (WG1, Wallops), at 10° | [CONFIRM] |
+| System noise temperature | 194 K (derived from G/T and G0) | 170 K (AS1), 200 K (WG1), derived | [CONFIRM] |
+| Polarization | RHCP | RHC/LHC selectable | [CONFIRM] |
 | Minimum elevation | 5° | 5° | 5° |
 | Required Eb/N0; minimum margin | 4.4 dB; 1 dB | [CONFIRM] | [CONFIRM] |
 | Sites | 47 registered HRD users | Fairbanks AK, Wallops VA; commercial NEN at North Pole AK, South Point HI | Sioux Falls SD; Gilmore Creek AK |
-| Source | JPSS-1 HRD-DBS RF ICD Rev A; NOAA OSPO | NEN station list; NTIA appendix | USGS |
+| Source | JPSS-1 HRD-DBS RF ICD Rev A; NOAA OSPO | NEN Users' Guide, 453-NENUG Rev 5, Tables 2-1 and 3-3 | USGS |
 
 The main-beam gain is G0 = 10 log10(eta (pi D/lambda)^2) from ITU-R SA.509-3, with an assumed aperture efficiency eta of 0.6. [CONFIRM: aperture efficiency for each antenna.] The 3 m JPSS antenna has D/lambda of about 78, below the D/lambda >= 100 range of the SA.509-3 sidelobe pattern, so the paper uses only its main-beam gain.
 
@@ -289,7 +289,7 @@ Negative margin means the criterion is met. The short-term criterion governs at 
 
 | Item | Why it matters | Possible source |
 | --- | --- | --- |
-| G/T, noise temperature, receiver bandwidth, and required Eb/N0 for NEN and Landsat receivers | Converts thresholds to I/N and link margin | NASA SCaN, USGS EROS |
+| Receiver bandwidth and required Eb/N0 for NEN receivers; G/T, noise temperature, bandwidth, and Eb/N0 for Landsat (NEN G/T is now from the NEN Users' Guide) | Converts thresholds to I/N and link margin | NASA SCaN, USGS EROS |
 | Aperture efficiency and antenna height per site | ±1 dB on gain; changes near-in elevation geometry | NASA, USGS, NOAA |
 | Earth station sites, including HRD terminals near population | Sets where geofences or channel limits would apply | NOAA OSPO, NASA DRL |
 | Pass statistics (time at each elevation) | Converts pointing assumptions into percent-of-time | Mission operations |
@@ -378,6 +378,10 @@ graph TD
 ```
 
 Checks performed: 11 unit tests (antenna pattern continuity, flat-Earth limit of the geometry, free-space loss formula, in-band power, criteria lookup, a hand link budget, Monte Carlo reproducibility and monotonicity, distance inversion, pulse metrics, Tsys derivation); an independent Python recomputation of the main-beam distances.
+
+# Companion paper
+
+All assumptions, with links and the questions NASA can answer, are in *Assumptions Register and NASA Red-Team Review* (`docs/assumptions_and_red_team_rev0.md`), which also quantifies the skeptic cases.
 
 # Open verifications
 

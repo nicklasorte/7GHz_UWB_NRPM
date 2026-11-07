@@ -49,3 +49,19 @@ Long term: 13° pointing, 20,000 iterations. Short term: 5° pointing, 200,000 i
 | 1 | 1.3 | -15.3 | +15.0 | -56.3 |
 
 Checks: 11 of 11 unit tests pass; Code Analyzer clean apart from a suppressed constant-switch warning; Python recomputation of the main-beam distances matches to the reported precision.
+
+## Red-team sensitivity (`red_team_sensitivity_rev1.m`, NEN WG1 Wallops: 57.5 dBi, 34.5 dB/K, 200 K, 8160 MHz)
+
+| Case | Margin change (dB) | Main-beam long (km) | Main-beam short (km) | Single sep el 5° (km) | Single sep el 13° (km) | Boresight ring el 5° (km) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Baseline | 0 | 42.26 | 5.97 | 1.71 | 0.62 | 1.28 |
+| No polarization credit | +3 | 59.69 | 8.43 | 1.85 | 0.67 | 1.28 |
+| Ground reflection | +6 | 84.32 | 11.91 | 2.05 | 0.73 | 1.28 |
+| Two radios per drone | +3 | 59.69 | 8.43 | 1.85 | 0.67 | 1.28 |
+| Four radios per drone | +6 | 84.32 | 11.91 | 2.05 | 0.73 | 1.28 |
+| In-packet power, short term | +7.3 (short) | 42.26 | 13.87 | 1.71 | 0.62 | 1.28 |
+| Apportioned I/N = -20 dB (-125.6 dBm/10 MHz) | +5.6 | 80.52 | 5.97 | 2.02 | 0.72 | 1.28 |
+| Structure exception, 243.84 m | 0 | 42.26 | 5.97 | 3.15 | 1.17 | 2.67 |
+| 8350 MHz, IEEE mask (-10 dBr) | -10 | 13.06 | 1.84 | 1.44 | 0.54 | 1.28 |
+| 8350 MHz, FCC envelope | 0 | 41.30 | 5.83 | 1.70 | 0.62 | 1.28 |
+| Combined skeptic case | +17.6 | 320.54 | 55.20 | 5.40 | 1.86 | 2.67 |

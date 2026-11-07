@@ -7,6 +7,7 @@ DRAFT//PRE-DECISIONAL. Public sources only.
 ## Start here
 
 - [Working paper (Markdown)](docs/working_paper_uwb_ch9_eess_rev0.md), also as `docs/working_paper_uwb_ch9_eess_rev0.docx`
+- [Assumptions register and NASA red-team review](docs/assumptions_and_red_team_rev0.md), also as `.docx`
 - [Results](docs/results.md)
 - [Problem map](docs/problem_map.md)
 - [Sources](docs/sources.md)
@@ -20,6 +21,7 @@ DRAFT//PRE-DECISIONAL. Public sources only.
 | Excess there | 30 dB (NEN), 29 dB (Landsat), 13 dB (JPSS) at 5° |
 | Single hovering drone, real antenna pattern, 121.92 m | 1.7 km separation at 5° pointing |
 | Aggregate geofence for the short-term criterion | 0.3 km at 0.1 active drones/km², 1.3 km at 1/km² |
+| Combined NASA-skeptic case, single drone at 243.84 m | 5.4 km separation at 5° pointing |
 
 ## MATLAB (R2025b)
 
@@ -27,13 +29,16 @@ DRAFT//PRE-DECISIONAL. Public sources only.
 cd matlab
 simplified_main_beam_rev1      % bounding LOS main-beam distances + pulse metrics
 main_uwb_ch9_eess_rev1         % single-entry and aggregate Monte Carlo (about 5 minutes)
+red_team_sensitivity_rev1      % NASA-skeptic sensitivity cases for NEN WG1 (Wallops)
 runtests('tests/test_uwb_eess_rev1.m')
 ```
 
 | File | Purpose |
 | --- | --- |
 | `uwb_eess_params_rev1.m` | All inputs, each with its source or a TODO |
-| `victim_systems_rev1.m` | JPSS HRD, NASA NEN, and Landsat receive parameters |
+| `victim_systems_rev1.m` | JPSS HRD, generic NASA NEN, and Landsat receive parameters |
+| `victim_systems_rev2.m` | Adds NEN AS1 (Fairbanks) and WG1 (Wallops) from the NEN Users' Guide |
+| `red_team_sensitivity_rev1.m` | One-at-a-time and combined skeptic cases |
 | `uwb_power_in_band_rev1.m` | UWB EIRP in a victim bandwidth (IEEE mask or FCC envelope) |
 | `uwb_pulse_metrics_rev1.m` | Average, in-packet, and peak power; noise-like vs. pulse-resolved |
 | `main_beam_distance_rev1.m` | Free-space boresight distance and the height needed to be on boresight |
