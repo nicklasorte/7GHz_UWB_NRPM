@@ -59,7 +59,8 @@ for s = 1:numel(sites)
 end
 disp('Dish tracking statistics (Aqua, Terra, Landsat 8, Landsat 9; 30 days, el >= 5 deg):'); disp(pass_tbl);
 fig6 = figure('Visible', 'off'); theme(fig6, 'light');
-bar(categorical(compose("%g-%g", ps{1}.el_edges_deg(1:end-1)', ps{1}.el_edges_deg(2:end)')), ...
+el_lbl = compose("%g-%g", ps{1}.el_edges_deg(1:end-1)', ps{1}.el_edges_deg(2:end)');
+bar(categorical(el_lbl, el_lbl), ...   % categories in elevation order, not alphabetical
     100 * [ps{1}.el_hist_frac; ps{2}.el_hist_frac]');
 ylabel('Share of tracking time (%)'); xlabel('Dish elevation (deg)'); grid on;
 legend([sites.name], 'Location', 'northeast'); title('Where the dish points while tracking');
