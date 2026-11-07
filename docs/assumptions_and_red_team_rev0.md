@@ -17,7 +17,7 @@ This paper lists every assumption behind the UWB channel 9 analysis in the compa
 
 The second half reviews the analysis from the point of view of a skeptical NASA spectrum engineer. It lists the gaps that reviewer would raise, quantifies the ones the model can test, and flags the ones it can't.
 
-All code is in [`nicklasorte/7GHz_UWB_NRPM`](https://github.com/nicklasorte/7GHz_UWB_NRPM) at commit `{SHA}`. Every input is set in [`uwb_eess_params_rev1.m`]({BASE}/matlab/uwb_eess_params_rev1.m) or [`victim_systems_rev2.m`]({BASE}/matlab/victim_systems_rev2.m).
+All code is in [`nicklasorte/7GHz_UWB_NRPM`](https://github.com/nicklasorte/7GHz_UWB_NRPM) at commit `dd66fb926ebb0646225d413456623c2e189f4a02`. Every input is set in [`uwb_eess_params_rev1.m`](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/dd66fb926ebb0646225d413456623c2e189f4a02/matlab/uwb_eess_params_rev1.m) or [`victim_systems_rev2.m`](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/dd66fb926ebb0646225d413456623c2e189f4a02/matlab/victim_systems_rev2.m).
 
 # How to read the register
 
@@ -114,7 +114,7 @@ The sensitivity column states the change in the link margin in decibels. Free-sp
 
 ## Quantified sensitivities
 
-[`red_team_sensitivity_rev1.m`]({BASE}/matlab/red_team_sensitivity_rev1.m) reruns the analysis for NEN WG1 (Wallops: 57.5 dBi, 34.5 dB/K, 200 K) with one assumption changed at a time. The single-drone separation uses the SA.509-3 single-entry pattern with the drone in the dish azimuth.
+[`red_team_sensitivity_rev1.m`](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/dd66fb926ebb0646225d413456623c2e189f4a02/matlab/red_team_sensitivity_rev1.m) reruns the analysis for NEN WG1 (Wallops: 57.5 dBi, 34.5 dB/K, 200 K) with one assumption changed at a time. The single-drone separation uses the SA.509-3 single-entry pattern with the drone in the dish azimuth.
 
 | Case | Margin change | Main-beam distance, long term | Main-beam distance, short term | Single-drone separation, 5° | Single-drone separation, 13° | Boresight ring, 5° |
 | --- | --- | --- | --- | --- | --- | --- |
