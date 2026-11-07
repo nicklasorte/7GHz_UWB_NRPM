@@ -119,3 +119,43 @@ verifyEqual(tc, v.g0_calc_dBi(as1), 57.5, 'AbsTol', 0.2);
 verifyGreaterThan(tc, v.bw3db_calc_deg(as1), 0.19);
 verifyLessThan(tc, v.bw3db_calc_deg(as1), 0.24);
 end
+
+function test_p2108_clutter(tc)
+% Median (50% of locations) at 2 km equals Eqn 3a with Q^-1(0.5) = 0, and the 2 km cap holds.
+f = 8.16;
+L_l = -2*log10(10^(-5*log10(f) - 12.5) + 10^(-16.5));
+L_s = 32.98 + 23.9*log10(2) + 3*log10(f);
+expect = -5*log10(10^(-0.2*L_l) + 10^(-0.2*L_s));
+verifyEqual(tc, p2108_terrestrial_clutter_rev1(f, 2, 50), expect, 'AbsTol', 1e-10);
+verifyEqual(tc, p2108_terrestrial_clutter_rev1(f, 10, 50), expect, 'AbsTol', 1e-10);
+verifyEqual(tc, p2108_terrestrial_clutter_rev1(f, 0.1, 50), 0);
+verifyLessThan(tc, p2108_terrestrial_clutter_rev1(f, 2, 10), expect);   % lower loss at 10% of locations
+end
+
+function test_p528_table_matches_direct(tc)
+% Interpolant reproduces direct P.528 calls at grid nodes.
+tc.assumeNotEmpty(which('p528_rev1'), 'itu_p528 not on the path; filtered.');
+[F, tbl] = p528_loss_table_rev1(8160, 10, 'd_km', [0.5 1 5 20], 'h_m', [30 121.92], 'p_pct', [1 50 99], ...
+    'cache_dir', string(tempname));
+A = p528_rev1(5, 10, 121.92, 8160, 1, 50);
+verifyEqual(tc, F(log10(5), 121.92, 50), A, 'AbsTol', 1e-9);
+verifyEqual(tc, size(tbl.A_db), [4 2 3]);
+end
+
+function test_mc_rev2_reproducible(tc)
+% Same seed, same result; larger exclusion never adds interference. Uses a
+% free-space interpolant so the test runs without itu_p528.
+p = tc.TestData.p;
+d = [0.02 0.1 1 10 100]; h = [1 50 300]; pp = [1 50 99];
+[D, H, ~] = ndgrid(d, h, pp);
+lambda = physconst('LightSpeed') / 8160e6;
+L = 20*log10(4*pi*sqrt((D*1000).^2 + (H - 10).^2)/lambda);
+F = griddedInterpolant({log10(d), h, pp}, L, 'linear', 'nearest');
+ps.tracking = true(10, 1); ps.az_deg = (0:36:324)'; ps.el_deg = 5 + (0:9)';
+pop = struct('name', "t", 'density_per_km2', 0.05, 'h_min_m', 10, 'h_max_m', 120, 'r_max_km', 30, ...
+    'eirp_offset_dB', 0, 'extra_loss_db', 0, 'clutter', false);
+a = aggregate_drone_mc_rev2(p, pop, ps, F, 8100, 'n_iter', 400, 'chunk', 100, 'seed', 3, 'pct_exceed', 20);
+b = aggregate_drone_mc_rev2(p, pop, ps, F, 8100, 'n_iter', 400, 'chunk', 100, 'seed', 3, 'pct_exceed', 20);
+verifyEqual(tc, a.pct_dBm, b.pct_dBm);
+verifyTrue(tc, all(diff(a.frac_exceed_long) <= 0));
+end
