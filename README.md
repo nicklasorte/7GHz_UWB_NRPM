@@ -8,7 +8,8 @@ DRAFT//PRE-DECISIONAL. Public sources only.
 
 - [Working paper (Markdown)](docs/working_paper_uwb_ch9_eess_rev0.md), also as `docs/working_paper_uwb_ch9_eess_rev0.docx`
 - [Assumptions register and NASA red-team review](docs/assumptions_and_red_team_rev0.md), also as `.docx`
-- [Results](docs/results.md)
+- [Results](docs/results.md), including the next-steps analysis (P.528, real passes, ground UWB baseline, mitigations, risk)
+- Agreement path with NASA: [joint assumptions agreement](docs/joint_assumptions_agreement_rev0.md), [pre-registration protocol](docs/preregistration_protocol_rev0.md), [NTIA ITS test plan](docs/its_test_plan_rev0.md)
 - [Problem map](docs/problem_map.md)
 - [Sources](docs/sources.md)
 
@@ -30,6 +31,7 @@ cd matlab
 simplified_main_beam_rev1      % bounding LOS main-beam distances + pulse metrics
 main_uwb_ch9_eess_rev1         % single-entry and aggregate Monte Carlo (about 5 minutes)
 red_team_sensitivity_rev1      % NASA-skeptic sensitivity cases for NEN WG1 (Wallops)
+next_steps_analysis_rev1       % P.528 loss, SGP4 pass statistics, ground UWB baseline, mitigation menu, risk (about 15 minutes)
 runtests('tests/test_uwb_eess_rev1.m')
 ```
 
@@ -39,6 +41,12 @@ runtests('tests/test_uwb_eess_rev1.m')
 | `victim_systems_rev1.m` | JPSS HRD, generic NASA NEN, and Landsat receive parameters |
 | `victim_systems_rev2.m` | Adds NEN AS1 (Fairbanks) and WG1 (Wallops) from the NEN Users' Guide |
 | `red_team_sensitivity_rev1.m` | One-at-a-time and combined skeptic cases |
+| `p528_loss_table_rev1.m` | Cached ITU-R P.528-5 loss table and interpolant (needs [itu_p528](https://github.com/nicklasorte/itu_p528) cloned next to this repo) |
+| `pass_statistics_rev1.m` | Dish pointing time series from SGP4 passes (Aqua, Terra, Landsat 8/9) |
+| `aggregate_drone_mc_rev2.m` | Monte Carlo with P.528 loss, random time percentage per device, real pointing, and device populations |
+| `single_entry_p528_rev1.m` | Single-drone separation with P.528 loss |
+| `p2108_terrestrial_clutter_rev1.m` | ITU-R P.2108-1 sec. 3.2 clutter for ground UWB devices |
+| `next_steps_analysis_rev1.m` | Runs the next-steps analysis |
 | `uwb_power_in_band_rev1.m` | UWB EIRP in a victim bandwidth (IEEE mask or FCC envelope) |
 | `uwb_pulse_metrics_rev1.m` | Average, in-packet, and peak power; noise-like vs. pulse-resolved |
 | `main_beam_distance_rev1.m` | Free-space boresight distance and the height needed to be on boresight |
