@@ -13,8 +13,13 @@ function out = aggregate_drone_mc_rev3(p, pop, ps, F, f_mhz, opts)
 %        draw, which is exactly the distribution of Q^-1(p_loc/100) for
 %        uniform p_loc, instead of erfcinv per device.
 %     4. dB to mW uses exp(x ln10/10).
-%     5. parallel_flag = 1 runs chunks in parfor. Each chunk draws from its
+%     5. Threefry generator (counter-based), measured about 2x faster than
+%        mrg32k3a for randn on R2025b.
+%     6. parallel_flag = 1 runs chunks in parfor. Each chunk draws from its
 %        own RandStream substream, so serial and parallel results are equal.
+%   Profiling (R2025b, indoor population) put rev2's time in per-device
+%   math, random draws, and the P.528 interpolation, not in loops: rev2 was
+%   already vectorized, so rev3 is about 1.5x faster, not orders faster.
 %   Random streams differ from rev2, so results match rev2 statistically,
 %   not draw for draw.
 arguments
@@ -103,7 +108,7 @@ end
 end
 
 function agg = run_chunk(seed, c, n_c, lambda_dev, r_max_km, pop, az_trk, el_trk, ae, r1, F, phi_grid, dphi, g_grid, const_dB, k_db, edges, n_r, w_l, f_ghz)
-rs = RandStream('mrg32k3a', 'Seed', seed);
+rs = RandStream('Threefry', 'Seed', seed);         % counter-based; faster randn than mrg32k3a, supports substreams
 rs.Substream = c;                                    % one substream per chunk: serial == parallel
 n_dev = poissinv(rand(rs, n_c, 1), lambda_dev);      % poissrnd has no RandStream input
 pick = randi(rs, numel(az_trk), n_c, 1);
