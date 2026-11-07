@@ -184,15 +184,3 @@ if ~isempty(pool)
     verifyEqual(tc, q.pct_dBm, s.pct_dBm);
 end
 end
-
-function test_gain_lookup_error(tc)
-% The 0.001 deg gain table reproduces sa509_gain_rev1 to within 0.01 dB.
-p = tc.TestData.p;
-dphi = 1e-3; grid = 0:dphi:180;
-g = sa509_gain_rev1(grid, p.es.diam_m, 8160, p.es.eff, "multiple");
-phi = [linspace(0, 1, 5000) 180*rand(1, 5000, 'like', 1)];
-x = phi / dphi; i0 = min(floor(x), numel(grid) - 2); w = x - i0;
-gi = g(i0 + 1) .* (1 - w) + g(i0 + 2) .* w;
-ge = sa509_gain_rev1(phi, p.es.diam_m, 8160, p.es.eff, "multiple");
-verifyLessThan(tc, max(abs(gi - ge)), 0.01);
-end

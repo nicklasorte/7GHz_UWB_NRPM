@@ -6,9 +6,9 @@ function out = aggregate_drone_mc_rev3(p, pop, ps, F, f_mhz, opts)
 %   goes to per-device transcendental functions. rev3 cuts that cost:
 %     1. Elevation sine and cosine come straight from the 4/3-Earth geometry
 %        (no atan2d, sind, cosd round trip).
-%     2. Antenna gain comes from a precomputed ITU-R SA.509-3 table on a
-%        0.001 deg grid with linear interpolation (max error checked in the
-%        tests), instead of masked piecewise evaluation per device.
+%     2. Antenna gain uses the exact ITU-R SA.509-3 function. (A 0.001 deg
+%        lookup table was tried and rejected: linear interpolation across the
+%        pattern's step discontinuities can err by up to 5 dB in a grid cell.)
 %     3. P.2108 location variability uses Q^-1(U) = Z, a standard normal
 %        draw, which is exactly the distribution of Q^-1(p_loc/100) for
 %        uniform p_loc, instead of erfcinv per device.
@@ -51,10 +51,7 @@ end
 az_trk = deg2rad(ps.az_deg(trk));
 el_trk = deg2rad(ps.el_deg(trk));
 
-% Gain lookup table (ITU-R SA.509-3 multiple-entry), 0.001 deg grid
-dphi = 1e-3;
-phi_grid = 0:dphi:180;
-g_grid = sa509_gain_rev1(phi_grid, p.es.diam_m, f_mhz, p.es.eff, "multiple");
+ant = [p.es.diam_m, f_mhz, p.es.eff];
 
 % P.2108 terrestrial clutter pieces that don't depend on distance
 if pop.clutter
@@ -72,7 +69,7 @@ chunk_agg = cell(n_chunks, 1);
 seed = opts.seed;
 chunk = opts.chunk;
 n_iter = opts.n_iter;
-args = {lambda_dev, r_max_km, pop, az_trk, el_trk, ae, r1, F, phi_grid, dphi, g_grid, const_dB, k_db, edges, n_r};
+args = {lambda_dev, r_max_km, pop, az_trk, el_trk, ae, r1, F, ant, const_dB, k_db, edges, n_r};
 if pop.clutter
     args = [args, {w_l, f_ghz}];
 else
@@ -81,7 +78,7 @@ end
 if opts.parallel_flag == 1
     parfor c = 1:n_chunks
         n_c = min(chunk, n_iter - (c - 1) * chunk);
-        chunk_agg{c} = run_chunk(seed, c, n_c, args{:});
+        chunk_agg{c} = run_chunk(seed, c, n_c, args{:}); %#ok<PFBNS> inputs are read-only, broadcast once
     end
 else
     for c = 1:n_chunks
@@ -108,7 +105,7 @@ if opts.n_iter * min(opts.pct_exceed) / 100 < 1
 end
 end
 
-function agg = run_chunk(seed, c, n_c, lambda_dev, r_max_km, pop, az_trk, el_trk, ae, r1, F, phi_grid, dphi, g_grid, const_dB, k_db, edges, n_r, w_l, f_ghz)
+function agg = run_chunk(seed, c, n_c, lambda_dev, r_max_km, pop, az_trk, el_trk, ae, r1, F, ant, const_dB, k_db, edges, n_r, w_l, f_ghz)
 rs = RandStream('Threefry', 'Seed', seed);         % counter-based; faster randn than mrg32k3a, supports substreams
 rs.Substream = c;                                    % one substream per chunk: serial == parallel
 n_dev = poissinv(rand(rs, n_c, 1), lambda_dev);      % poissrnd has no RandStream input
@@ -136,11 +133,7 @@ el_p = el_trk(pick); az_p = az_trk(pick);
 cos_phi = sin_el .* sin(el_p(it)) + cos_el .* cos(el_p(it)) .* cos(az - az_p(it));
 phi = acosd(min(max(cos_phi, -1), 1));
 
-% Gain by linear interpolation on the precomputed grid
-x = phi / dphi;
-i0 = min(floor(x), numel(phi_grid) - 2);
-w = x - i0;
-g = g_grid(i0 + 1)' .* (1 - w) + g_grid(i0 + 2)' .* w;
+g = sa509_gain_rev1(phi, ant(1), ant(2), ant(3), "multiple");
 
 L = F(log10(max(r, 0.02)), h, p_time);
 if pop.clutter
