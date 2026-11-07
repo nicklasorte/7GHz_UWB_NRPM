@@ -20,7 +20,11 @@ p.uwb.mask_type         = "ieee802154"; % "ieee802154" (device mask) or "flat" (
 p.uwb.mask_offset_x_chip = [0.65 0.80];
 p.uwb.mask_level_dBr     = [-10 -18];
 p.uwb.eirp_offset_dB     = 0;       % TODO extra reduction toward the ES (e.g., downward-directed antenna, ET 26-245 NPRM para 29). 0 = isotropic at the limit
-p.uwb.pol_loss_dB        = 3;       % linear UWB antenna into circularly polarized ES feed: cos^2(45 deg) = 3 dB. TODO confirm ES feed polarization per station
+p.uwb.mean_prf_MHz       = [62.4 124.8 249.6]; % IEEE 802.15.4z HRP: BPRF 62.4 MHz, HPRF 124.8/249.6 MHz (MathWorks lrwpanHRPConfig doc, IEEE 802.15.4-2020)
+p.uwb.peak_prf_MHz       = 499.2;   % chip rate inside a burst
+p.uwb.t_on_ms            = [0.1 0.25 1]; % TODO packet (burst-on) duration within a 1 ms window; no public drone-UWB value, swept
+p.uwb.activity_pct       = [0.25 1 5];   % ECC Report 327 Table 18 activity factors (parking 0.25%, indoor/outdoor 1%, vehicle fixed 5%), via FiRa 2025 report
+p.uwb.pol_loss_dB        = 3;      % linear UWB antenna into circularly polarized ES feed: cos^2(45 deg) = 3 dB. TODO confirm ES feed polarization per station
 
 %% Drone
 p.drone.h_min_m = 10;               % TODO lowest operating altitude AGL of interest

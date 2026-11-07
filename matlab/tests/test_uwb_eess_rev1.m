@@ -81,3 +81,41 @@ verifyEqual(tc, a.agg_mW, b.agg_mW);
 verifyTrue(tc, all(diff(a.agg_mW, 1, 2) <= 0, 'all'));   % larger exclusion never adds interference
 verifyEqual(tc, a.drones_drawn/500, a.mean_drones, 'RelTol', 0.05);
 end
+
+function test_main_beam_distance_inverse(tc)
+% Distance from main_beam_distance_rev1 must give exactly the threshold back.
+f = 8160; e = -31.3; g = 57.5; lp = 3; ith = -120;
+d = main_beam_distance_rev1(e, g, lp, ith, f, 5);
+lambda = physconst('LightSpeed')/(f*1e6);
+verifyEqual(tc, e - fspl(d*1000, lambda) + g - lp, ith, 'AbsTol', 1e-9);
+[~, h] = main_beam_distance_rev1(e, g, lp, ith, f, 0);
+verifyEqual(tc, h, (d*1000)^2/(2*(4/3)*6371e3), 'RelTol', 1e-12);
+end
+
+function test_pulse_metrics(tc)
+p = tc.TestData.p;
+m = uwb_pulse_metrics_rev1([1; 30; 375], p.uwb, [0.1 1]);
+verifyEqual(tc, m.avg_dBm(1), -41.3, 'AbsTol', 1e-12);
+verifyEqual(tc, m.burst_boost_dB, [20*log10(1/50)+41.3, 0], 'AbsTol', 1e-12);   % 10 dB request capped at 7.3 dB
+verifyEqual(tc, m.peak_env_dBm(1), 20*log10(1/50), 'AbsTol', 1e-12);
+verifyEqual(tc, m.regime(:,1), ["noise-like"; "noise-like"; "pulse-resolved"]);
+verifyEqual(tc, m.par_pulse_dB(3,1), 10*log10(375/62.4), 'AbsTol', 1e-12);
+end
+
+function test_victim_tsys_from_gt(tc)
+v = victim_systems_rev1();
+k = find(contains(v.name, "JPSS"));
+verifyEqual(tc, 10*log10(v.tsys_K(k)), v.g0_dBi(k) - 22.7, 'AbsTol', 1e-9);
+end
+
+function test_victim_rev2_nen(tc)
+% NEN Users' Guide values: G/T 35.2 (AS1) and 34.5 (WG1) dB/K with 57.5 dBi.
+v = victim_systems_rev2();
+as1 = contains(v.name, "AS1"); wg1 = contains(v.name, "WG1");
+verifyEqual(tc, 10*log10(v.tsys_K(as1)), 57.5 - 35.2, 'AbsTol', 1e-9);
+verifyEqual(tc, 10*log10(v.tsys_K(wg1)), 57.5 - 34.5, 'AbsTol', 1e-9);
+% SA.509-3 G0 and beamwidth for 11.3 m agree with the published 57.5 dBi and 0.2-0.23 deg.
+verifyEqual(tc, v.g0_calc_dBi(as1), 57.5, 'AbsTol', 0.2);
+verifyGreaterThan(tc, v.bw3db_calc_deg(as1), 0.19);
+verifyLessThan(tc, v.bw3db_calc_deg(as1), 0.24);
+end
