@@ -75,7 +75,7 @@ mc = cell(numel(sites), numel(dens));
 for s = 1:numel(sites)
     for k = 1:numel(dens)
         pop = drone; pop.density_per_km2 = dens(k);
-        o = aggregate_drone_mc_rev2(p, pop, ps{s}, F, f, 'n_iter', n_iter_by_dens(k));
+        o = aggregate_drone_mc_rev3(p, pop, ps{s}, F, f, 'n_iter', n_iter_by_dens(k));
         [r_l, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(1, :), o.crit.long_dBm);
         [r_s, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(2, :), o.crit.short_dBm);
         risk_min = o.frac_exceed_short(1) * ps{s}.frac_tracking * min_per_year;
@@ -100,7 +100,7 @@ indoor = struct('name', "indoor", 'density_per_km2', 500, 'h_min_m', 1.5, 'h_max
     'r_max_km', 5, 'eirp_offset_dB', 0, 'extra_loss_db', 17, 'clutter', true);
 base_rows = {};
 for pop = [hand indoor]
-    o = aggregate_drone_mc_rev2(p, pop, ps{1}, F, f, 'n_iter', 2e4);
+    o = aggregate_drone_mc_rev3(p, pop, ps{1}, F, f, 'n_iter', 2e4);
     base_rows(end+1, :) = {pop.name, pop.density_per_km2, o.pct_dBm(1,1) - o.crit.long_dBm, o.pct_dBm(2,1) - o.crit.short_dBm, ...
         o.frac_exceed_short(1) * ps{1}.frac_tracking * min_per_year}; %#ok<SAGROW> two rows
     fprintf('%s baseline done (%.0f s)\n', pop.name, toc(t_start));
@@ -121,10 +121,18 @@ dens_m = [0.1 1];
 n_iter_m = [1e5 5e4];
 mit_rows = {};
 for m = 1:numel(dens_m)
+    base_o = [];
     for j = 1:size(cases, 1)
         pop = cases{j, 2};
         pop.density_per_km2 = dens_m(m) * (1 - 0.8 * cases{j, 3});
-        o = aggregate_drone_mc_rev2(p, pop, ps{1}, F, f, 'n_iter', n_iter_m(m));
+        if pop.eirp_offset_dB > 0 && pop.h_max_m == drone.h_max_m && cases{j, 3} == 0 && ~isempty(base_o)
+            % A pure EIRP reduction scales every device equally, so it is an exact
+            % dB shift of the baseline run: no new Monte Carlo needed.
+            o = shift_case(base_o, pop.eirp_offset_dB);
+        else
+            o = aggregate_drone_mc_rev3(p, pop, ps{1}, F, f, 'n_iter', n_iter_m(m));
+        end
+        if j == 1, base_o = o; end
         [r_l, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(1, :), o.crit.long_dBm);
         [r_s, ~] = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(2, :), o.crit.short_dBm);
         mit_rows(end+1, :) = {dens_m(m), cases{j, 1}, o.pct_dBm(2,1) - o.crit.short_dBm, max(r_l, r_s), ...
@@ -153,5 +161,15 @@ end
 fprintf('Done in %.0f s. Outputs in %s\n', toc(t_start), out_dir);
 
 function o = rmfield_safe(o)
-% keep results small: drop nothing large (rev2 output has no per-iteration array)
+% keep saved results small
+if isfield(o, 'agg_r0_mW'), o = rmfield(o, 'agg_r0_mW'); end
+end
+
+function o = shift_case(o, offset_dB)
+% Exact effect of lowering every device's EIRP by offset_dB.
+o.pct_dBm = o.pct_dBm - offset_dB;
+o.agg_r0_mW = o.agg_r0_mW * 10^(-offset_dB / 10);
+crit_mW = 10.^([o.crit.long_dBm o.crit.short_dBm] / 10);
+o.frac_exceed_long(1) = mean(o.agg_r0_mW > crit_mW(1));
+o.frac_exceed_short(1) = mean(o.agg_r0_mW > crit_mW(2));
 end

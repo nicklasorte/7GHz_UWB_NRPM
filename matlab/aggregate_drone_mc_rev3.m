@@ -97,6 +97,7 @@ out.pct_dBm = 10 * log10(prctile(agg, 100 - opts.pct_exceed, 1));
 crit_mW = 10.^([crit.long_dBm crit.short_dBm] / 10);
 out.frac_exceed_long = mean(agg > crit_mW(1), 1);
 out.frac_exceed_short = mean(agg > crit_mW(2), 1);
+out.agg_r0_mW = agg(:, 1);                          % kept so EIRP-offset cases can be derived exactly
 out.crit = crit;
 out.mean_devices = lambda_dev;
 out.pop = pop;
