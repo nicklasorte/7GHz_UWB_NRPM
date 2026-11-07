@@ -159,3 +159,40 @@ b = aggregate_drone_mc_rev2(p, pop, ps, F, 8100, 'n_iter', 400, 'chunk', 100, 's
 verifyEqual(tc, a.pct_dBm, b.pct_dBm);
 verifyTrue(tc, all(diff(a.frac_exceed_long) <= 0));
 end
+
+function test_mc_rev3_matches_rev2_statistically(tc)
+% rev3 uses cheaper math and different random streams; its percentiles must
+% agree with rev2 within Monte Carlo noise, and serial must equal parallel.
+p = tc.TestData.p;
+d = [0.02 0.1 1 10 100]; h = [1 50 300]; pp = [1 50 99];
+[D, H, P] = ndgrid(d, h, pp);
+lambda = physconst('LightSpeed') / 8160e6;
+L = 20*log10(4*pi*sqrt((D*1000).^2 + (H - 10).^2)/lambda) + 0.05*(P - 50);
+F = griddedInterpolant({log10(d), h, pp}, L, 'linear', 'nearest');
+ps.tracking = true(50, 1); ps.az_deg = linspace(0, 350, 50)'; ps.el_deg = linspace(5, 40, 50)';
+for clutter = [false true]
+    pop = struct('name', "t", 'density_per_km2', 0.2, 'h_min_m', 10, 'h_max_m', 120, 'r_max_km', 30, ...
+        'eirp_offset_dB', 0, 'extra_loss_db', 0, 'clutter', clutter);
+    a = aggregate_drone_mc_rev2(p, pop, ps, F, 8100, 'n_iter', 20000, 'pct_exceed', [20 50]);
+    b = aggregate_drone_mc_rev3(p, pop, ps, F, 8100, 'n_iter', 20000, 'pct_exceed', [20 50]);
+    verifyEqual(tc, b.pct_dBm(:, 1), a.pct_dBm(:, 1), 'AbsTol', 0.3);
+end
+pool = gcp('nocreate');
+if ~isempty(pool)
+    s = aggregate_drone_mc_rev3(p, pop, ps, F, 8100, 'n_iter', 6000, 'chunk', 1000, 'pct_exceed', 20);
+    q = aggregate_drone_mc_rev3(p, pop, ps, F, 8100, 'n_iter', 6000, 'chunk', 1000, 'pct_exceed', 20, 'parallel_flag', 1);
+    verifyEqual(tc, q.pct_dBm, s.pct_dBm);
+end
+end
+
+function test_gain_lookup_error(tc)
+% The 0.001 deg gain table reproduces sa509_gain_rev1 to within 0.01 dB.
+p = tc.TestData.p;
+dphi = 1e-3; grid = 0:dphi:180;
+g = sa509_gain_rev1(grid, p.es.diam_m, 8160, p.es.eff, "multiple");
+phi = [linspace(0, 1, 5000) 180*rand(1, 5000, 'like', 1)];
+x = phi / dphi; i0 = min(floor(x), numel(grid) - 2); w = x - i0;
+gi = g(i0 + 1) .* (1 - w) + g(i0 + 2) .* w;
+ge = sa509_gain_rev1(phi, p.es.diam_m, 8160, p.es.eff, "multiple");
+verifyLessThan(tc, max(abs(gi - ge)), 0.01);
+end
