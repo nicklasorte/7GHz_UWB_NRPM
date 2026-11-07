@@ -17,8 +17,9 @@ if ~isfolder(out_dir), mkdir(out_dir); end
 p = uwb_eess_params_rev1();
 f_v = p.es.f_victim_MHz;
 crit = eess_criteria_rev1(f_v, p);
-if quick_flag %#ok<UNRCH> constant switch for smoke runs
-    n_long = 2e3; n_short = 2e4; dens = [1e-2 1e-1];
+if quick_flag
+    n_long = 2e3; %#ok<UNRCH> constant switch for smoke runs
+    n_short = 2e4; dens = [1e-2 1e-1];
 else
     n_long = 2e4; n_short = p.mc.n_iter; dens = p.mc.density_active_per_km2;
 end

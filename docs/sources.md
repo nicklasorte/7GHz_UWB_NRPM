@@ -44,3 +44,20 @@ Public sources only. Each entry notes what the analysis takes from it.
 | [NASA Near Space Network complexes](https://www.nasa.gov/technology/space-comms/near-space-network-complexes/) | Network overview. |
 | [Earth observation satellite transmission frequencies (Wikipedia)](https://en.wikipedia.org/wiki/Earth_observation_satellites_transmission_frequencies) | Example X-band downlinks inside the ch 9 overlap: Aqua 8160 MHz, Terra and Landsat 8212.5 MHz. |
 | [NTIA TM 97-339, EESS in 8025–8400 MHz](https://www.ntia.gov/report/1997/assessment-expansion-earth-exploration-satellite-service-8025-8400-mhz-range) | Background on federal EESS use of the band. |
+
+## Added for the working paper
+
+| Source | Used for |
+| --- | --- |
+| [NTIA, *The Spectrum Needs of U.S. Space-based Operations*, Appendix "Allocations and Systems" (July 2021)](https://www.ntia.gov/sites/default/files/publications/appendix-allocationsandsystems_0.pdf) | Allocations and named federal users in 7250-8400 MHz: NOAA S-NPP and JPSS in 7750-7900 MHz; NASA Aqua, Aura, Terra, and NEN in 8025-8400 MHz; US258 cited. |
+| [JPSS-1 HRD to DBS RF ICD Rev A, 470-REF-00184 (2015-02-09)](https://www.nesdis.noaa.gov/s3/2022-03/JPSS-1SCHRDtoDBSRFICDRevA-470-REF-00184February9,2015.pdf) | JPSS HRD: 7812 MHz, 30 MHz assigned bandwidth, QPSK, RHCP, 15 Mbps, 3 m reference antenna, G/T 22.7 dB/K at 5°, Eb/N0 4.4 dB, 1 dB margin. |
+| [NOAA OSPO, High Rate Data](https://ospo.noaa.gov/operations/jpss/high-rate-data.html) | 47 HRD users; 25 Mbps from NOAA-21. |
+| [USGS, Landsat data from space to Earth](https://www.usgs.gov/landsat-missions/landsat-data-space-earth); [USGS pub 70193004](https://pubs.usgs.gov/publication/70193004) | EROS 10 m antenna; Landsat 8 384 Mbps in the 375 MHz allocation with rate-7/8 LDPC. |
+| [47 CFR 15.521 (archived text)](https://ziggy.hallikainen.org/org/FCC/FccRules/2013/15/521) | 15.521(a) aircraft prohibition; 15.521(d) RMS average in 1 MHz over 1 ms or less; 15.521(g) peak limit 20 log (RBW/50) dBm for 1-50 MHz RBW. |
+| [MathWorks `lrwpanHRPConfig`](https://www.mathworks.com/help/comm/ref/lrwpanhrpconfig.html) | HRP mean PRF: BPRF 62.4 MHz; HPRF 124.8 and 249.6 MHz; peak PRF 499.2 MHz. |
+| [NTIA Report 01-383, *Temporal and Spectral Characteristics of UWB Signals* (2001)](https://www.its.ntia.gov/publications/download/TR-01-383.pdf) | Noise-like vs. pulse-resolved regimes vs. repetition rate and receiver bandwidth; dithering; aggregate tends to Gaussian. |
+| [NTIA SP 01-43, *Assessment of Compatibility Between UWB Devices and Selected Federal Systems* (2001)](https://www.ntia.gov/report/2001/assessment-compatibility-between-ultrawideband-devices-and-selected-federal-systems) | Federal average and peak UWB method; FSS earth station analyses at 5° and 20°. |
+| [Report ITU-R SM.2057 (2005), contents](https://www.itu.int/dms_pub/itu-r/opb/rep/R-REP-SM.2057-2005-TOC-HTM-E.htm); [ITU-R SM.1757](https://www.itu.int/rec/R-REC-SM.1757/en) | International UWB impact studies; SM.2057 Annex 6 (EESS, space research) and Annex 8 section 6.1 (EESS protection). |
+| [ECC Report 64 (2005)](https://docdb.cept.org/document/174) | European generic UWB study; coverage of 8 GHz EESS not verified. |
+| [FiRa Consortium, *UWB Simulation Report* (2025)](https://www.firaconsortium.org/sites/default/files/2025-11/FiRa%20Ultra-Wideband%20Simulation%20Report.pdf) | ECC Report 327 Table 18 activity factors (0.25%-5%); industry SEAMCAT study of FSS earth stations and radars. |
+| [Ely, Fuller, Shaver, *UWB Electromagnetic Interference to Aircraft Radios* (NASA Langley, about 2002)](https://ntrs.nasa.gov/api/citations/20030007914/downloads/20030007914.pdf) | Field evidence of UWB effects on aviation receivers near -41 dBm EIRP. |
