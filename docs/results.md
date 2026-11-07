@@ -65,3 +65,14 @@ Checks: 11 of 11 unit tests pass; Code Analyzer clean apart from a suppressed co
 | 8350 MHz, IEEE mask (-10 dBr) | -10 | 13.06 | 1.84 | 1.44 | 0.54 | 1.28 |
 | 8350 MHz, FCC envelope | 0 | 41.30 | 5.83 | 1.70 | 0.62 | 1.28 |
 | Combined skeptic case | +17.6 | 320.54 | 55.20 | 5.40 | 1.86 | 2.67 |
+
+## Next-steps analysis (`next_steps_analysis_rev1.m`)
+
+P.528 propagation, SGP4 dish pointing, ground UWB baseline, mitigation menu, and risk metric. Full write-up: [next_steps_results_rev0.md](next_steps_results_rev0.md); run log: [next_steps_run_log_rev1.txt](next_steps_run_log_rev1.txt).
+
+| Site | Active drones per km² | Long-term margin (dB) | Short-term margin (dB) | Geofence (km) |
+| --- | --- | --- | --- | --- |
+| WG1 | 0.01 / 0.1 / 1 | -36.8 / -25.3 / -13.8 | -15.6 / -8.4 / +7.5 | 0 / 0 / 0.4 |
+| AS1 | 0.01 / 0.1 / 1 | -36.8 / -25.3 / -13.8 | -14.8 / -0.3 / +2.3 | 0 / 0 / 0.2 |
+
+Short-term margins within about 4 dB of zero are undecided (Monte Carlo tail noise).

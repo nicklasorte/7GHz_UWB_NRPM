@@ -9,6 +9,7 @@ DRAFT//PRE-DECISIONAL. Public sources only.
 - [Working paper (Markdown)](docs/working_paper_uwb_ch9_eess_rev0.md), also as `docs/working_paper_uwb_ch9_eess_rev0.docx`
 - [Assumptions register and NASA red-team review](docs/assumptions_and_red_team_rev0.md), also as `.docx`
 - [Results](docs/results.md), including the next-steps analysis (P.528, real passes, ground UWB baseline, mitigations, risk)
+- [Next-steps results addendum](docs/next_steps_results_rev0.md)
 - Agreement path with NASA: [joint assumptions agreement](docs/joint_assumptions_agreement_rev0.md), [pre-registration protocol](docs/preregistration_protocol_rev0.md), [NTIA ITS test plan](docs/its_test_plan_rev0.md)
 - [Problem map](docs/problem_map.md)
 - [Sources](docs/sources.md)
@@ -23,6 +24,7 @@ DRAFT//PRE-DECISIONAL. Public sources only.
 | Single hovering drone, real antenna pattern, 121.92 m | 1.7 km separation at 5° pointing |
 | Aggregate geofence for the short-term criterion | 0.3 km at 0.1 active drones/km², 1.3 km at 1/km² |
 | Combined NASA-skeptic case, single drone at 243.84 m | 5.4 km separation at 5° pointing |
+| With P.528 and real pass statistics, geofence for the short-term criterion | None at 0.1 active drones/km²; 0.4 km (WG1) and 0.2 km (AS1) at 1/km² |
 
 ## MATLAB (R2025b)
 
@@ -44,6 +46,7 @@ runtests('tests/test_uwb_eess_rev1.m')
 | `p528_loss_table_rev1.m` | Cached ITU-R P.528-5 loss table and interpolant (needs [itu_p528](https://github.com/nicklasorte/itu_p528) cloned next to this repo) |
 | `pass_statistics_rev1.m` | Dish pointing time series from SGP4 passes (Aqua, Terra, Landsat 8/9) |
 | `aggregate_drone_mc_rev2.m` | Monte Carlo with P.528 loss, random time percentage per device, real pointing, and device populations |
+| `aggregate_drone_mc_rev3.m` | Same model as rev2, about 1.6 times faster (Threefry generator, cheaper geometry), optional parfor |
 | `single_entry_p528_rev1.m` | Single-drone separation with P.528 loss |
 | `p2108_terrestrial_clutter_rev1.m` | ITU-R P.2108-1 sec. 3.2 clutter for ground UWB devices |
 | `next_steps_analysis_rev1.m` | Runs the next-steps analysis |
