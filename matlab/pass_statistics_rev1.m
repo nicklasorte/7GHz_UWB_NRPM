@@ -35,7 +35,8 @@ if ~isfile(opts.tle_file)
 end
 sc = satelliteScenario(opts.start_utc, opts.start_utc + days(opts.duration_days), opts.sample_s);
 sats = satellite(sc, char(opts.tle_file));
-names = string({sats.Name});
+names = strings(1, numel(sats));
+for k = 1:numel(sats), names(k) = string(sats(k).Name); end
 gs = groundStation(sc, site.lat_deg, site.lon_deg, 'Altitude', site.alt_m, 'Name', site.name);
 
 n_s = numel(opts.norad_ids);
