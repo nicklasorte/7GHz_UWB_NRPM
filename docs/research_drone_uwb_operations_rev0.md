@@ -22,6 +22,8 @@ This note collects the public facts behind three inputs to the barbell analysis 
 
 Latham and Watkins' summary adds delivery, docking, and landing-station beacons at logistics hubs as cited use cases.[^lw]
 
+**Analysis assumption: drones can transmit.** The analysis takes the NPRM's drone question as answered yes, with no duty-cycle limit specific to drones. The § 15.521(a) prohibition and today's receive-only products are context, not a constraint on the model. The NPRM's 1% limit is proposed for a new device category and may not cover drones, so the analysis sweeps the duty cycle from 0.1% to continuous transmission while airborne (`example_bridge_rev1.m`, step 9) and reports the duty cycle at which each case reaches the allowance.
+
 **What this means for the analysis:**
 
 | Use case | Who transmits | Likely duty cycle | Where it happens |
@@ -30,7 +32,7 @@ Latham and Watkins' summary adds delivery, docking, and landing-station beacons 
 | Indoor or swarm positioning (light shows, warehouses) | Anchors (TDoA); drones in two-way modes | Continuous during the flight | Mostly indoors; outdoor light shows use GNSS |
 | Tag carried as cargo or attached (AirTag-type) | The tag | Low; a tag ranges only when queried | Anywhere the drone flies |
 
-The analysis therefore uses a 1% duty cycle as the base case, from the NPRM's proposed limit, and sweeps 0.25%-5% from ECC Report 327's activity factors. Continuous transmission is the worst-case bookend only.
+The analysis uses a 1% duty cycle as the base case, from the NPRM's proposed limit, ranks 0.25%-5% from ECC Report 327's activity factors, and sweeps to continuous transmission.
 
 ## How high and fast drones normally fly
 
