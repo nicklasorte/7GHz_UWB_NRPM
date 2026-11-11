@@ -1,0 +1,10 @@
+item,value,source
+Location,"40.820 N, 73.950 W","NASA DRL X-band list, entry 154"
+Antenna diameter,"2.4 m","CUNY CREST SRS page"
+Aperture efficiency,"0.6","TODO assumption"
+Antenna height AGL,"20 m","TODO assumption"
+Minimum elevation,"5 deg","ITU-R SA.1026-5"
+Victim links,"8160 MHz EESS; 7812 MHz MetSat","CUNY CREST SRS page (satellites)"
+Antenna pattern,"ITU-R F.699-5 (D/lambda about 63-65 < 100)","Assumption, peak envelope (conservative)"
+UWB polarization loss,"3 dB","Linear UWB into circular feed"
+Site shielding,"0 dB (radome and buildings ignored)","Assumption (conservative)"

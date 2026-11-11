@@ -1,0 +1,5 @@
+quantity,measured,limit_or_model,unit,headroom_dB
+"Channel 9 average EIRP, worst configuration",-41.84,-41.3,dBm/MHz,0.540000000000006
+"Channel 9 average EIRP, lowest",-43.45,-41.3,dBm/MHz,2.15000000000001
+"Channel 9 peak EIRP, worst configuration",-0.6,0,dBm/50 MHz,0.6
+"Channel 9 -10 dB bandwidth",525.5,500,MHz (minimum),NaN

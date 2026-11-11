@@ -1,0 +1,31 @@
+scenario,this_model_m,ecc327_m,ecc_source,station
+"Single entry, 100% duty, LOS, dish 20 m high at 13 deg, long-term",15,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 20 m high at 13 deg, short-term",0,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 20 m high at 5 deg, long-term",15,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 20 m high at 5 deg, short-term",0,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, long-term",115,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, short-term",20,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, long-term",375,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, short-term",55,300-3600,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Aggregate fixed outdoor, urban (20 active/km^2), long-term, flat, no clutter",550,100,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Aggregate fixed outdoor, suburban (2.5 active/km^2), long-term, flat, no clutter",0,100,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"Aggregate fixed outdoor, rural (0.5 active/km^2), long-term, flat, no clutter",0,100,ECC Report 327 sec. 0.5.1,CCNY 2.4 m
+"ECC replica: EESS 8 m dish at 8 m, 8200 MHz, device at 10 m, dish 5 deg, free space, criterion -123 dBm/10 MHz (20 dB apportionment), this model's off-axis gain",625,600,ECC Report 327 Table 62,CCNY 2.4 m
+"ECC replica: EESS 8 m dish at 8 m, 8200 MHz, as above with ECC's fixed horizon gain of 14.5 dBi",595,600,ECC Report 327 Table 62,CCNY 2.4 m
+"ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, device at 10 m, dish 5 deg, free space, criterion -117 dBm/10 MHz (20 dB apportionment), this model's off-axis gain",440,300,ECC Report 327 Table 65,CCNY 2.4 m
+"ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, as above with ECC's fixed horizon gain of 15.4 dBi",350,300,ECC Report 327 Table 65,CCNY 2.4 m
+"Single entry, 100% duty, LOS, dish 10 m high at 13 deg, long-term",40,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Single entry, 100% duty, LOS, dish 10 m high at 13 deg, short-term",0,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Single entry, 100% duty, LOS, dish 10 m high at 5 deg, long-term",175,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Single entry, 100% duty, LOS, dish 10 m high at 5 deg, short-term",0,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, long-term",95,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, short-term",15,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, long-term",300,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, short-term",45,300-3600,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Aggregate fixed outdoor, urban (20 active/km^2), long-term, flat, no clutter",0,100,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Aggregate fixed outdoor, suburban (2.5 active/km^2), long-term, flat, no clutter",0,100,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"Aggregate fixed outdoor, rural (0.5 active/km^2), long-term, flat, no clutter",0,100,ECC Report 327 sec. 0.5.1,WG1 11.3 m
+"ECC replica: EESS 8 m dish at 8 m, 8200 MHz, device at 10 m, dish 5 deg, free space, criterion -123 dBm/10 MHz (20 dB apportionment), this model's off-axis gain",625,600,ECC Report 327 Table 62,WG1 11.3 m
+"ECC replica: EESS 8 m dish at 8 m, 8200 MHz, as above with ECC's fixed horizon gain of 14.5 dBi",595,600,ECC Report 327 Table 62,WG1 11.3 m
+"ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, device at 10 m, dish 5 deg, free space, criterion -117 dBm/10 MHz (20 dB apportionment), this model's off-axis gain",440,300,ECC Report 327 Table 65,WG1 11.3 m
+"ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, as above with ECC's fixed horizon gain of 15.4 dBi",350,300,ECC Report 327 Table 65,WG1 11.3 m

@@ -1,0 +1,225 @@
+Run started 10-Nov-2026 21:11:02
+Station inputs:
+             item                                 value                                          source                  
+    _______________________    ____________________________________________    __________________________________________
+
+    "Location"                 "40.820 N, 73.950 W"                            "NASA DRL X-band list, entry 154"         
+    "Antenna diameter"         "2.4 m"                                         "CUNY CREST SRS page"                     
+    "Aperture efficiency"      "0.6"                                           "TODO assumption"                         
+    "Antenna height AGL"       "20 m"                                          "TODO assumption"                         
+    "Minimum elevation"        "5 deg"                                         "ITU-R SA.1026-5"                         
+    "Victim links"             "8160 MHz EESS; 7812 MHz MetSat"                "CUNY CREST SRS page (satellites)"        
+    "Antenna pattern"          "ITU-R F.699-5 (D/lambda about 63-65 < 100)"    "Assumption, peak envelope (conservative)"
+    "UWB polarization loss"    "3 dB"                                          "Linear UWB into circular feed"           
+    "Site shielding"           "0 dB (radome and buildings ignored)"           "Assumption (conservative)"               
+
+Pass statistics (30 days from 2026-11-01, el >= 5 deg):
+                link                  satellites      pct_time_tracking    tracking_min_per_day    pct_tracking_below_6deg    median_el_deg
+    _____________________________    _____________    _________________    ____________________    _______________________    _____________
+
+    "EESS 8160 MHz (Aqua, Terra)"    "AQUA, TERRA"         5.8734                 84.577                   7.3437                14.034    
+    "MetSat 7812 MHz (Suomi NPP)"    "SUOMI NPP"           3.6304                 52.277                   7.1201                14.598    
+
+Step 1 done (13 s)
+Approximate 3 dB beamwidth at 8160 MHz: 1.07 deg (main beam spans +/- 0.54 deg).
+Ground distance at which a drone is on the dish boresight (km):
+    dish_el_deg    d_km_h10m    d_km_h60m    d_km_h122m
+    ___________    _________    _________    __________
+
+         5           -0.1143      0.4572        1.165  
+        10         -0.056713     0.22685      0.57802  
+        20         -0.027475      0.1099      0.28002  
+        30         -0.017321    0.069282      0.17653  
+        45             -0.01        0.04      0.10192  
+
+Link budget A: drone at 400 ft on boresight of a 5 deg pass (EESS 8160 MHz, P.528 median):
+                       step                         value          unit                                                source                                         
+    __________________________________________    _________    ____________    _______________________________________________________________________________________
+
+    "UWB average EIRP density limit"                  -41.3    "dBm/MHz"       "47 CFR 15.519(c)"                                                                     
+    "Reference bandwidth"                                10    "MHz"           "ITU-R SA.1026-5 / SA.1027-6"                                                          
+    "UWB EIRP in the reference bandwidth at f"        -31.3    "dBm"           "IEEE 802.15.4 HRP mask over -41.3 dBm/MHz; 10log10(10) = 10 dB in-band"               
+    "EIRP reduction toward the station"                   0    "dB"            "Assumption (0 = isotropic at the limit)"                                              
+    "Polarization mismatch"                               3    "dB"            "Linear into circular feed"                                                            
+    "Drone height AGL"                               121.92    "m"             "Input"                                                                                
+    "Earth station antenna height"                       20    "m"             "Input"                                                                                
+    "Ground distance"                                 1.165    "km"            "Input"                                                                                
+    "Slant range"                                    1.1694    "km"            "4/3-Earth geometry"                                                                   
+    "Drone elevation seen from the dish"              4.996    "deg"           "4/3-Earth geometry"                                                                   
+    "Dish pointing elevation"                             5    "deg"           "Input"                                                                                
+    "Azimuth offset from the dish"                        0    "deg"           "Input"                                                                                
+    "Off-axis angle"                              0.0039703    "deg"           "Spherical law of cosines"                                                             
+    "Dish peak gain"                                 44.026    "dBi"           "ITU-R F.699-5 (D/lambda <= 100)"                                                      
+    "Dish gain toward the drone"                     44.026    "dBi"           "ITU-R F.699-5 (D/lambda <= 100)"                                                      
+    "Free-space loss at the slant range"             112.04    "dB"            "20 log10(4 pi d / lambda)"                                                            
+    "ITU-R P.528-5 basic transmission loss"          112.05    "dB"            "P.528-5 at 50% of time (itu_p528)"                                                    
+    "Interference at the antenna output"            -102.33    "dBm/10 MHz"    "EIRP - losses - P.528 + gain"                                                         
+    "Long-term criterion"                              -120    "dBm/10 MHz"    "ITU-R SA.1027-6 Table 1, EESS 8025-8400 MHz (terrestrial-path share) (20% of time)"   
+    "Short-term criterion"                             -103    "dBm/10 MHz"    "ITU-R SA.1027-6 Table 1, EESS 8025-8400 MHz (terrestrial-path share) (0.005% of time)"
+    "Margin to long-term criterion"                  17.671    "dB"            "Positive = exceeds"                                                                   
+    "Margin to short-term criterion"                0.67149    "dB"            "Positive = exceeds"                                                                   
+
+Link budget B: drone at 400 ft, 5 km away, 30 deg off the dish azimuth, dish at 20 deg:
+                       step                        value         unit                                                source                                         
+    __________________________________________    _______    ____________    _______________________________________________________________________________________
+
+    "UWB average EIRP density limit"                -41.3    "dBm/MHz"       "47 CFR 15.519(c)"                                                                     
+    "Reference bandwidth"                              10    "MHz"           "ITU-R SA.1026-5 / SA.1027-6"                                                          
+    "UWB EIRP in the reference bandwidth at f"      -31.3    "dBm"           "IEEE 802.15.4 HRP mask over -41.3 dBm/MHz; 10log10(10) = 10 dB in-band"               
+    "EIRP reduction toward the station"                 0    "dB"            "Assumption (0 = isotropic at the limit)"                                              
+    "Polarization mismatch"                             3    "dB"            "Linear into circular feed"                                                            
+    "Drone height AGL"                             121.92    "m"             "Input"                                                                                
+    "Earth station antenna height"                     20    "m"             "Input"                                                                                
+    "Ground distance"                                   5    "km"            "Input"                                                                                
+    "Slant range"                                  5.0011    "km"            "4/3-Earth geometry"                                                                   
+    "Drone elevation seen from the dish"           1.1509    "deg"           "4/3-Earth geometry"                                                                   
+    "Dish pointing elevation"                          20    "deg"           "Input"                                                                                
+    "Azimuth offset from the dish"                     30    "deg"           "Input"                                                                                
+    "Off-axis angle"                               34.865    "deg"           "Spherical law of cosines"                                                             
+    "Dish peak gain"                               44.026    "dBi"           "ITU-R F.699-5 (D/lambda <= 100)"                                                      
+    "Dish gain toward the drone"                  -4.7105    "dBi"           "ITU-R F.699-5 (D/lambda <= 100)"                                                      
+    "Free-space loss at the slant range"           124.66    "dB"            "20 log10(4 pi d / lambda)"                                                            
+    "ITU-R P.528-5 basic transmission loss"        124.72    "dB"            "P.528-5 at 50% of time (itu_p528)"                                                    
+    "Interference at the antenna output"          -163.73    "dBm/10 MHz"    "EIRP - losses - P.528 + gain"                                                         
+    "Long-term criterion"                            -120    "dBm/10 MHz"    "ITU-R SA.1027-6 Table 1, EESS 8025-8400 MHz (terrestrial-path share) (20% of time)"   
+    "Short-term criterion"                           -103    "dBm/10 MHz"    "ITU-R SA.1027-6 Table 1, EESS 8025-8400 MHz (terrestrial-path share) (0.005% of time)"
+    "Margin to long-term criterion"               -43.731    "dB"            "Positive = exceeds"                                                                   
+    "Margin to short-term criterion"              -60.731    "dB"            "Positive = exceeds"                                                                   
+
+Single drone at 400 ft, dish at 5 deg: area above short-term criterion 0.001 km^2, above long-term 0.06 km^2.
+Density chain (New York City): 2475 drones airborne in the U.S. on average; 7.24e-06 per resident; New York state flies 0.40 times the national rate per resident; 11032 residents/km^2 -> 0.0323 airborne drones/km^2 on average.
+Manhattan only: 28367 residents/km^2 -> 0.0829 airborne drones/km^2 on average.
+Active UWB drone density, New York City (per km^2):
+    peak_factor    equipped_frac    activity    airborne_per_km2    active_uwb_per_km2
+    ___________    _____________    ________    ________________    __________________
+
+         1              0.1           0.05          0.032255            0.00016127    
+         3              0.1           0.05          0.096764            0.00048382    
+         6              0.1           0.05           0.19353            0.00096764    
+         1                1           0.05          0.032255             0.0016127    
+         3                1           0.05          0.096764             0.0048382    
+         6                1           0.05           0.19353             0.0096764    
+         1              0.1              1          0.032255             0.0032255    
+         3              0.1              1          0.096764             0.0096764    
+         6              0.1              1           0.19353              0.019353    
+         1                1              1          0.032255              0.032255    
+         3                1              1          0.096764              0.096764    
+         6                1              1           0.19353               0.19353    
+
+Step 5 done (19 s)
+EESS 8160 MHz (Aqua, Terra), Low: average hour, 10% equipped, 5% activity done (23 s)
+EESS 8160 MHz (Aqua, Terra), Mid: peak x3, all equipped, 5% activity done (46 s)
+EESS 8160 MHz (Aqua, Terra), High: peak x3, all equipped, continuous done (133 s)
+EESS 8160 MHz (Aqua, Terra), Bound: Manhattan peak x6, all, continuous done (492 s)
+MetSat 7812 MHz (Suomi NPP), Low: average hour, 10% equipped, 5% activity done (497 s)
+MetSat 7812 MHz (Suomi NPP), Mid: peak x3, all equipped, 5% activity done (525 s)
+MetSat 7812 MHz (Suomi NPP), High: peak x3, all equipped, continuous done (639 s)
+MetSat 7812 MHz (Suomi NPP), Bound: Manhattan peak x6, all, continuous done (873 s)
+Aggregate drones at CCNY (no geofence; margins positive = criterion exceeded; 95% intervals):
+                link                                      case                         active_per_km2    n_iter    tail_samples    margin_long_dB    margin_short_dB    margin_short_lo_dB    margin_short_hi_dB    pct_trk_above_short    pct_trk_above_short_lo    pct_trk_above_short_hi    poisson_pred_pct    pct_all_time_above_short    min_per_year_above_short    allowed_min_per_year    r_req_long_km    r_req_short_km    margin_short_app20_dB    pct_trk_above_short_app20    r_req_short_app20_km
+    _____________________________    ______________________________________________    ______________    ______    ____________    ______________    _______________    __________________    __________________    ___________________    ______________________    ______________________    ________________    ________________________    ________________________    ____________________    _____________    ______________    _____________________    _________________________    ____________________
+
+    "EESS 8160 MHz (Aqua, Terra)"    "Low: average hour, 10% equipped, 5% activity"      0.00016127      4e+06         200            -55.898             -33.86               -34.19               -33.141                      0                        0                9.2222e-05             1.0146e-05                       0                          0                   26.298                 0                  0                 -13.86                    0.00025                       0         
+    "EESS 8160 MHz (Aqua, Terra)"    "Mid: peak x3, all equipped, 5% activity"            0.0048382      4e+06         200            -36.308             -16.08              -16.938               -15.441               0.000275               0.00013728                0.00049205             0.00030437              1.6152e-05                   0.084952                   26.298                 0                  0                 3.9195                    0.01075                     0.5         
+    "EESS 8160 MHz (Aqua, Terra)"    "High: peak x3, all equipped, continuous"             0.096764      1e+06          50            -21.117            0.31825             -0.93707                1.6346                 0.0055                0.0041434                 0.0071589              0.0060873              0.00032304                      1.699                   26.298                 0               0.25                 20.318                     0.2198                     1.5         
+    "EESS 8160 MHz (Aqua, Terra)"    "Bound: Manhattan peak x6, all, continuous"            0.49764      6e+05          30            -12.944             7.6259                6.164                8.3565               0.024833                 0.021006                  0.029156               0.031302               0.0014586                     7.6715                   26.298                 0                  1                 27.626                     1.2312                       2         
+    "MetSat 7812 MHz (Suomi NPP)"    "Low: average hour, 10% equipped, 5% activity"      0.00016127      4e+06         500            -61.397            -43.052               -43.46               -42.704                      0                        0                9.2222e-05             3.0779e-06                       0                          0                   65.745                 0                  0                -23.052                   0.000275                       0         
+    "MetSat 7812 MHz (Suomi NPP)"    "Mid: peak x3, all equipped, 5% activity"            0.0048382      4e+06         500            -41.837            -26.115              -26.523               -25.592               0.000125               4.0587e-05                0.00029171             9.2338e-05               4.538e-06                   0.023868                   65.745                 0                  0                 -6.115                   0.003575                       0         
+    "MetSat 7812 MHz (Suomi NPP)"    "High: peak x3, all equipped, continuous"             0.096764      1e+06         125            -26.658            -11.103              -11.911               -10.083                 0.0012               0.00062006                 0.0020961              0.0018467              4.3564e-05                    0.22913                   65.745                 0                  0                  8.897                      0.073                       1         
+    "MetSat 7812 MHz (Suomi NPP)"    "Bound: Manhattan peak x6, all, continuous"            0.49764      6e+05          75            -18.481            -2.2581              -3.0957              -0.90794              0.0083333                0.0061852                  0.010986              0.0094971              0.00030253                     1.5912                   65.745                 0                  0                 17.742                    0.39333                     1.5         
+
+Single-device exceedance footprint (averaged over passes, heights, and P.528 time):
+                link                 p1_short     area_short_km2    area_short_lo_km2    area_short_hi_km2    r_hit_max_km
+    _____________________________    _________    ______________    _________________    _________________    ____________
+
+    "EESS 8160 MHz (Aqua, Terra)"    2.225e-05       0.0006291         0.00050522           0.00077416           1.0311   
+    "MetSat 7812 MHz (Suomi NPP)"     6.75e-06      0.00019085         0.00012577           0.00027768          0.59203   
+
+Baseline EESS 8160 MHz (Aqua, Terra), handheld outdoor done (955 s)
+[Warning: n_iter too small to resolve the 0.005% tail.] 
+[> In aggregate_drone_mc_rev4 (line 118)
+In example_station_ccny_rev1 (line 224)] 
+[Warning: n_iter too small to resolve the 0.005% tail.] 
+[> In aggregate_drone_mc_rev4 (line 118)
+In example_station_ccny_rev1 (line 226)] 
+Baseline EESS 8160 MHz (Aqua, Terra), indoor done (1038 s)
+Baseline MetSat 7812 MHz (Suomi NPP), handheld outdoor done (1113 s)
+[Warning: n_iter too small to resolve the 0.0125% tail.] 
+[> In aggregate_drone_mc_rev4 (line 118)
+In example_station_ccny_rev1 (line 224)] 
+[Warning: n_iter too small to resolve the 0.0125% tail.] 
+[> In aggregate_drone_mc_rev4 (line 118)
+In example_station_ccny_rev1 (line 226)] 
+Baseline MetSat 7812 MHz (Suomi NPP), indoor done (1196 s)
+Ground UWB baseline at CCNY (ECC Report 327 urban densities via FiRa; validated P.2108; no clutter below 0.25 km; last column holds the 0.25 km loss below 0.25 km):
+                link                     population        active_per_km2    margin_long_dB    margin_long_lo_dB    margin_long_hi_dB    margin_short_dB    pct_trk_above_short    min_per_year_above_short    margin_long_hold_dB
+    _____________________________    __________________    ______________    ______________    _________________    _________________    _______________    ___________________    ________________________    ___________________
+
+    "EESS 8160 MHz (Aqua, Terra)"    "handheld outdoor"           7             -9.9508             -10.103              -9.8204             -13.293                 0                        0                      -26.894      
+    "EESS 8160 MHz (Aqua, Terra)"    "indoor"                   500             -8.6468             -8.7034              -8.5805             -22.053                 0                        0                      -24.251      
+    "MetSat 7812 MHz (Suomi NPP)"    "handheld outdoor"           7             -15.426             -15.587              -15.279             -19.167                 0                        0                      -32.315      
+    "MetSat 7812 MHz (Suomi NPP)"    "indoor"                   500             -14.085             -14.141              -14.033             -28.233                 0                        0                       -29.62      
+
+Clutter swap: rev1 formula minus validated port, max 1.02 dB (d < 2 km), max 0.034 dB (d >= 2 km).
+[Warning: n_iter too small to resolve the 0.005% tail.] 
+[> In aggregate_drone_mc_rev3 (line 104)
+In example_station_ccny_rev1 (line 265)] 
+[Warning: n_iter too small to resolve the 0.005% tail.] 
+[> In aggregate_drone_mc_rev4 (line 118)
+In example_station_ccny_rev1 (line 266)] 
+[Warning: n_iter too small to resolve the 0.005% tail.] 
+[> In aggregate_drone_mc_rev4 (line 118)
+In example_station_ccny_rev1 (line 267)] 
+WG1 ground baseline, long-term margin: rev3 (old formula, no clutter below 0.25 km), rev4 zero (validated port, same short-path rule), rev4 hold (0.25 km loss below 0.25 km):
+        population        margin_long_rev3_dB    margin_long_rev4_zero_dB    rev4_zero_lo_dB    rev4_zero_hi_dB    margin_long_rev4_hold_dB
+    __________________    ___________________    ________________________    _______________    _______________    ________________________
+
+    "handheld outdoor"          -12.621                  -12.624                  -12.77            -12.451                -29.959         
+    "indoor"                    -10.535                  -10.535                 -10.595            -10.479                -26.606         
+
+Step 10 done (1429 s)
+Consistency with ECC Report 327 (this model vs published ECC distances):
+                                                                                  scenario                                                                                  this_model_m     ecc327_m             ecc_source               station   
+    ____________________________________________________________________________________________________________________________________________________________________    ____________    __________    ___________________________    ____________
+
+    "Single entry, 100% duty, LOS, dish 20 m high at 13 deg, long-term"                                                                                                          15         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 20 m high at 13 deg, short-term"                                                                                                          0         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 20 m high at 5 deg, long-term"                                                                                                           15         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 20 m high at 5 deg, short-term"                                                                                                           0         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, long-term"                                                                                                        115         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, short-term"                                                                                                        20         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, long-term"                                                                                                         375         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, short-term"                                                                                                         55         "300-3600"    "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Aggregate fixed outdoor, urban (20 active/km^2), long-term, flat, no clutter"                                                                                              550         "100"         "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Aggregate fixed outdoor, suburban (2.5 active/km^2), long-term, flat, no clutter"                                                                                            0         "100"         "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "Aggregate fixed outdoor, rural (0.5 active/km^2), long-term, flat, no clutter"                                                                                               0         "100"         "ECC Report 327 sec. 0.5.1"    "CCNY 2.4 m"
+    "ECC replica: EESS 8 m dish at 8 m, 8200 MHz, device at 10 m, dish 5 deg, free space, criterion -123 dBm/10 MHz (20 dB apportionment), this model's off-axis gain"          625         "600"         "ECC Report 327 Table 62"      "CCNY 2.4 m"
+    "ECC replica: EESS 8 m dish at 8 m, 8200 MHz, as above with ECC's fixed horizon gain of 14.5 dBi"                                                                           595         "600"         "ECC Report 327 Table 62"      "CCNY 2.4 m"
+    "ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, device at 10 m, dish 5 deg, free space, criterion -117 dBm/10 MHz (20 dB apportionment), this model's off-axis gain"        440         "300"         "ECC Report 327 Table 65"      "CCNY 2.4 m"
+    "ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, as above with ECC's fixed horizon gain of 15.4 dBi"                                                                         350         "300"         "ECC Report 327 Table 65"      "CCNY 2.4 m"
+    "Single entry, 100% duty, LOS, dish 10 m high at 13 deg, long-term"                                                                                                          40         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Single entry, 100% duty, LOS, dish 10 m high at 13 deg, short-term"                                                                                                          0         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Single entry, 100% duty, LOS, dish 10 m high at 5 deg, long-term"                                                                                                          175         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Single entry, 100% duty, LOS, dish 10 m high at 5 deg, short-term"                                                                                                           0         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, long-term"                                                                                                         95         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, short-term"                                                                                                        15         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, long-term"                                                                                                         300         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, short-term"                                                                                                         45         "300-3600"    "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Aggregate fixed outdoor, urban (20 active/km^2), long-term, flat, no clutter"                                                                                                0         "100"         "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Aggregate fixed outdoor, suburban (2.5 active/km^2), long-term, flat, no clutter"                                                                                            0         "100"         "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "Aggregate fixed outdoor, rural (0.5 active/km^2), long-term, flat, no clutter"                                                                                               0         "100"         "ECC Report 327 sec. 0.5.1"    "WG1 11.3 m"
+    "ECC replica: EESS 8 m dish at 8 m, 8200 MHz, device at 10 m, dish 5 deg, free space, criterion -123 dBm/10 MHz (20 dB apportionment), this model's off-axis gain"          625         "600"         "ECC Report 327 Table 62"      "WG1 11.3 m"
+    "ECC replica: EESS 8 m dish at 8 m, 8200 MHz, as above with ECC's fixed horizon gain of 14.5 dBi"                                                                           595         "600"         "ECC Report 327 Table 62"      "WG1 11.3 m"
+    "ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, device at 10 m, dish 5 deg, free space, criterion -117 dBm/10 MHz (20 dB apportionment), this model's off-axis gain"        440         "300"         "ECC Report 327 Table 65"      "WG1 11.3 m"
+    "ECC replica: MetSat 3 m dish at 4 m, 7800 MHz, as above with ECC's fixed horizon gain of 15.4 dBi"                                                                         350         "300"         "ECC Report 327 Table 65"      "WG1 11.3 m"
+
+Apple AirTag (FCC ID BCGA2187), UL test report 12791034-E2V3, sec. 8.1-8.2:
+                      quantity                       measured    limit_or_model         unit          headroom_dB
+    _____________________________________________    ________    ______________    _______________    ___________
+
+    "Channel 9 average EIRP, worst configuration"     -41.84         -41.3         "dBm/MHz"             0.54    
+    "Channel 9 average EIRP, lowest"                  -43.45         -41.3         "dBm/MHz"             2.15    
+    "Channel 9 peak EIRP, worst configuration"          -0.6             0         "dBm/50 MHz"           0.6    
+    "Channel 9 -10 dB bandwidth"                       525.5           500         "MHz (minimum)"        NaN    
+
+Done in 1438 s. Outputs in /private/tmp/uwbrun/7GHz_UWB_NRPM/matlab/../output/ccny
