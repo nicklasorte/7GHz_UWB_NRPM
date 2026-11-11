@@ -34,6 +34,7 @@ This paper does five things:
 - A consistency check against ECC Report 327 and measured channel 9 emissions from a shipping device.
 - A table of the intermediate calculations NASA can check, and those that need NASA data.
 - Rev 1.1: the assumption that drones can transmit, the duty cycles used in comparable studies in this band, the duty cycle at which drones would reach the allowance, and the distance inside which one drone exceeds each criterion, main beam and sidelobes, at the NASA NEN station at Wallops (see "Key assumptions: drones transmit, how often, and how close").
+- Rev 1.1: 10 figures for the barbell analysis (Figures 1, 9, and 11-18), built from the published run outputs by `python/viz/` (seven figures) and `matlab/viz/` (three figures). The figure code reads every number from `docs/bridge_results/`, so the figures and the tables can't disagree.
 
 The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz_UWB_NRPM`. Appendix A maps each equation to the code.
 
