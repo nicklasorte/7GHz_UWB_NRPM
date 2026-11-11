@@ -1,4 +1,4 @@
-Run started 11-Nov-2026 11:10:48
+Run started 11-Nov-2026 11:12:15
 
 ===== NEN WG1 Wallops (NASA, 11.3 m) =====
 Tracking 11.08% of the time (AQUA, TERRA, LANDSAT 8, LANDSAT 9).
@@ -112,4 +112,4 @@ Summary:
     "NEN WG1 Wallops (NASA, 11.3 m)"       0.22525             19.297              5.2679          12.154          1.6104           12.087            203.58            0.00023043            24.561           -50.277            -59.832              -33.568                4.734                 -30.277                   -13.568                         NaN          
     "CCNY Manhattan (2.4 m)"                1.0606             6.6567               7.996           16.91          2.0997           7.5283            471.12              0.032253            10.613           -25.173            -37.484              -8.6592               7.4168                 -5.1727                    11.341                      7.3438          
 
-Done in 49 s. Outputs in /private/tmp/uwbrun/7GHz_UWB_NRPM/matlab/../output/bridge
+Done in 56 s. Outputs in /private/tmp/uwbrun/7GHz_UWB_NRPM/matlab/../output/bridge
