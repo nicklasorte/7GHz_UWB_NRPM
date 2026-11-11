@@ -185,9 +185,9 @@ for s = 1:numel(stations)
     names_c = ["Tracking-time basis, full criterion"; "All-time basis, full criterion"; "Tracking-time basis, 20 dB apportionment"];
     % ratio is linear in duty, so the break-even duty is base / ratio; above 1 means continuous transmission stays under.
     % Rows 4-6 repeat rows 1-3 at a sustained peak-hour density (peak_range(2) times the annual average).
-    areas = [A(2); A(2); A(4)]; bases = [1; ps.frac_tracking; 1];
+    areas = repmat([A(2); A(2); A(4)], 2, 1);
+    bases = repmat([1; ps.frac_tracking; 1], 2, 1);
     pk = [ones(3, 1); repmat(peak_range(2), 3, 1)];
-    areas = [areas; areas]; bases = [bases; bases];
     be = zeros(6, 1); cont = zeros(6, 1);
     for c = 1:6
         be(c) = duty_base * 10^(-ratio(duty_base, areas(c), bases(c), pk(c)) / 10);
