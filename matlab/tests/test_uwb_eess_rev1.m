@@ -311,3 +311,81 @@ verifyEqual(tc, Lh(1:2), 100 + [L25; L25], 'AbsTol', 1e-12);
 verifyEqual(tc, Lz(3), Lh(3));
 verifyGreaterThan(tc, L25, 10);
 end
+
+function test_region_chord_disk(tc)
+% A disk of radius 1 km: area pi, perimeter 2 pi, mean chord pi/2 (Cauchy-Crofton).
+x = -1.5:0.002:1.5;
+[X, Y] = meshgrid(x, x);
+rg = region_chord_rev1(x, x, -hypot(X, Y), -1);
+verifyEqual(tc, rg.area_km2, pi, 'RelTol', 2e-3);
+verifyEqual(tc, rg.perimeter_km, 2 * pi, 'RelTol', 5e-3);
+verifyEqual(tc, rg.mean_chord_km, pi / 2, 'RelTol', 5e-3);
+verifyEqual(tc, rg.n_regions, 1);
+end
+
+function test_crossing_budget_hand(tc)
+% 0.001 km^2 footprint, 50 m chord, dish tracks 5% of the time, 0.005% allowance, 1% duty.
+cb = crossing_budget_rev1(1e-3, 0.05, 0.05, 0.005, 'duty', 0.01, 'speeds_mps', 10, 'density_per_km2', 0.1);
+yr = 365.25 * 86400;
+T_track = 0.05 * yr; T_allow = 5e-5 * T_track;
+verifyEqual(tc, cb.T_allow_s, T_allow, 'RelTol', 1e-12);
+verifyEqual(tc, cb.rho_allow_per_km2, T_allow / (0.01 * 1e-3 * T_track), 'RelTol', 1e-12);   % = 5 per km^2
+verifyEqual(tc, cb.rho_allow_per_km2, 5, 'RelTol', 1e-12);
+verifyEqual(tc, cb.table.dwell_s, 5, 'RelTol', 1e-12);
+verifyEqual(tc, cb.ratio_to_allowance, 0.1 / 5, 'RelTol', 1e-12);
+cbA = crossing_budget_rev1(1e-3, 0.05, 0.05, 0.005, 'basis', "all", 'duty', 0.01);
+verifyEqual(tc, cbA.rho_allow_per_km2, 5 / 0.05, 'RelTol', 1e-12);                          % all-time basis is 1/tracking_frac looser
+end
+
+function test_bridge_steps_hand(tc)
+ing = struct('margin_bore_dB', 12, 'hover_frac_trk', 1e-3, 'rho_per_km2', 0.01, 'uwb_share', 1, ...
+    'area_limit_km2', 2e-3, 'area_meas_km2', 1.8e-3, 'area_app_km2', 0.2, 'duty', 0.01, ...
+    'tracking_frac', 0.05, 'allowance_pct', 0.005);
+br = bridge_steps_rev1(ing);
+verifyEqual(tc, br.frac_above(1), 1);
+verifyEqual(tc, br.frac_above(2), 1e-3);
+verifyEqual(tc, br.frac_above(3), 1 - exp(-0.01 * 2e-3), 'RelTol', 1e-12);
+verifyEqual(tc, br.frac_above(5), 0.01 * (1 - exp(-0.01 * 1.8e-3)), 'RelTol', 1e-12);
+verifyEqual(tc, br.frac_above(7), br.frac_above(6) * 0.05, 'RelTol', 1e-12);
+verifyEqual(tc, br.frac_above(8), 0.01 * (1 - exp(-0.01 * 0.2)) * 0.05, 'RelTol', 1e-12);
+verifyEqual(tc, br.ratio_dB(1), 10 * log10(1 / 5e-5), 'AbsTol', 1e-9);
+verifyError(tc, @() bridge_steps_rev1(rmfield(ing, 'duty')), 'bridge_steps_rev1:missing');
+end
+
+function test_beam_dwell_synthetic(tc)
+% One pass at constant angular rate 0.05 deg/s in elevation; a flat loss set so the
+% boresight margin is exactly 3 dB. The exceedance cone is then the 3 dB beam, and
+% the dwell must equal beamwidth / rate.
+p = uwb_eess_params_rev1();
+p.es.diam_m = 11.3; p.es.h_m = 10;
+f = 8160;
+crit = eess_criteria_rev1(f, p);
+e10 = uwb_power_in_band_rev1(f, p.crit.ref_bw_MHz, p.uwb);
+g0 = es_gain_rev1(0, p.es.diam_m, f, p.es.eff, "single");
+L = e10 - p.uwb.pol_loss_dB + g0 - crit.short_dBm - 3;
+F = @(x, h, pt) L + 0 * x;
+n = 61; dt = 20;
+t0 = datetime(2026, 11, 1, 'TimeZone', 'UTC');
+ps = struct('t', t0 + seconds((0:n-1)' * dt), 'tracking', true(n, 1), 'az_deg', zeros(n, 1), ...
+    'el_deg', 5 + 0.05 * dt * (0:n-1)', 'sat_idx', ones(n, 1));
+bd = beam_dwell_rev1(p, ps, F, f);
+verifyEqual(tc, bd.margin_dB(10), 3, 'AbsTol', 1e-9);
+verifyEqual(tc, bd.omega_deg_s(10), 0.05, 'RelTol', 1e-6);
+verifyEqual(tc, bd.dwell_s(10), bd.beamwidth_deg / 0.05, 'RelTol', 1e-3);
+verifyEqual(tc, height(bd.pass), 1);
+verifyEqual(tc, bd.hover_frac_trk, max(bd.dwell_s) / (n * dt), 'RelTol', 1e-12);
+% 70 lambda / D rule of thumb for the 3 dB beamwidth, within 15%
+verifyEqual(tc, bd.beamwidth_deg, 70 * (physconst('LightSpeed') / (f * 1e6)) / 11.3, 'RelTol', 0.15);
+verifyError(tc, @() beam_dwell_rev1(p, ps, F, f, 'h_drone_m', 5), 'beam_dwell_rev1:belowDish');
+end
+
+function test_bridge_and_tornado_charts(tc)
+ing = struct('margin_bore_dB', 12, 'hover_frac_trk', 1e-3, 'rho_per_km2', 0.01, 'uwb_share', 1, ...
+    'area_limit_km2', 2e-3, 'area_meas_km2', 1.8e-3, 'area_app_km2', 0.2, 'duty', 0.01, ...
+    'tracking_frac', 0.05, 'allowance_pct', 0.005);
+fig = bridge_chart_rev1(bridge_steps_rev1(ing), "test");
+verifyClass(tc, fig, 'matlab.ui.Figure'); close(fig);
+[fig, tbl] = tornado_chart_rev1(["a"; "b"; "c"], [-5; -1; -20], [5; 1; 0], 0);
+verifyEqual(tc, tbl.input, ["c"; "a"; "b"]);          % widest span first
+close(fig);
+end
