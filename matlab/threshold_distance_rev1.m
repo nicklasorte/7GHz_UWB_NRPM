@@ -43,7 +43,7 @@ arguments
     p struct
     F
     f_mhz (1,1) double {mustBePositive}
-    opts.phi_deg (1,:) double {mustBeNonnegative} = [NaN 0 1 2 5 10 20 48 90]
+    opts.phi_deg (1,:) double = [NaN 0 1 2 5 10 20 48 90]
     opts.h_drone_m (1,1) double {mustBePositive} = p.drone.h_max_m
     opts.p_time (1,1) double {mustBeInRange(opts.p_time, 1, 99)} = 50
     opts.eirp_offset_dB (1,1) double = 0.54
@@ -51,6 +51,9 @@ arguments
     opts.pattern (1,1) string {mustBeMember(opts.pattern, ["single", "multiple"])} = "single"
     opts.duty (1,:) double {mustBePositive, mustBeLessThanOrEqual(opts.duty, 1)} = [0.0005 0.003 0.01 0.05 1]
     opts.tracking_frac (1,1) double = NaN
+end
+if any(opts.phi_deg < 0)
+    error('threshold_distance_rev1:phi', 'Off-axis angles must be nonnegative (NaN means the 3 dB edge).');
 end
 crit = eess_criteria_rev1(f_mhz, p);
 e10 = uwb_power_in_band_rev1(f_mhz, p.crit.ref_bw_MHz, p.uwb);

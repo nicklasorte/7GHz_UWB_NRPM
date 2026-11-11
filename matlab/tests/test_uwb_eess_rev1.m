@@ -406,4 +406,8 @@ verifyEqual(tc, td.d_long_km(1) / td.d_short_km(1), 10^(17 / 20), 'RelTol', 2e-3
 verifyEqual(tc, td.region(1), "main beam"); verifyEqual(tc, td.region(2), "sidelobe");
 verifyEqual(tc, td.hours_to_allowance.hours_tracking_basis(3), 5e-5 * 0.1 * 365.25 * 86400 / 0.01 / 3600, 'RelTol', 1e-12);
 verifyEqual(tc, td.long_reachable_by_one_drone', [false false false false true]);   % 20% criterion: only continuous
+td2 = threshold_distance_rev1(p, F, f, 'phi_deg', [NaN 0]);                      % NaN = the 3 dB edge
+verifyEqual(tc, td2.phi_deg(2), td2.half_beamwidth_deg);
+verifyEqual(tc, td2.gain_dBi(1) - td2.gain_dBi(2), 3, 'AbsTol', 0.05);
+verifyError(tc, @() threshold_distance_rev1(p, F, f, 'phi_deg', -1), 'threshold_distance_rev1:phi');
 end
