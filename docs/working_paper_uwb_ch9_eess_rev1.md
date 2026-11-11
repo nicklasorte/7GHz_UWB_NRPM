@@ -1,13 +1,14 @@
 ---
 title: "UWB Channel 9 Drones and Federal Space-to-Earth Receivers in 7737.6-8236.8 MHz"
-subtitle: "Working Paper, Rev 0"
-date: "November 7, 2026"
+subtitle: "Working Paper, Rev 1"
+date: "November 10, 2026"
 ---
 
 ```
 DRAFT - PRE-DECISIONAL AND DELIBERATIVE
 Prepared with AI assistance. Reviewer: [CONFIRM]
 Rule text as of: 2026-11-07
+Analysis run: 2026-11-10
 Public and cleared sources only.
 ```
 
@@ -15,12 +16,23 @@ Public and cleared sources only.
 
 The Federal Communications Commission (FCC) Notice of Proposed Rulemaking (NPRM) on ultra-wideband (UWB) modernization, ET Docket No. 26-245, asks whether to relax the prohibition on UWB operation aboard aircraft in 47 CFR 15.521(a), and whether to permit UWB-based drone navigation and landing systems.[^nprm] NASA has raised concern that drones carrying IEEE 802.15.4 high-rate pulse (HRP) UWB radios on channel 9 could interfere with its Earth Exploration-Satellite Service (EESS) receive earth stations.
 
-This paper does four things:
+This paper does five things:
 
 1. Identifies the space-to-Earth allocations and federal receive systems inside UWB channel 9 (7737.6-8236.8 MHz).
 2. Collects public parameters for the UWB emission and for three candidate victim systems.
 3. Calculates the distance at which one drone, in line of sight (LOS) and on the earth station boresight, reaches the applicable protection criteria, and then tests whether a drone can physically occupy that boresight.
 4. Describes how the pulsed structure of the UWB emission appears inside each victim receiver and lists the data still needed.
+5. Runs the full chain of calculations, step by step, at a real public X-band station in New York City, with drone density built from FAA data.
+
+## What's new in Rev 1
+
+- A site example at the CCNY NOAA-CREST X-band station in Manhattan, with each intermediate calculation shown (see "Site example: New York City").
+- Drone density from FAA 2025 flight hours and Census population, replacing the assumed 0.1 and 1 per km² bracket.
+- Confidence intervals on the short-term result, which Rev 0 left uncertain by about ±4 dB.
+- Results on both time bases: all time and tracking time.
+- The validated ITU-R P.2108 port for ground devices, with its effect separated into the formula fix and the short-path assumption.
+- A consistency check against ECC Report 327 and measured channel 9 emissions from a shipping device.
+- A table of the intermediate calculations NASA can check, and those that need NASA data.
 
 The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz_UWB_NRPM`. Appendix A maps each equation to the code.
 
@@ -31,6 +43,8 @@ The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz
 - **Inside that ring, the excess is large.** A drone on a 5° boresight at the 1.3 km geometric limit exceeds the long-term EESS criterion by about 30 dB at the NEN and Landsat antennas and the MetSat criterion by about 13 dB at a JPSS terminal.
 - **With a realistic antenna pattern,** one hovering drone at 121.92 m in the dish azimuth exceeds the long-term criterion out to about 1.7 km (5° pointing). In the aggregate Monte Carlo analysis, a geofence of 0.3 km protects the short-term criterion at 0.1 active drones per km², and 1.3 km is needed at 1 active drone per km².
 - **The pulsed emission matters for wideband receivers.** The 30 MHz JPSS receiver is narrower than every HRP mean pulse repetition frequency (PRF), so UWB looks noise-like there. The 375 MHz Landsat receiver resolves individual pulses. The FCC 1 ms averaging rule also lets in-packet power run up to 7.3 dB above the long-term average, which extends the short-term distance by a factor of about 2.3.
+
+{{bottom_line_rev1}}
 
 These results are threshold distances against ITU-R sharing criteria. They aren't a finding of harmful interference as defined in 47 CFR 2.1, which depends on actual service degradation.
 
@@ -408,3 +422,12 @@ All assumptions, with links and the questions NASA can answer, are in *Assumptio
 [^landsat]: USGS, *Landsat Data from Space to Earth*, https://www.usgs.gov/landsat-missions/landsat-data-space-earth; USGS publication 70193004, https://pubs.usgs.gov/publication/70193004.
 [^jpssicd]: JPSS-1 Spacecraft High Rate Data (HRD) to Direct Broadcast Stations (DBS) RF ICD, Rev A, 470-REF-00184 (Feb. 9, 2015), https://www.nesdis.noaa.gov/s3/2022-03/JPSS-1SCHRDtoDBSRFICDRevA-470-REF-00184February9,2015.pdf; NOAA OSPO, *High Rate Data*, https://ospo.noaa.gov/operations/jpss/high-rate-data.html.
 [^01383]: W. A. Kissick, ed., *The Temporal and Spectral Characteristics of Ultrawideband Signals*, NTIA Report 01-383 (Jan. 2001), https://www.its.ntia.gov/publications/download/TR-01-383.pdf.
+[^crest]: CUNY CREST, *Satellite Receiving Station*, https://crest.cuny.edu/hires/research/facilities/satellite-receiving-station.
+[^drl]: NASA Goddard Space Flight Center, Direct Readout Laboratory, *X-band station list*, entry 154, https://directreadout.sci.gsfc.nasa.gov/x-band.html.
+[^faa]: FAA, *Small Unmanned Aircraft Systems Survey Report 2025*, Tables 1 and 6, https://www.faa.gov/data_research/aviation/aerospace_forecasts/Small-Unmanned-Aircraft-Systems-Survey-Report-2025.pdf.
+[^census]: Census Bureau Vintage 2025 estimates, as tabulated in Cornell Program on Applied Demographics, *Vintage 2025 State Highlights*, https://pad.human.cornell.edu/papers/downloads/V2025StateHighlights.pdf.
+[^nycdcp]: NYC Department of City Planning, *New York City Population Estimates and Trends* (March 2026), Appendix A, https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/population/population-estimates/new-york-city-population-estimates-and-trends-march-2026.pdf; land area from NYS Department of Health, *Vital Statistics 2020*, Table 2, https://healthweb-back.health.ny.gov/statistics/vital_statistics/2020/table02.htm.
+[^faafcst]: FAA, *Aerospace Forecast FY2021-2041*, Unmanned Aircraft Systems chapter, https://www.faa.gov/sites/faa.gov/files/data_research/aviation/aerospace_forecasts/Unmanned_Aircraft_Systems.pdf.
+[^fira]: FiRa Consortium, *UWB Simulation Report* (Roberson and Associates, 2025), summarizing ECC Report 327 Tables 1 and 18, https://www.firaconsortium.org/sites/default/files/2025-11/FiRa%20Ultra-Wideband%20Simulation%20Report.pdf.
+[^ecc327]: ECC Report 327, *Technical studies to assess the feasibility of UWB applications in the 6-8.5 GHz band* (Oct. 2021), section 0.5.1, https://docdb.cept.org/download/3511.
+[^airtag]: UL, *Test report 12791034-E2V3*, Apple AirTag, FCC ID BCGA2187, sections 8.1-8.2, https://fcc.report/FCC-ID/BCGA2187/5130980.pdf.

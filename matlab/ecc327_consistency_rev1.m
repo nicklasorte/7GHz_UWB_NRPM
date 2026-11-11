@@ -15,9 +15,15 @@ function cc = ecc327_consistency_rev1(p, F, ps, f_mhz, opts)
 %        km^2) times a 5% activity factor (ECC Report 327 Table 18, fixed
 %        vehicle installations, as summarized by FiRa; the fixed-outdoor
 %        activity factor itself wasn't available, TODO).
-%   ECC's earth station parameters (sec. 5.5) could not be retrieved, so
-%   this is a consistency check, not a calibration: agreement in order of
-%   magnitude is the test.
+%   3. Replica of ECC's single-entry cases with ECC's own parameters
+%      (ECC Report 327 sec. 5.5, Tables 62 and 65): EESS 8 m dish at 8 m,
+%      MetSat 3 m dish at 4 m, dish at 5 deg, UWB device at 10 m, free
+%      space (P.452-16 on flat terrain, no clutter), no polarization loss,
+%      and the SA.1027-6 / SA.1026-5 short-term criteria reduced by ECC's
+%      20 dB apportionment. ECC: 0.6 km (EESS) and 0.3 km (MetSat). This is
+%      the calibration: the same inputs must give the same distances.
+%   Rows 1-2 use this paper's station and assumptions, so they test
+%   consistency, not equality.
 %
 %   The single-entry rows run twice: with the earth station at its own
 %   height (the device sits below the dish, so it is always well off-axis)
@@ -65,6 +71,20 @@ for k = 1:3
     r_req = required_exclusion_radius_rev1(o.r_ex_km, o.pct_dBm(1, :), crit.long_dBm);
     rows(end+1, :) = {sprintf("Aggregate fixed outdoor, %s (%g active/km^2), long-term, flat, no clutter", lbl(k), dens(k)), ...
         1000 * r_req, "100", "ECC Report 327 sec. 0.5.1"}; %#ok<AGROW> three rows
+end
+% 3. ECC replica (Tables 62 and 65)
+rep = struct('label', {"EESS 8 m dish at 8 m, 8200 MHz", "MetSat 3 m dish at 4 m, 7800 MHz"}, ...
+    'diam_m', {8, 3}, 'h_es_m', {8, 4}, 'f_mhz', {8200, 7800}, 'crit_dBm', {-103 - 20, -97 - 20}, ...
+    'ecc_m', {"600", "300"}, 'src', {"ECC Report 327 Table 62", "ECC Report 327 Table 65"});
+for k = 1:2
+    lam = physconst('LightSpeed') / (rep(k).f_mhz * 1e6);
+    [sl, eld] = air_to_ground_geometry_rev1(d, rep(k).h_es_m, 10, p.prop.k_factor, p.prop.re_km);
+    g = es_gain_rev1(abs(eld - 5), rep(k).diam_m, rep(k).f_mhz, p.es.eff, "single");
+    i_dBm = uwb_power_in_band_rev1(rep(k).f_mhz, p.crit.ref_bw_MHz, p.uwb) - 20 * log10(4 * pi * sl * 1000 / lam) + g;
+    kk = find(i_dBm > rep(k).crit_dBm, 1, 'last');
+    if isempty(kk), sep = 0; else, sep = d(min(kk + 1, numel(d))); end
+    rows(end+1, :) = {sprintf("ECC replica: %s, device at 10 m, dish 5 deg, free space, criterion %g dBm/10 MHz (20 dB apportionment)", ...
+        rep(k).label, rep(k).crit_dBm), 1000 * sep, rep(k).ecc_m, rep(k).src}; %#ok<AGROW> two rows
 end
 cc = cell2table(rows, 'VariableNames', {'scenario', 'this_model_m', 'ecc327_m', 'ecc_source'});
 end
