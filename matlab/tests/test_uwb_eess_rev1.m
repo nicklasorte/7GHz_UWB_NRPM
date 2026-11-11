@@ -389,3 +389,21 @@ verifyClass(tc, fig, 'matlab.ui.Figure'); close(fig);
 verifyEqual(tc, tbl.input, ["c"; "a"; "b"]);          % widest span first
 close(fig);
 end
+
+function test_threshold_distance_hand(tc)
+% With a free-space loss function, the boresight short-term distance must satisfy
+% EIRP10 - offset - pol + G0 - FSL(d) = criterion exactly.
+p = uwb_eess_params_rev1(); p.es.diam_m = 11.3; p.es.h_m = 10;
+f = 8160; lam = physconst('LightSpeed') / (f * 1e6);
+F = @(x, h, pt) 20 * log10(4 * pi * (10.^x) * 1000 / lam);
+td = threshold_distance_rev1(p, F, f, 'phi_deg', [0 10], 'eirp_offset_dB', 0.54, 'tracking_frac', 0.1);
+crit = eess_criteria_rev1(f, p);
+g0 = es_gain_rev1(0, 11.3, f, p.es.eff, "single");
+Lreq = uwb_power_in_band_rev1(f, p.crit.ref_bw_MHz, p.uwb) - 0.54 - p.uwb.pol_loss_dB + g0 - crit.short_dBm;
+d_exp = 10^(Lreq / 20) * lam / (4 * pi) / 1000;
+verifyEqual(tc, td.d_short_km(1), d_exp, 'RelTol', 2e-3);
+verifyEqual(tc, td.d_long_km(1) / td.d_short_km(1), 10^(17 / 20), 'RelTol', 2e-3);   % criteria 17 dB apart
+verifyEqual(tc, td.region(1), "main beam"); verifyEqual(tc, td.region(2), "sidelobe");
+verifyEqual(tc, td.hours_to_allowance.hours_tracking_basis(3), 5e-5 * 0.1 * 365.25 * 86400 / 0.01 / 3600, 'RelTol', 1e-12);
+verifyEqual(tc, td.long_reachable_by_one_drone', [false false false false true]);   % 20% criterion: only continuous
+end

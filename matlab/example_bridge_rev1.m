@@ -23,6 +23,8 @@
 %     8. Ranking (tornado) chart around Bookend B
 %     9. Duty-cycle sweep, from 0.1% to continuous transmission, and the
 %        duty cycle at which each case reaches the allowance
+%    10. Threshold distance for one drone, main beam and sidelobes, and the
+%        time inside it each duty cycle needs to use up the allowance
 %
 %   Assumption: drones are allowed to transmit UWB. 47 CFR 15.521(a)
 %   prohibits it today; the analysis takes the NPRM question (FCC 26-66)
@@ -52,6 +54,7 @@ app_dB = 20;                       % ECC Report 327 sec. 5.5 apportionment for U
 duty_base = 0.01;                  % FCC 26-66 (ET Docket 26-245) proposed new-category duty cycle: under 1% in any 24 hours
 duty_range = [0.0025 0.05];        % ECC Report 327 Table 18 activity factors 0.25%-5% (via FiRa)
 duty_sweep = logspace(-3, 0, 61);  % 0.1% to continuous transmission while airborne
+duty_cite = [0.0005 0.003 0.01 0.05 1];   % ECC Report 327: parking 0.05%, logistics 0.3%, indoor 1%, generic and urban vehicle-fixed 5%; FCC 26-66: 1%; continuous
 share_base = 1;                    % share of drones carrying channel 9 UWB: no public data; 100% bounds it
 share_range = [0.1 1];
 peak_range = [1 6];                % annual average to a sustained peak-hour bound
@@ -214,6 +217,38 @@ for s = 1:numel(stations)
     xlim(axd, [0.1 100]);
     legend(axd, 'Location', 'northwest');
     exportgraphics(figd, fullfile(out_dir, "fig_duty_sweep_" + st.tag + ".png"), 'Resolution', 200);
+
+    %% 10. Threshold distance, main beam and sidelobes
+    phis = [NaN 0 0.5 1 2 5 10 20 48 90];
+    td = threshold_distance_rev1(p, F, f_mhz, 'phi_deg', phis, 'eirp_offset_dB', eirp_meas_dB, ...
+        'duty', duty_cite, 'tracking_frac', ps.frac_tracking);
+    tdA = threshold_distance_rev1(p, F, f_mhz, 'phi_deg', phis, 'eirp_offset_dB', eirp_meas_dB, 'crit_offset_dB', app_dB);
+    d_reach = min(bdA.d_bore_km(bdA.el_deg >= 5 & bdA.el_deg < 5.5), [], 'omitnan');   % farthest point a 400 ft drone meets boresight
+    if isempty(d_reach) || isnan(d_reach), d_reach = max(bdA.d_bore_km, [], 'omitnan'); end
+    td_tbl = table(td.region, td.phi_deg, td.gain_dBi, 1000 * td.d_short_km, 1000 * td.d_long_km, 1000 * tdA.d_short_km, ...
+        'VariableNames', {'region', 'off_axis_deg', 'gain_dBi', 'd_short_m', 'd_long_m', 'd_short_app20_m'});
+    fprintf(['Threshold distance for one drone (measured EIRP, P.528 median, 400 ft); a 400 ft drone can reach the ' ...
+        'boresight of a 5 deg pass only out to %.2f km:\n'], d_reach);
+    disp(td_tbl); writetable(td_tbl, fullfile(out_dir, "threshold_distance_" + st.tag + ".csv"));
+    disp('Hours a year inside the short-term distance needed to use up the allowance:'); disp(td.hours_to_allowance);
+    writetable(td.hours_to_allowance, fullfile(out_dir, "hours_to_allowance_" + st.tag + ".csv"));
+    figt = figure('Visible', 'off', 'Position', [100 100 900 520]); theme(figt, 'light');
+    axt = axes(figt); %#ok<LAXES> one new figure per station
+    hold(axt, 'on'); grid(axt, 'on'); set(axt, 'XScale', 'log', 'YScale', 'log');
+    pp = max(td.phi_deg, 0.01);                       % boresight drawn at 0.01 deg on the log axis
+    plot(axt, pp, 1000 * td.d_short_km, '-o', 'LineWidth', 1.6, 'DisplayName', 'Short-term criterion (0.005%)');
+    plot(axt, pp, 1000 * td.d_long_km, '--s', 'LineWidth', 1.4, 'DisplayName', 'Long-term criterion (20%; one drone can''t exceed it below 20% duty)');
+    plot(axt, pp, 1000 * tdA.d_short_km, ':^', 'LineWidth', 1.4, 'DisplayName', 'Short-term, 20 dB apportionment');
+    xline(axt, td.half_beamwidth_deg, 'k-.', 'Main beam edge (3 dB)', 'HandleVisibility', 'off', 'LabelOrientation', 'horizontal', ...
+        'LabelVerticalAlignment', 'bottom');
+    yline(axt, 1000 * d_reach, 'r-', sprintf('400 ft drone meets a 5%s boresight at %.2f km', char(176), d_reach), 'HandleVisibility', 'off', ...
+        'LabelHorizontalAlignment', 'left');
+    xlabel(axt, 'Off-axis angle from the dish boresight (degrees; boresight plotted at 0.01)');
+    ylabel(axt, 'Distance inside which one drone exceeds the criterion (m)');
+    title(axt, "How close one drone has to be: " + st.name);
+    subtitle(axt, 'Measured device EIRP, P.528 median loss, drone at 400 ft. Distance doesn''t depend on duty cycle.');
+    legend(axt, 'Location', 'southwest');
+    exportgraphics(figt, fullfile(out_dir, "fig_threshold_distance_" + st.tag + ".png"), 'Resolution', 200);
 
     summary(end+1, :) = {st.name, bdA.beamwidth_deg, ing.margin_bore_dB, median(bdA.dwell_s(low), 'omitnan'), ...
         max(bdA.dwell_s(low)), 100 * bdA.hover_frac_trk, 1000 * rg.mean_chord_km, A(2) * 1e6, rho, ...
