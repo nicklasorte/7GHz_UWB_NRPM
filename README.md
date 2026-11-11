@@ -52,7 +52,7 @@ runtests('tests/test_uwb_eess_rev1.m')
 | `single_entry_p528_rev1.m` | Single-drone separation with P.528 loss |
 | `p2108_terrestrial_clutter_rev1.m` | Superseded: early P.2108 sec. 3.2 reconstruction (caps distance at 2 km); rev4 uses the validated itu_p2108 port |
 | `next_steps_analysis_rev1.m` | Runs the next-steps analysis |
-| `example_station_ccny_rev1.m` | Site example at CCNY, New York City: passes, link budget, single-drone map, FAA density, aggregate with 95% intervals, footprint check, time-basis graph, ground baseline, clutter swap, ECC 327 and AirTag checks; outputs in `output/ccny/` |
+| `example_station_ccny_rev1.m` | Site example at CCNY, New York City: passes, link budget, single-drone map, FAA density, aggregate with 95% intervals and a 20 dB apportionment sensitivity, footprint check, time-basis graph, ground baseline, clutter swap, ECC Report 327 calibration, and AirTag checks; outputs in `output/ccny/`, with a copy of the published run in `docs/ccny_results/` |
 | `aggregate_drone_mc_rev4.m` | Monte Carlo with the validated P.2108 port (needs [itu_p2108](https://github.com/nicklasorte/itu_p2108) next to this repo), pattern by antenna size, and confidence intervals |
 | `device_interference_rev1.m` | Per-device link physics shared by the Monte Carlo and the footprint check |
 | `exceedance_footprint_rev1.m` | Single-device exceedance area and the Poisson cross-check |
@@ -60,7 +60,7 @@ runtests('tests/test_uwb_eess_rev1.m')
 | `drone_density_faa_rev1.m` | Active UWB drone density from FAA 2025 flight hours and Census population |
 | `link_budget_walkthrough_rev1.m` | Single-drone link budget, one row per step, with sources |
 | `es_gain_rev1.m`, `f699_gain_rev1.m` | Earth station pattern by size: SA.509-3, or F.699-5 for D/lambda <= 100 |
-| `ecc327_consistency_rev1.m` | Reruns ECC Report 327 scenarios for comparison with its published distances |
+| `ecc327_consistency_rev1.m` | Calibration against ECC Report 327 (Tables 62 and 65 replicas) and consistency runs with this paper's stations |
 | `uwb_power_in_band_rev1.m` | UWB EIRP in a victim bandwidth (IEEE mask or FCC envelope) |
 | `uwb_pulse_metrics_rev1.m` | Average, in-packet, and peak power; noise-like vs. pulse-resolved |
 | `main_beam_distance_rev1.m` | Free-space boresight distance and the height needed to be on boresight |

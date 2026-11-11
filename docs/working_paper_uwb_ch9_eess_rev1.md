@@ -44,7 +44,13 @@ The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz
 - **With a realistic antenna pattern,** one hovering drone at 121.92 m in the dish azimuth exceeds the long-term criterion out to about 1.7 km (5° pointing). In the aggregate Monte Carlo analysis, a geofence of 0.3 km protects the short-term criterion at 0.1 active drones per km², and 1.3 km is needed at 1 active drone per km².
 - **The pulsed emission matters for wideband receivers.** The 30 MHz JPSS receiver is narrower than every HRP mean pulse repetition frequency (PRF), so UWB looks noise-like there. The 375 MHz Landsat receiver resolves individual pulses. The FCC 1 ms averaging rule also lets in-packet power run up to 7.3 dB above the long-term average, which extends the short-term distance by a factor of about 2.3.
 
-{{bottom_line_rev1}}
+**Rev 1 site example, CCNY station in Manhattan (2.4 m dish):**
+
+- **At realistic densities, drones meet the criteria.** Drone density built from FAA 2025 flight hours and Census population is about 0.03 airborne drones per km² in New York City on an average hour. With UWB transmitting 5% of the time, as ECC Report 327 assumes, drones meet the EESS and MetSat criteria with at least 16 dB to spare, even at peak hour with every drone carrying UWB.
+- **The edge case is continuous transmission at peak hour.** If every drone carries UWB and transmits continuously at peak hour, the EESS short-term level sits at the criterion: +0.3 dB, with a 95% interval of -0.9 to +1.6 dB. A 250 m geofence covers that case, and about 1 km covers a bounding case at Manhattan density. The long-term criterion is met by at least 12.9 dB in every case.
+- **Two assumptions decide the close cases.** On an all-time basis, the edge case is above the short-term criterion for 1.7 minutes a year, against 26 allowed. On a tracking-time basis it slightly exceeds. If UWB gets only 1% of the allowance (ECC Report 327's 20 dB apportionment), the 5% activity case exceeds the EESS short-term criterion by 3.9 dB and needs a 0.5 km geofence.
+- **The method reproduces ECC Report 327.** With ECC's own earth station inputs, the model gives 595 m against ECC's 600 m. The differences from ECC are assumptions (apportionment and antenna height), not method.
+- **Ground devices already legal today come closer to the long-term criterion than drones do:** within 9-15 dB at CCNY, against at least 12.9 dB for every drone case. A shipping channel 9 device, the AirTag, measures within 0.5 dB of the average limit, so modeling every drone at the limit isn't a large source of conservatism.
 
 These results are threshold distances against ITU-R sharing criteria. They aren't a finding of harmful interference as defined in 47 CFR 2.1, which depends on actual service degradation.
 
@@ -299,17 +305,300 @@ Each Monte Carlo iteration draws a Poisson number of active drones, uniform in a
 
 Negative margin means the criterion is met. The short-term criterion governs at every density. The aggregate runs use the 1 ms average EIRP; using in-packet power for the short-term test adds up to 7.3 dB to the short-term margins.
 
+# Site example: New York City
+
+This section runs the full chain of calculations at one real, public X-band receive station in a dense city, one step at a time, so that NASA can check each intermediate number. The code is `matlab/example_station_ccny_rev1.m`. Every table below is also written as a CSV file to `output/ccny/`.
+
+## Why this station
+
+The NOAA Cooperative Remote Sensing Science and Technology Center (NOAA-CREST) Satellite Receiving Station at The City College of New York (CCNY), in upper Manhattan, operates a 2.4 m X-band tracking antenna in a weatherproof dome. It receives the polar-orbiting satellites Terra and Aqua (MODIS) and Suomi NPP (VIIRS).[^crest] It appears in the NASA Goddard Direct Readout Laboratory list of X-band stations (entry 154, 40.820° N, 73.950° W).[^drl] It is the X-band receiver in the largest U.S. city in that list.
+
+It is an example of a class of receiver, not a NASA protection request. It is a university station, not a NASA facility, and it is smaller than NASA's NEN and Landsat antennas. A 2.4 m dish has about 13 dB less gain than an 11.3 m dish, so it is less exposed to a drone in its main beam. But it sits in the densest population, and so the densest drone traffic, of any station in the list. The paper's earlier NEN Wallops results remain the large-antenna case.
+
+The analysis runs two victim links, both inside UWB channel 9:
+
+- **EESS, 8160 MHz:** Aqua and Terra direct broadcast. Criteria from ITU-R SA.1027-6: -120 dBm in 10 MHz for 20% of the time (long term) and -103 dBm in 10 MHz for 0.005% of the time (short term).
+- **MetSat, 7812 MHz:** Suomi NPP high rate data (HRD). Criteria from ITU-R SA.1026-5.
+
+## Station inputs
+
+| Item | Value | Source |
+| --- | --- | --- |
+| Location | 40.820° N, 73.950° W | NASA DRL X-band station list, entry 154 |
+| Antenna diameter | 2.4 m | CUNY CREST station page |
+| Satellites | Terra, Aqua, Suomi NPP | CUNY CREST station page |
+| Aperture efficiency | 0.6 | Assumption; not published |
+| Antenna height above ground | 20 m | Assumption (rooftop dome); not published |
+| Minimum elevation | 5° | ITU-R SA.1026-5 |
+| Antenna pattern | ITU-R F.699-5 (D/λ is about 63-65, below the SA.509-3 range of D/λ ≥ 100) | ITU-R F.699-5, SA.509-3 |
+| Peak gain | 44.0 dBi at 8160 MHz | 10 log10(η (π D/λ)²) |
+| 3 dB beamwidth | 1.07° at 8160 MHz | 70 λ/D |
+| UWB polarization loss | 3 dB | Linear UWB antenna into a circular feed |
+| Site shielding, dome loss | 0 dB | Assumption (conservative) |
+
+## Step 1: Pass statistics
+
+The model propagates public two-line elements with SGP4 for 30 days from November 1, 2026, at 20-second steps, and assumes the dish tracks the highest-priority satellite above 5°. When no satellite is in view, the dish isn't receiving.
+
+| Link | Satellites | Share of time tracking | Tracking per day | Share of tracking below 6° | Median elevation |
+| --- | --- | --- | --- | --- | --- |
+| EESS 8160 MHz | Aqua, Terra | 5.9% | 85 min | 7.3% | 14.0° |
+| MetSat 7812 MHz | Suomi NPP | 3.6% | 52 min | 7.1% | 14.6° |
+
+The dish receives for about an hour and a half a day on the EESS link and under an hour on the MetSat link. This matters for how the time percentages in the criteria are counted (step 8).
+
+## Step 2: Where a drone can be in the main beam
+
+A drone is on the dish boresight only where its elevation, seen from the dish, equals the pointing elevation. On a flat Earth that ground distance is (h_drone - h_dish) / tan(elevation).
+
+| Dish elevation | Drone at 10 m | Drone at 60 m | Drone at 121.92 m (400 ft) |
+| --- | --- | --- | --- |
+| 5° | Below the dish | 0.46 km | 1.17 km |
+| 10° | Below the dish | 0.23 km | 0.58 km |
+| 20° | Below the dish | 0.11 km | 0.28 km |
+| 30° | Below the dish | 0.07 km | 0.18 km |
+| 45° | Below the dish | 0.04 km | 0.10 km |
+
+The main beam is about ±0.54° wide, so at 1.17 km it is about 22 m tall. A drone below the 20 m dish height can't enter the main beam at all.
+
+## Step 3: Single-drone link budget
+
+This is the worst single-drone case: a drone at 400 ft, hovering exactly on the boresight of a 5° pass, with the median (50% of time) ITU-R P.528-5 loss. A second budget shows a typical off-axis drone for contrast.
+
+| Step | Boresight case | Off-axis case | Unit | Source |
+| --- | --- | --- | --- | --- |
+| UWB average EIRP limit | -41.3 | -41.3 | dBm/MHz | 47 CFR 15.519(c) |
+| EIRP in the 10 MHz reference bandwidth | -31.3 | -31.3 | dBm | -41.3 + 10 log10(10) |
+| Polarization loss | 3 | 3 | dB | Linear into circular |
+| Drone height, ground distance | 121.92 m, 1.165 km | 121.92 m, 5 km | | Input |
+| Slant range | 1.169 | 5.001 | km | 4/3-Earth geometry |
+| Dish pointing (elevation, azimuth offset) | 5°, 0° | 20°, 30° | | Input |
+| Off-axis angle | 0.004 | 34.9 | deg | Spherical law of cosines |
+| Dish gain toward the drone | 44.0 | -4.7 | dBi | ITU-R F.699-5 |
+| Free-space loss | 112.04 | 124.66 | dB | 20 log10(4πd/λ) |
+| P.528-5 basic transmission loss | 112.05 | 124.72 | dB | ITU-R P.528-5, `itu_p528` |
+| Interference at the antenna output | -102.3 | -163.7 | dBm/10 MHz | EIRP - losses + gain |
+| Margin to the long-term criterion (-120) | +17.7 | -43.7 | dB | Positive = exceeds |
+| Margin to the short-term criterion (-103) | +0.7 | -60.7 | dB | Positive = exceeds |
+
+P.528 matches free space within 0.1 dB at these ranges, as it should for a short line-of-sight path. One drone on boresight is right at the short-term criterion. But the long-term criterion applies to 20% of the time, and one drone can't hold that position for 20% of every day's passes.
+
+## Step 4: Single-drone interference map
+
+![Figure 5: One drone at 400 ft around the CCNY dish pointed north at 5°. Color shows interference minus the long-term criterion; the black contour is the long-term criterion and the red contour the short-term criterion.](figures/fig_ccny1_single_drone_map.png)
+
+A drone at 400 ft exceeds the short-term criterion over 0.001 km² and the long-term criterion over 0.06 km², both in a narrow sliver along the dish azimuth. Elsewhere, interference is 20-60 dB below the criteria.
+
+## Step 5: Drone density from FAA and Census data
+
+The earlier analysis bracketed density at 0.1 and 1 active drone per km². This step replaces that bracket with a chain of public numbers. Each step is a separate column in `density_nyc.csv`.
+
+| Step | Calculation | Value | Source |
+| --- | --- | --- | --- |
+| 1. Drones airborne in the U.S. on average | 21,676,799 flight hours in 2025 ÷ 8,760 h | 2,475 | FAA sUAS Survey Report 2025, Table 1[^faa] |
+| 2. Per U.S. resident | ÷ 341,784,857 residents | 7.24 × 10⁻⁶ | Census Vintage 2025[^census] |
+| 3. New York State adjustment | (1,366,899 NY flights ÷ 20,002,427 residents) ÷ (57,836,452 U.S. flights ÷ U.S. residents) | 0.40 | FAA survey Table 6; Census V2025 |
+| 4. New York City density | 8,584,629 residents ÷ 778.2 km² = 11,032 per km² | 0.032 airborne per km² | NYC DCP, Census V2025[^nycdcp] |
+| 4a. Manhattan only | 1,664,862 ÷ 58.7 km² = 28,367 per km² | 0.083 airborne per km² | NYC DCP |
+| 5. Peak-hour factor | Swept 1, 3, 6 | | No public hourly distribution found |
+| 6. Share carrying channel 9 UWB | Swept 0.1, 1 | | No public data |
+| 7. UWB transmit activity | 5% (ECC Report 327 upper value) or 100% | | ECC Report 327 via FiRa[^fira] |
+
+Step 4 assumes drones fly where people live. The FAA forecast says recreational ownership "maps closely against the population centers."[^faafcst] New York flies less per resident than the national average, which pulls the city density down. On an average hour, the result is about one airborne drone for every 31 km² of the city. The four cases the Monte Carlo runs are:
+
+| Case | Active UWB drones per km² |
+| --- | --- |
+| Low: average hour, 10% carry UWB, 5% activity | 0.00016 |
+| Mid: peak hour (×3), all carry UWB, 5% activity | 0.0048 |
+| High: peak hour (×3), all carry UWB, transmitting continuously | 0.097 |
+| Bound: Manhattan density, peak ×6, all carry UWB, continuous | 0.50 |
+
+Even the bounding case sits below the 1 per km² upper bracket used in Rev 0.
+
+## Step 6: Aggregate Monte Carlo with 95% confidence intervals
+
+The Monte Carlo is the same model as the earlier P.528 analysis: Poisson drone counts out to 60 km, uniform heights from 10 m to 121.92 m, a random P.528 time percentage per drone, dish pointing drawn from the step 1 pass samples, and the multiple-entry antenna pattern. Drones get no clutter loss, because they fly above it. No geofence is applied.
+
+Rev 0 left the short-term result uncertain by about ±4 dB, because only about 10 samples fell beyond the 0.005% point. This run sizes each case so that 50-500 samples fall beyond it, and reports exact 95% intervals:
+
+- **For the level exceeded 0.005% of the time:** a distribution-free order-statistic interval. The number of samples below the true percentile is binomial, so the interval runs between two sorted samples.
+- **For the share of time above the criterion:** a Clopper-Pearson (exact binomial) interval.
+
+Positive margins mean the criterion is exceeded. The time shares are shares of tracking time. The last column applies the 20 dB apportionment that ECC Report 327 used for UWB (see step 11).
+
+| Link | Case | Samples beyond the short-term point | Long-term margin | Short-term margin (95% interval) | Tracking time above short-term criterion (95% interval) | Geofence for the short-term criterion | With a 20 dB apportionment: short-term margin, geofence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| EESS | Low | 200 | -55.9 dB | -33.9 (-34.2 to -33.1) dB | 0% (0% to 9.2e-05%) | None | -13.9 dB, None |
+| EESS | Mid | 200 | -36.3 dB | -16.1 (-16.9 to -15.4) dB | 0.00028% (0.00014% to 0.00049%) | None | +3.9 dB, 0.5 km |
+| EESS | High | 50 | -21.1 dB | +0.3 (-0.9 to +1.6) dB | 0.0055% (0.0041% to 0.0072%) | 0.25 km | +20.3 dB, 1.5 km |
+| EESS | Bound | 30 | -12.9 dB | +7.6 (+6.2 to +8.4) dB | 0.0248% (0.021% to 0.0292%) | 1 km | +27.6 dB, 2 km |
+| MetSat | Low | 500 | -61.4 dB | -43.1 (-43.5 to -42.7) dB | 0% (0% to 9.2e-05%) | None | -23.1 dB, None |
+| MetSat | Mid | 500 | -41.8 dB | -26.1 (-26.5 to -25.6) dB | 0.00013% (4.1e-05% to 0.00029%) | None | -6.1 dB, None |
+| MetSat | High | 125 | -26.7 dB | -11.1 (-11.9 to -10.1) dB | 0.0012% (0.00062% to 0.0021%) | None | +8.9 dB, 1 km |
+| MetSat | Bound | 75 | -18.5 dB | -2.3 (-3.1 to -0.9) dB | 0.0083% (0.0062% to 0.011%) | None | +17.7 dB, 1.5 km |
+
+The short-term intervals in the drone cases are now 0.8-2.6 dB wide, against about ±4 dB in Rev 0. At the EESS link:
+
+- With the ECC activity factor of 5% (Low and Mid cases), the criteria are met with at least 16 dB to spare.
+- With every drone carrying UWB and transmitting continuously at peak hour (High case), the short-term level is at the criterion: the interval includes zero.
+- The bounding Manhattan case exceeds it, and a geofence of about 1 km protects it.
+
+The MetSat link meets its criteria in every case, with 1-3 dB to spare in the bound. The long-term criterion is met by at least 12.9 dB in every case on both links.
+
+The apportionment column changes the picture. If UWB gets only 1% of the interference allowance, as ECC assumed for ground UWB, the Mid case (5% activity, which ECC treats as realistic) exceeds the EESS short-term criterion. The High and Bound cases then need geofences of about 1.5 km and 2 km at the EESS link. Whether an apportionment applies, and how large, is the single assumption that moves these results most.
+
+## Step 7: Independent check of the short-term result
+
+The short-term criterion is usually broken by one drone near the main beam, not by many weak ones. If that's true, a simple calculation should reproduce the Monte Carlo:
+
+1. Place single drones at random, with the same height, P.528 time, and pointing distributions, and count how often one drone alone exceeds the short-term criterion. Multiplying by the sampled area gives the equivalent exceedance footprint, the area that must be free of drones while the dish tracks.
+2. Predict the share of time with at least one drone in that footprint from Poisson statistics: 1 - exp(-density × footprint).
+
+| Link | Footprint (95% interval) | Farthest single-drone exceedance |
+| --- | --- | --- |
+| EESS 8160 MHz | 629 m² (505 to 774 m²) | 1.03 km |
+| MetSat 7812 MHz | 191 m² (126 to 278 m²) | 0.59 km |
+
+The Poisson prediction falls inside the Monte Carlo 95% interval in the Mid and High cases on both links and in the MetSat bound. In the EESS bound it is about 25% high: it predicts 0.031% of tracking time against a Monte Carlo 0.025% (95% interval 0.021% to 0.029%). That is expected. The check uses the footprint averaged over all dish pointings, but at any moment every drone sees the same pointing, and low passes have much larger footprints than high ones. Averaging first makes the Poisson formula an upper bound, which tightens as density falls. The check therefore confirms the Monte Carlo from above and agrees with it where the density is realistic (see the `poisson_pred_pct` column in `aggregate_drones.csv`). The EESS footprint is about 630 m², a patch about 25 m on a side. That is the physical picture for NASA: the short-term risk comes from a drone passing through a sliver of sky about a kilometer long, in the direction the dish is pointing, at the moment it's pointing there.
+
+## Step 8: Time basis
+
+The criteria are percentages of time, and it matters whether "time" means all time or only the time the dish is receiving. Figure 6 shows both. The all-time curves (solid) are the tracking-time curves (dotted) scaled down by the share of time the dish tracks, about 6% (EESS) and 4% (MetSat).
+
+![Figure 6: Aggregate UWB drone interference at CCNY for the four density cases, as a percentage of all time (solid) and of tracking time only (dotted). Stars mark the criteria.](figures/fig_ccny2_time_basis_ccdf.png)
+
+In minutes per year, the High case puts the EESS link above the short-term criterion for about 1.7 minutes. The 0.005% criterion allows 26 minutes per year if counted over all time, or about 1.5 minutes per year if counted over tracking time only. The choice of basis, not the propagation or density model, is what decides the High case. This paper makes no choice between the bases. It's a question for the joint assumptions agreement.
+
+## Step 9: Ground UWB baseline at the same station
+
+For context, the same model runs the ground devices that are already legal today: phones and tags in outdoor hands at 7 per km², and indoor devices at 500 per km² with 17 dB of building loss. These are the ECC Report 327 urban densities, as summarized by FiRa. Ground devices get ITU-R P.2108-1 terrestrial clutter loss from the validated port (`nicklasorte/itu_p2108`).
+
+P.2108 doesn't cover paths shorter than 0.25 km. This paper assumes no clutter loss on those paths, the conservative choice, and reports the alternative (holding the 0.25 km loss) as a sensitivity.
+
+| Link | Population | Long-term margin (95% interval) | Long-term margin, holding the 0.25 km loss |
+| --- | --- | --- | --- |
+| EESS | Handheld outdoor, 7 per km² | -10.0 dB (-10.1 to -9.8) | -26.9 dB |
+| EESS | Indoor, 500 per km² | -8.6 dB (-8.7 to -8.6) | -24.3 dB |
+| MetSat | Handheld outdoor, 7 per km² | -15.4 dB (-15.6 to -15.3) | -32.3 dB |
+| MetSat | Indoor, 500 per km² | -14.1 dB (-14.1 to -14.0) | -29.6 dB |
+
+Under the conservative short-path rule, the ground devices already legal today come within about 9-15 dB of the long-term criterion at CCNY. That's closer than any drone case in step 6, where the long-term margin is at least 12.9 dB even in the bounding case. Holding the 0.25 km loss moves the ground baseline about 16-17 dB further below the criterion. Drones differ from ground devices in two ways. They have no clutter, and they can rise into the main beam. That's why the short-term criterion, not the long-term one, is the issue for drones.
+
+## Step 10: What the validated clutter model changed
+
+Rev 0 used a reconstruction of P.2108 section 3.2 that capped the distance at 2 km. The validated port follows the NTIA reference: min(L(2 km), L(d)). The two differ by up to 1.02 dB below 2 km and 0.034 dB beyond, at high location percentages (Figure 7).
+
+![Figure 7: Rev 0 clutter formula minus the validated P.2108 port, at 8.16 GHz.](figures/fig_ccny3_clutter_swap.png)
+
+The step separates the formula fix from the short-path assumption, at the NEN Wallops station:
+
+| Population | Rev 0 code | Validated port, no clutter below 0.25 km | Validated port, 0.25 km loss below 0.25 km |
+| --- | --- | --- | --- |
+| Handheld outdoor | -12.6 dB | -12.6 dB (-12.8 to -12.5) | -30.0 dB |
+| Indoor | -10.5 dB | -10.5 dB (-10.6 to -10.5) | -26.6 dB |
+
+The formula fix alone changes the long-term ground baseline by less than 0.1 dB: the 20% level is set by devices within a few hundred meters, where the two formulas agree or don't apply. The short-path assumption moves it by about 16-17 dB, because the nearest devices set that level. The next-steps addendum compared drones with the ground baseline using the first column, which matches the conservative rule, so that comparison stands.
+
+The section 3.3 aeronautical clutter model of P.2108 isn't used anywhere in this analysis. It is valid only from 10 GHz to 100 GHz, and it models a ground terminal in clutter looking up, not a drone transmitting down to a station.
+
+## Step 11: Consistency with ECC Report 327 and a measured device
+
+ECC Report 327 (2021) studied ground UWB against EESS and MetSat earth stations in 6-8.5 GHz with the same SA.1027-6 and SA.1026-5 criteria used here.[^ecc327] Its single-entry studies found separation distances "between 300 m and 3600 m," and its aggregate studies found 100 m for fixed outdoor devices. Section 5.5 gives the parameters behind its earth station cases, which makes a direct calibration possible.
+
+**Calibration.** The model reruns ECC's two single-entry cases with ECC's inputs: for EESS, an 8 m dish at 8 m height (Table 62); for MetSat, a 3 m dish at 4 m (Table 65). Both cases use a dish pointing at 5°, a device at 10 m, -41.3 dBm/MHz with no polarization loss, line-of-sight loss, and the short-term criterion reduced by a 20 dB apportionment for UWB.
+
+| ECC case | This model | ECC Report 327 |
+| --- | --- | --- |
+| EESS 8 m dish at 8 m, 8200 MHz, device at 10 m, dish 5 deg, free space, criterion -123 dBm/10 MHz (20 dB apportionment), this model's off-axis gain | 625 m | 600 m (ECC Report 327 Table 62) |
+| EESS 8 m dish at 8 m, 8200 MHz, as above with ECC's fixed horizon gain of 14.5 dBi | 595 m | 600 m (ECC Report 327 Table 62) |
+| MetSat 3 m dish at 4 m, 7800 MHz, device at 10 m, dish 5 deg, free space, criterion -117 dBm/10 MHz (20 dB apportionment), this model's off-axis gain | 440 m | 300 m (ECC Report 327 Table 65) |
+| MetSat 3 m dish at 4 m, 7800 MHz, as above with ECC's fixed horizon gain of 15.4 dBi | 350 m | 300 m (ECC Report 327 Table 65) |
+
+With ECC's fixed horizon gain, the EESS case reproduces ECC's 0.6 km. The MetSat case gives 350 m against ECC's 300 m. ECC's stated loss at 300 m is 101 dB from P.452-16, about 1.2 dB more than free space. With that loss, the link budget gives ECC's -117 dBm exactly: -31.3 dBm + 15.4 dBi - 101 dB. When this model computes the actual off-axis angle instead of a fixed horizon gain, both distances grow, because a 10 m device sits slightly above a lower dish.
+
+**What the calibration shows NASA.** The link budget reproduces ECC's numbers. The difference between ECC and this paper is in two assumptions, not in the method:
+
+- **Apportionment.** ECC cut the criteria by 20 dB for UWB. This paper's drone results use the full criteria, and step 6 shows the 20 dB case beside them.
+- **Antenna height.** ECC put the device 2-6 m above the dish. At CCNY the dish is assumed 18.5 m above a handheld device, which keeps the device far off-axis.
+
+**Consistency with this paper's own assumptions.** The table reruns ECC's scenario types with this paper's stations and full criteria:
+
+| Station | Scenario | This model | ECC Report 327 |
+| --- | --- | --- | --- |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 20 m high at 13 deg, long-term | 15 m | 300-3600 m |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 20 m high at 13 deg, short-term | 0 m | 300-3600 m |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 20 m high at 5 deg, long-term | 15 m | 300-3600 m |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 20 m high at 5 deg, short-term | 0 m | 300-3600 m |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, long-term | 115 m | 300-3600 m |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, short-term | 20 m | 300-3600 m |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, long-term | 375 m | 300-3600 m |
+| CCNY 2.4 m | Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, short-term | 55 m | 300-3600 m |
+| CCNY 2.4 m | Aggregate fixed outdoor, urban (20 active/km^2), long-term, flat, no clutter | 550 m | 100 m |
+| CCNY 2.4 m | Aggregate fixed outdoor, suburban (2.5 active/km^2), long-term, flat, no clutter | 0 m | 100 m |
+| CCNY 2.4 m | Aggregate fixed outdoor, rural (0.5 active/km^2), long-term, flat, no clutter | 0 m | 100 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 10 m high at 13 deg, long-term | 40 m | 300-3600 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 10 m high at 13 deg, short-term | 0 m | 300-3600 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 10 m high at 5 deg, long-term | 175 m | 300-3600 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 10 m high at 5 deg, short-term | 0 m | 300-3600 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, long-term | 95 m | 300-3600 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 1.5 m high at 13 deg, short-term | 15 m | 300-3600 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, long-term | 300 m | 300-3600 m |
+| WG1 11.3 m | Single entry, 100% duty, LOS, dish 1.5 m high at 5 deg, short-term | 45 m | 300-3600 m |
+| WG1 11.3 m | Aggregate fixed outdoor, urban (20 active/km^2), long-term, flat, no clutter | 0 m | 100 m |
+| WG1 11.3 m | Aggregate fixed outdoor, suburban (2.5 active/km^2), long-term, flat, no clutter | 0 m | 100 m |
+| WG1 11.3 m | Aggregate fixed outdoor, rural (0.5 active/km^2), long-term, flat, no clutter | 0 m | 100 m |
+
+With the dish well above a 1.5 m device and no apportionment, single-entry distances are tens of meters or less. With the dish at the device height, they rise to 300-375 m for the long-term criterion at 5° pointing, the low end of ECC's range. The aggregate urban case gives 550 m at CCNY against ECC's 100 m. ECC's aggregate parameters (Table 66) were only partly retrieved, so that difference isn't explained yet. Antenna height is the station input NASA should confirm first.
+
+Measured emissions support the emission model. The FCC test report for the Apple AirTag (FCC ID BCGA2187, UL report 12791034-E2V3) gives these channel 9 results:[^airtag]
+
+| Quantity | Measured | Limit used in this paper | Headroom |
+| --- | --- | --- | --- |
+| Average EIRP, worst configuration | -41.84 dBm/MHz | -41.3 dBm/MHz | 0.54 dB |
+| Average EIRP, lowest configuration | -43.45 dBm/MHz | -41.3 dBm/MHz | 2.15 dB |
+| Peak EIRP, worst configuration | -0.6 dBm/50 MHz | 0 dBm/50 MHz | 0.6 dB |
+| -10 dB bandwidth | 525.5-528 MHz | 500 MHz minimum | |
+
+A shipping channel 9 device runs within about 0.5 dB of the average limit. Modeling every drone at the limit overstates a real device by only that much, so the paper's EIRP assumption is not a large source of conservatism.
+
+## Intermediate calculations for NASA review
+
+The steps above are the intermediate calculations behind every result in this section. The table lists them with their status, plus the further calculations NASA would need to check the result at one of its own stations.
+
+| Calculation | Status | What NASA can check or supply |
+| --- | --- | --- |
+| UWB EIRP in the 10 MHz reference bandwidth | Done (step 3) | Whether any airborne device would transmit below the limit; the AirTag runs 0.5-2 dB below it |
+| Protection criteria in dBm per 10 MHz | Done (SA.1027-6, SA.1026-5) | Whether NASA applies different criteria, such as an I/N for a specific receiver |
+| Criteria expressed as I/N at the station | Not done | System noise temperature and receiver bandwidth for each station |
+| Pass statistics: tracking share and elevation histogram | Done (step 1) | Actual schedules and minimum elevations, which can differ from SGP4 visibility |
+| Main-beam geometry | Done (step 2) | Antenna height above ground, terrain mask, and dome loss |
+| Antenna gain toward the drone | Done (steps 3-4) | Measured pattern, or confirmation of SA.509-3 or F.699-5 |
+| Air-to-ground loss | Done (P.528-5) | Local terrain and building blockage, which this paper ignores |
+| Drone density chain | Done (step 5) | Local drone traffic data near each station |
+| Aggregate interference with confidence intervals | Done (step 6) | Agreement on case selection and sample sizes |
+| Independent footprint check | Done (step 7) | Review of the footprint method |
+| Time basis | Shown both ways (step 8) | Which basis NASA's criteria assume |
+| Ground UWB baseline | Done (step 9) | Whether NASA has observed interference from existing UWB |
+| Clutter-model effects | Done (step 10) | Agreement on the short-path clutter assumption |
+| Calibration against ECC Report 327 | Done (step 11): reproduces ECC's 0.6 km EESS case | Whether NASA accepts ECC's 20 dB apportionment for UWB |
+| Apportionment sensitivity | Done (step 6) | The share of the criteria NASA would allow UWB |
+| Effect of UWB pulses on the demodulator | Not done | Laboratory measurement through the actual receiver (see the ITS test plan) |
+| Minutes per year above each criterion, per station | Done for CCNY (step 8) | Station-by-station runs with NASA inputs |
+
 # What else is needed
 
 | Item | Why it matters | Possible source |
 | --- | --- | --- |
 | Receiver bandwidth and required Eb/N0 for NEN receivers; G/T, noise temperature, bandwidth, and Eb/N0 for Landsat (NEN G/T is now from the NEN Users' Guide) | Converts thresholds to I/N and link margin | NASA SCaN, USGS EROS |
 | Aperture efficiency and antenna height per site | ±1 dB on gain; changes near-in elevation geometry | NASA, USGS, NOAA |
-| Earth station sites, including HRD terminals near population | Sets where geofences or channel limits would apply | NOAA OSPO, NASA DRL |
+| Earth station sites, including HRD terminals near population | Sets where geofences or channel limits would apply; Rev 1 runs one public site (CCNY) | NOAA OSPO, NASA DRL |
+| Antenna height above ground and dome loss at each site | Sets main-beam geometry and the single-entry distance more than any other station input (step 11) | Station operators |
 | Pass statistics (time at each elevation) | Converts pointing assumptions into percent-of-time | Mission operations |
 | Site shielding and terrain masks | Can remove low-elevation exposure entirely | Site surveys |
 | UWB drone use cases: altitude, packet on-time, ranging rate, channel, antenna pattern | Sets in-packet power, activity, and coupling | NPRM commenters, manufacturers, FiRa |
-| Drone density forecasts near earth stations | Drives the aggregate result about 1:1 in dB | FAA forecasts, commenters |
+| Local drone traffic near earth stations | Drives the aggregate result about 1:1 in dB; Rev 1 builds a city-wide chain from FAA and Census data, but peak-hour factors and the share of drones carrying UWB have no public data | FAA Remote ID data, commenters |
+| Apportionment of the criteria to UWB | ECC Report 327 used 20 dB; with it, the Mid density case at CCNY exceeds the EESS short-term criterion | NASA, NOAA, interagency agreement |
+| Basis of the time percentages | Decides the High density case at CCNY (step 8) | NASA; joint assumptions agreement |
 | Demodulator response to pulsed interference (LDPC, RS/convolutional) | Needed to judge pulse-resolved receivers | Laboratory measurement; NTIA ITS UWB testing in the 7 GHz band (NPRM fn. 40) |
 | IEEE 802.15.4-2020 transmit mask text | Out-of-channel EESS (8236.8-8400 MHz) | IEEE standard |
 | Text of US258 | Federal-non-federal status in 8025-8400 MHz | 47 CFR 2.106 |
@@ -336,10 +625,11 @@ Negative margin means the criterion is met. The short-term criterion governs at 
 These are options for the analysis, not policy recommendations.
 
 1. Obtain NEN and Landsat receiver parameters and rerun the I/N columns.
-2. Run the aggregate model at each real earth station location with terrain (ITM) and real pass statistics.
-3. Add in-packet power and activity statistics to the short-term Monte Carlo test.
-4. Test candidate mitigations with the model: geofence radius, channel 9 exclusion for airborne use, an altitude cap, an EIRP cap in 7750-7900 and 8025-8400 MHz similar to ECC Decision (12)03, a duty-cycle cap, and downward-directed antennas.
-5. Measure an 802.15.4z channel 9 emission through representative EESS and MetSat demodulators, in coordination with NTIA ITS.
+2. Extend the site example to NASA's own stations, adding terrain and building blockage (ITM or P.452 with terrain) to the P.528 loss used at CCNY.
+3. Agree on the apportionment and the time basis with NASA, then rerun the site examples once on the agreed basis.
+4. Add in-packet power and activity statistics to the short-term Monte Carlo test.
+5. Test candidate mitigations with the model: geofence radius, channel 9 exclusion for airborne use, an altitude cap, an EIRP cap in 7750-7900 and 8025-8400 MHz similar to ECC Decision (12)03, a duty-cycle cap, and downward-directed antennas.
+6. Measure an 802.15.4z channel 9 emission through representative EESS and MetSat demodulators, in coordination with NTIA ITS.
 
 [CONFIRM: recommendation]
 
@@ -364,6 +654,20 @@ All code is at commit `1f608cf176d4833fd5dc30196deb00d098b909f5` of `nicklasorte
 | Aggregate for every geofence radius | [`aggregate_drone_mc_rev1.m` L75](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/aggregate_drone_mc_rev1.m#L75) |
 | Percentile of exceedance | [`aggregate_drone_mc_rev1.m` L83](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/aggregate_drone_mc_rev1.m#L83) |
 | Required radius | [`required_exclusion_radius_rev1.m` L16](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/1f608cf176d4833fd5dc30196deb00d098b909f5/matlab/required_exclusion_radius_rev1.m#L16) |
+
+Rev 1 additions, at commit `c9ba260300083965b8ee3414b6286811c8ce6134`:
+
+| Equation or step | Code |
+| --- | --- |
+| Site example, all 11 steps | [`example_station_ccny_rev1.m`](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/example_station_ccny_rev1.m) |
+| FAA and Census density chain, steps 1-4 | [`drone_density_faa_rev1.m` L50-L53](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/drone_density_faa_rev1.m#L50-L53) |
+| Order-statistic interval on a percentile | [`mc_tail_ci_rev1.m` L38](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/mc_tail_ci_rev1.m#L38) |
+| Clopper-Pearson interval on a time share | [`mc_tail_ci_rev1.m` L52](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/mc_tail_ci_rev1.m#L52) |
+| Short-path clutter rule | [`device_interference_rev1.m` L52-L53](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/device_interference_rev1.m#L52-L53) |
+| Poisson footprint prediction | [`exceedance_footprint_rev1.m` L76](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/exceedance_footprint_rev1.m#L76) |
+| 20 dB apportionment sensitivity | [`example_station_ccny_rev1.m` L171-L172](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/example_station_ccny_rev1.m#L171-L172) |
+| ECC Report 327 replica with ECC's fixed gain | [`ecc327_consistency_rev1.m` L88](https://github.com/nicklasorte/7GHz_UWB_NRPM/blob/c9ba260300083965b8ee3414b6286811c8ce6134/matlab/ecc327_consistency_rev1.m#L88) |
+| Validated P.2108 terrestrial model | [`p2108_terrestrial_rev1.m`](https://github.com/nicklasorte/itu_p2108/blob/f3fc991/src/p2108_terrestrial_rev1.m) in `nicklasorte/itu_p2108` |
 
 Call graph:
 
@@ -391,7 +695,7 @@ graph TD
   A --> E
 ```
 
-Checks performed: 11 unit tests (antenna pattern continuity, flat-Earth limit of the geometry, free-space loss formula, in-band power, criteria lookup, a hand link budget, Monte Carlo reproducibility and monotonicity, distance inversion, pulse metrics, Tsys derivation); an independent Python recomputation of the main-beam distances.
+Checks performed (Rev 0): 11 unit tests (antenna pattern continuity, flat-Earth limit of the geometry, free-space loss formula, in-band power, criteria lookup, a hand link budget, Monte Carlo reproducibility and monotonicity, distance inversion, pulse metrics, Tsys derivation); an independent Python recomputation of the main-beam distances. Rev 1 has 24 unit tests in total (all passing in MATLAB R2025b), hand checks of the CCNY link budget and density chain, the Poisson footprint cross-check, and the ECC Report 327 calibration.
 
 # Companion paper
 
@@ -404,12 +708,15 @@ All assumptions, with links and the questions NASA can answer, are in *Assumptio
 - IEEE 802.15.4-2020 transmit PSD mask breakpoints.
 - Aperture efficiency, G/T, receiver bandwidth, and required Eb/N0 for NEN and Landsat receivers.
 - Whether ECC Report 64 addresses 8 GHz EESS.
+- CCNY antenna height above ground, aperture efficiency, and dome loss (assumed 20 m, 0.6, and 0 dB).
+- Whether NASA accepts a 20 dB apportionment of the SA.1027-6 criteria to UWB, as ECC Report 327 used.
 - Pulsed-interference tolerance data for the Landsat and JPSS demodulators.
 
 # Flags
 
 - The paper attributes a concern to NASA as reported by the requester; it states no NASA position.
 - JPSS is a NOAA program; analysis of JPSS terminals may need NOAA coordination.
+- The CCNY station is a university (NOAA-CREST) site, not a NASA facility. It is used only as a public example; any finding about it may need coordination with CUNY and NOAA.
 - Whether ITU-R average-power criteria suffice for impulsive interference into wideband EESS receivers may need interagency technical agreement.
 
 [^nprm]: FCC, *Modernization of Ultra-Wideband Technology Rules*, Notice of Proposed Rulemaking, ET Docket No. 26-245 (RM-11844, RM-12014) (rel. Oct. 1, 2026); circulation draft at https://docs.fcc.gov/public/attachments/DOC-424842A1.pdf. [CITE: FCC item number.]
