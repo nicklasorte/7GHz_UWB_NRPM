@@ -282,7 +282,7 @@ d = drone_density_faa_rev1(10000, 'peak_factor', 1, 'equipped_frac', 1, 'activit
 u = d.Properties.UserData;
 verifyEqual(tc, u.airborne_us_avg, 21676799/8760, 'RelTol', 1e-12);
 verifyEqual(tc, u.state_ratio, (1366899/20002427)/(57836452/341784857), 'RelTol', 1e-12);
-verifyEqual(tc, d.active_uwb_per_km2, 21676799/8760/341.8e6*u.state_ratio*10000, 'RelTol', 1e-12);
+verifyEqual(tc, d.active_uwb_per_km2, 21676799/8760/341784857*u.state_ratio*10000, 'RelTol', 1e-12);
 end
 
 function test_link_budget_sums(tc)
