@@ -1,4 +1,7 @@
-case,continuous_ratio_dB,break_even_duty_pct,continuous_stays_under
-"Tracking-time basis, full criterion",-30.2769849894336,NaN,1
-"All-time basis, full criterion",-39.831524115964,NaN,1
-"Tracking-time basis, 20 dB apportionment",-13.5684705522165,NaN,1
+density,case,continuous_ratio_dB,break_even_duty_pct,continuous_stays_under
+Annual average,"Tracking-time basis, full criterion",-30.2769849894336,NaN,1
+Annual average,"All-time basis, full criterion",-39.831524115964,NaN,1
+Annual average,"Tracking-time basis, 20 dB apportionment",-13.5684705522165,NaN,1
+Sustained peak (x6),"Tracking-time basis, full criterion",-22.495472990949,NaN,1
+Sustained peak (x6),"All-time basis, full criterion",-32.0500121174793,NaN,1
+Sustained peak (x6),"Tracking-time basis, 20 dB apportionment",-5.78698191806508,NaN,1
