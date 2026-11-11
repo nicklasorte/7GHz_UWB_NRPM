@@ -53,6 +53,12 @@ runtests('tests/test_uwb_eess_rev1.m')
 | `p2108_terrestrial_clutter_rev1.m` | Superseded: early P.2108 sec. 3.2 reconstruction (caps distance at 2 km); rev4 uses the validated itu_p2108 port |
 | `next_steps_analysis_rev1.m` | Runs the next-steps analysis |
 | `example_station_ccny_rev1.m` | Site example at CCNY, New York City: passes, link budget, single-drone map, FAA density, aggregate with 95% intervals and a 20 dB apportionment sensitivity, footprint check, time-basis graph, ground baseline, clutter swap, ECC Report 327 calibration, and AirTag checks; outputs in `output/ccny/`, with a copy of the published run in `docs/ccny_results/` |
+| `example_bridge_rev1.m` | Barbell analysis at NEN WG1 Wallops (NASA) and CCNY: boresight worst case, normal conditions, the bridge between them, crossing budget, and ranking chart; outputs in `output/bridge/`, published copy in `docs/bridge_results/` |
+| `beam_dwell_rev1.m` | How long the tracking beam stays on a hovering drone placed on boresight, from SGP4 pass samples |
+| `region_chord_rev1.m` | Area, perimeter, and mean chord of a single-drone exceedance region |
+| `crossing_budget_rev1.m` | Turns the short-term allowance into allowed drone density, dwell per crossing, and crossings per year |
+| `bridge_steps_rev1.m`, `bridge_chart_rev1.m` | Bridge table and waterfall chart from the worst case to normal conditions |
+| `tornado_chart_rev1.m` | Ranking chart of what moves the result |
 | `aggregate_drone_mc_rev4.m` | Monte Carlo with the validated P.2108 port (needs [itu_p2108](https://github.com/nicklasorte/itu_p2108) next to this repo), pattern by antenna size, and confidence intervals |
 | `device_interference_rev1.m` | Per-device link physics shared by the Monte Carlo and the footprint check |
 | `exceedance_footprint_rev1.m` | Single-device exceedance area and the Poisson cross-check |
