@@ -1,0 +1,4 @@
+case,continuous_ratio_dB,break_even_duty_pct,continuous_stays_under
+"Tracking-time basis, full criterion",-5.17267321767452,NaN,1
+"All-time basis, full criterion",-17.4837689471178,NaN,1
+"Tracking-time basis, 20 dB apportionment",11.3407808463669,7.34381816990943,0

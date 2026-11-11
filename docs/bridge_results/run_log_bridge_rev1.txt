@@ -1,4 +1,4 @@
-Run started 11-Nov-2026 11:02:17
+Run started 11-Nov-2026 11:10:48
 
 ===== NEN WG1 Wallops (NASA, 11.3 m) =====
 Tracking 11.08% of the time (AQUA, TERRA, LANDSAT 8, LANDSAT 9).
@@ -43,6 +43,14 @@ Crossing budget (measured EIRP, 1% duty): allowed density 24.6/km^2 (tracking ba
     "Time basis"                       -59.832        -50.277      9.5545
     "Drone density"                    -50.277        -42.495      7.7815
     "Device EIRP"                      -51.756        -49.831      1.9242
+
+Duty-cycle break-even (share of drones carrying UWB 100%, average density):
+                       case                       continuous_ratio_dB    break_even_duty_pct    continuous_stays_under
+    __________________________________________    ___________________    ___________________    ______________________
+
+    "Tracking-time basis, full criterion"               -30.277                  NaN                    true          
+    "All-time basis, full criterion"                    -39.832                  NaN                    true          
+    "Tracking-time basis, 20 dB apportionment"          -13.568                  NaN                    true          
 
 
 ===== CCNY Manhattan (2.4 m) =====
@@ -89,11 +97,19 @@ Crossing budget (measured EIRP, 1% duty): allowed density 10.6/km^2 (tracking ba
     "Drone density"                    -25.173        -17.391      7.7813
     "Device EIRP"                      -26.623        -24.732      1.8916
 
+Duty-cycle break-even (share of drones carrying UWB 100%, average density):
+                       case                       continuous_ratio_dB    break_even_duty_pct    continuous_stays_under
+    __________________________________________    ___________________    ___________________    ______________________
+
+    "Tracking-time basis, full criterion"               -5.1727                   NaN                   true          
+    "All-time basis, full criterion"                    -17.484                   NaN                   true          
+    "Tracking-time basis, 20 dB apportionment"           11.341                7.3438                   false         
+
 Summary:
-                station                 beamwidth_deg    margin_bore_max_dB    dwell_median_s    dwell_max_s    hover_pct_trk    mean_chord_m    footprint_meas_m2    rho_air_per_km2    rho_allow_per_km2    B_ratio_dB    B_all_time_ratio_dB    B_app20_ratio_dB    dwell_median_meas_s
-    ________________________________    _____________    __________________    ______________    ___________    _____________    ____________    _________________    _______________    _________________    __________    ___________________    ________________    ___________________
+                station                 beamwidth_deg    margin_bore_max_dB    dwell_median_s    dwell_max_s    hover_pct_trk    mean_chord_m    footprint_meas_m2    rho_air_per_km2    rho_allow_per_km2    B_ratio_dB    B_all_time_ratio_dB    B_app20_ratio_dB    dwell_median_meas_s    continuous_ratio_dB    continuous_app20_ratio_dB    break_even_duty_app20_pct
+    ________________________________    _____________    __________________    ______________    ___________    _____________    ____________    _________________    _______________    _________________    __________    ___________________    ________________    ___________________    ___________________    _________________________    _________________________
 
-    "NEN WG1 Wallops (NASA, 11.3 m)"       0.22525             19.297              5.2679          12.154          1.6104           12.087            203.58            0.00023043            24.561           -50.277            -59.832              -33.568                4.734       
-    "CCNY Manhattan (2.4 m)"                1.0606             6.6567               7.996           16.91          2.0997           7.5283            471.12              0.032253            10.613           -25.173            -37.484              -8.6592               7.4168       
+    "NEN WG1 Wallops (NASA, 11.3 m)"       0.22525             19.297              5.2679          12.154          1.6104           12.087            203.58            0.00023043            24.561           -50.277            -59.832              -33.568                4.734                 -30.277                   -13.568                         NaN          
+    "CCNY Manhattan (2.4 m)"                1.0606             6.6567               7.996           16.91          2.0997           7.5283            471.12              0.032253            10.613           -25.173            -37.484              -8.6592               7.4168                 -5.1727                    11.341                      7.3438          
 
-Done in 47 s. Outputs in /private/tmp/uwbrun/7GHz_UWB_NRPM/matlab/../output/bridge
+Done in 49 s. Outputs in /private/tmp/uwbrun/7GHz_UWB_NRPM/matlab/../output/bridge
