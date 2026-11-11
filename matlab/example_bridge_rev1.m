@@ -223,10 +223,10 @@ for s = 1:numel(stations)
     td = threshold_distance_rev1(p, F, f_mhz, 'phi_deg', phis, 'eirp_offset_dB', eirp_meas_dB, ...
         'duty', duty_cite, 'tracking_frac', ps.frac_tracking);
     tdA = threshold_distance_rev1(p, F, f_mhz, 'phi_deg', phis, 'eirp_offset_dB', eirp_meas_dB, 'crit_offset_dB', app_dB);
-    okr = isfinite(bdA.el_deg) & isfinite(bdA.d_bore_km);   % boresight crosses 400 ft at a 5 deg pass
-    [e_u, i_u] = unique(bdA.el_deg(okr));
-    d_b = bdA.d_bore_km(okr);
-    d_reach = interp1(e_u, d_b(i_u), 5);
+    dg = logspace(-2, 1.5, 6000);                      % ground distance at which a 400 ft drone is at 5 deg elevation
+    [~, elg] = air_to_ground_geometry_rev1(dg, p.es.h_m, p.drone.h_max_m, p.prop.k_factor, p.prop.re_km);
+    [elu, iu5] = unique(elg(:));
+    d_reach = interp1(elu, dg(iu5), 5);
     td_tbl = table(td.region, td.phi_deg, td.gain_dBi, 1000 * td.d_short_km, 1000 * td.d_long_km, 1000 * tdA.d_short_km, ...
         'VariableNames', {'region', 'off_axis_deg', 'gain_dBi', 'd_short_m', 'd_long_m', 'd_short_app20_m'});
     fprintf(['Threshold distance for one drone (measured EIRP, P.528 median, 400 ft); a 400 ft drone can reach the ' ...
