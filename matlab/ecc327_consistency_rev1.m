@@ -75,7 +75,7 @@ end
 % 3. ECC replica (Tables 62 and 65)
 rep = struct('label', {"EESS 8 m dish at 8 m, 8200 MHz", "MetSat 3 m dish at 4 m, 7800 MHz"}, ...
     'diam_m', {8, 3}, 'h_es_m', {8, 4}, 'f_mhz', {8200, 7800}, 'crit_dBm', {-103 - 20, -97 - 20}, ...
-    'ecc_m', {"600", "300"}, 'src', {"ECC Report 327 Table 62", "ECC Report 327 Table 65"});
+    'g_ecc_dBi', {14.5, 15.4}, 'ecc_m', {"600", "300"}, 'src', {"ECC Report 327 Table 62", "ECC Report 327 Table 65"});
 for k = 1:2
     lam = physconst('LightSpeed') / (rep(k).f_mhz * 1e6);
     [sl, eld] = air_to_ground_geometry_rev1(d, rep(k).h_es_m, 10, p.prop.k_factor, p.prop.re_km);
@@ -83,8 +83,13 @@ for k = 1:2
     i_dBm = uwb_power_in_band_rev1(rep(k).f_mhz, p.crit.ref_bw_MHz, p.uwb) - 20 * log10(4 * pi * sl * 1000 / lam) + g;
     kk = find(i_dBm > rep(k).crit_dBm, 1, 'last');
     if isempty(kk), sep = 0; else, sep = d(min(kk + 1, numel(d))); end
-    rows(end+1, :) = {sprintf("ECC replica: %s, device at 10 m, dish 5 deg, free space, criterion %g dBm/10 MHz (20 dB apportionment)", ...
-        rep(k).label, rep(k).crit_dBm), 1000 * sep, rep(k).ecc_m, rep(k).src}; %#ok<AGROW> two rows
+    rows(end+1, :) = {sprintf("ECC replica: %s, device at 10 m, dish 5 deg, free space, criterion %g dBm/10 MHz (20 dB apportionment), this model's off-axis gain", ...
+        rep(k).label, rep(k).crit_dBm), 1000 * sep, rep(k).ecc_m, rep(k).src}; %#ok<AGROW> four rows
+    i_fix = uwb_power_in_band_rev1(rep(k).f_mhz, p.crit.ref_bw_MHz, p.uwb) - 20 * log10(4 * pi * sl * 1000 / lam) + rep(k).g_ecc_dBi;
+    kk = find(i_fix > rep(k).crit_dBm, 1, 'last');
+    if isempty(kk), sep = 0; else, sep = d(min(kk + 1, numel(d))); end
+    rows(end+1, :) = {sprintf("ECC replica: %s, as above with ECC's fixed horizon gain of %g dBi", rep(k).label, rep(k).g_ecc_dBi), ...
+        1000 * sep, rep(k).ecc_m, rep(k).src}; %#ok<AGROW> four rows
 end
 cc = cell2table(rows, 'VariableNames', {'scenario', 'this_model_m', 'ecc327_m', 'ecc_source'});
 end
