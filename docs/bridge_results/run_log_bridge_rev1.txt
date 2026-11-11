@@ -1,0 +1,99 @@
+Run started 11-Nov-2026 10:55:26
+
+===== NEN WG1 Wallops (NASA, 11.3 m) =====
+Tracking 11.08% of the time (AQUA, TERRA, LANDSAT 8, LANDSAT 9).
+Bookend A: beamwidth 0.225 deg; boresight margin 16.5 dB at 5-10 deg (max 34.4 dB); dish rate median 0.147 deg/s below 10 deg; dwell median 5.27 s, max 12.15 s below 10 deg.
+Hovering at the ideal spot before every pass: 1.6104% of tracking time above the short-term criterion.
+Exceedance region at 5 deg: 0.0009 km^2, 115 m long, 15 m wide, mean chord 12 m.
+                device                 eirp_vs_limit_dB    footprint_m2    footprint_lo_m2    footprint_hi_m2    hits    farthest_hit_km
+    _______________________________    ________________    ____________    _______________    _______________    ____    _______________
+
+    "At the limit"                              0             225.57           209.37             242.69          718        1.2842     
+    "Measured (AirTag worst)"               -0.54             203.58            188.2             219.87          648        1.2842     
+    "Measured (AirTag lowest)"              -2.15             144.83           131.91             158.67          461        1.2842     
+    "Measured, 20 dB apportionment"         19.46             9540.6           9274.2             9812.7         4859        1.6434     
+
+Density: 29.1 residents/km^2, state ratio 1.10 -> 2.30e-04 airborne drones/km^2 on average.
+Crossing budget (measured EIRP, 1% duty): allowed density 24.6/km^2 (tracking basis), 222/km^2 (all time); local 2.30e-04/km^2 -> 9.4e-06 and 1e-06 of the allowance.
+    speed_mps    dwell_s    crossings_allowed    crossings_expected    crossings_allowed_all_time
+    _________    _______    _________________    __________________    __________________________
+
+       2.2        5.4943         31.821              0.00029855                  287.19          
+       6.7        1.8041         96.909              0.00090921                  874.62          
+      13.4       0.90204         193.82               0.0018184                  1749.2          
+
+    step                                     label                                      frac_above    ratio_dB
+    ____    ________________________________________________________________________    __________    ________
+
+    "A"     "A: one drone follows the beam, at the limit, continuous (hypothetical)"             1      43.01 
+    "1"     "1: hovers at the ideal spot; the tracking beam sweeps past"                  0.016104      25.08 
+    "2"     "2: random positions, local traffic, device at the limit"                   5.1978e-08    -29.831 
+    "3"     "3: measured device EIRP"                                                   4.6911e-08    -30.277 
+    "4"     "4: UWB duty cycle"                                                         4.6911e-10    -50.277 
+    "B"     "B: normal conditions (tracking-time basis, full criterion)"                4.6911e-10    -50.277 
+    "D1"    "Decision 1: count over all time"                                           5.1978e-11    -59.832 
+    "D2"    "Decision 2: 20 dB apportionment"                                           2.1985e-08    -33.568 
+
+                input                 result_low    result_high     span 
+    ______________________________    __________    ___________    ______
+
+    "Apportionment"                    -50.277        -33.568      16.709
+    "UWB duty cycle"                   -56.298        -43.287       13.01
+    "Share of drones carrying UWB"     -60.277        -50.277          10
+    "Time basis"                       -59.832        -50.277      9.5545
+    "Drone density"                    -50.277        -42.495      7.7815
+    "Device EIRP"                      -51.756        -49.831      1.9242
+
+
+===== CCNY Manhattan (2.4 m) =====
+Tracking 5.87% of the time (AQUA, TERRA).
+Bookend A: beamwidth 1.061 deg; boresight margin 3.9 dB at 5-10 deg (max 21.7 dB); dish rate median 0.145 deg/s below 10 deg; dwell median 8.00 s, max 16.91 s below 10 deg.
+Hovering at the ideal spot before every pass: 2.0997% of tracking time above the short-term criterion.
+Exceedance region at 5 deg: 0.0003 km^2, 60 m long, 5 m wide, mean chord 8 m.
+                device                 eirp_vs_limit_dB    footprint_m2    footprint_lo_m2    footprint_hi_m2    hits    farthest_hit_km
+    _______________________________    ________________    ____________    _______________    _______________    ____    _______________
+
+    "At the limit"                              0             521.48           502.84             540.65         2951        1.1728     
+    "Measured (AirTag worst)"               -0.54             471.12           453.41             489.35         2666        1.1347     
+    "Measured (AirTag lowest)"              -2.15             337.35           322.38             352.83         1909        1.1026     
+    "Measured, 20 dB apportionment"         19.46              21117            20483              21765         4201        1.8689     
+
+Density: 11031.4 residents/km^2, state ratio 0.40 -> 3.23e-02 airborne drones/km^2 on average.
+Crossing budget (measured EIRP, 1% duty): allowed density 10.6/km^2 (tracking basis), 181/km^2 (all time); local 3.23e-02/km^2 -> 0.003 and 0.00018 of the allowance.
+    speed_mps    dwell_s    crossings_allowed    crossings_expected    crossings_allowed_all_time
+    _________    _______    _________________    __________________    __________________________
+
+       2.2        3.4219         27.083               0.082305                   461.11          
+       6.7        1.1236         82.479                0.25066                   1404.3          
+      13.4       0.56181         164.96                0.50131                   2808.6          
+
+    step                                     label                                      frac_above    ratio_dB
+    ____    ________________________________________________________________________    __________    ________
+
+    "A"     "A: one drone follows the beam, at the limit, continuous (hypothetical)"             1      43.01 
+    "1"     "1: hovers at the ideal spot; the tracking beam sweeps past"                  0.020997     26.232 
+    "2"     "2: random positions, local traffic, device at the limit"                   1.6819e-05    -4.7316 
+    "3"     "3: measured device EIRP"                                                   1.5195e-05    -5.1727 
+    "4"     "4: UWB duty cycle"                                                         1.5195e-07    -25.173 
+    "B"     "B: normal conditions (tracking-time basis, full criterion)"                1.5195e-07    -25.173 
+    "D1"    "Decision 1: count over all time"                                           8.9247e-09    -37.484 
+    "D2"    "Decision 2: 20 dB apportionment"                                           6.8084e-06    -8.6592 
+
+                input                 result_low    result_high     span 
+    ______________________________    __________    ___________    ______
+
+    "Apportionment"                    -25.173        -8.6592      16.513
+    "UWB duty cycle"                   -31.193        -18.183       13.01
+    "Time basis"                       -37.484        -25.173      12.311
+    "Share of drones carrying UWB"     -35.173        -25.173          10
+    "Drone density"                    -25.173        -17.391      7.7813
+    "Device EIRP"                      -26.623        -24.732      1.8916
+
+Summary:
+                station                 beamwidth_deg    margin_bore_max_dB    dwell_median_s    dwell_max_s    hover_pct_trk    mean_chord_m    footprint_meas_m2    rho_air_per_km2    rho_allow_per_km2    B_ratio_dB    B_all_time_ratio_dB    B_app20_ratio_dB    dwell_median_meas_s
+    ________________________________    _____________    __________________    ______________    ___________    _____________    ____________    _________________    _______________    _________________    __________    ___________________    ________________    ___________________
+
+    "NEN WG1 Wallops (NASA, 11.3 m)"       0.22525             19.297              5.2679          12.154          1.6104           12.087            203.58            0.00023043            24.561           -50.277            -59.832              -33.568                4.734       
+    "CCNY Manhattan (2.4 m)"                1.0606             6.6567               7.996           16.91          2.0997           7.5283            471.12              0.032253            10.613           -25.173            -37.484              -8.6592               7.4168       
+
+Done in 47 s. Outputs in /private/tmp/uwbrun/7GHz_UWB_NRPM/matlab/../output/bridge

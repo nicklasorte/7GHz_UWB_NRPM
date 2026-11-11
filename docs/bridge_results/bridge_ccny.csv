@@ -1,0 +1,9 @@
+step,label,kind,frac_above,ratio_to_allowance,ratio_dB
+A,"A: one drone follows the beam, at the limit, continuous (hypothetical)",physics,1,20000,43.0102999566398
+1,"1: hovers at the ideal spot; the tracking beam sweeps past",physics,0.0209967640333354,419.935280666709,26.2318236321905
+2,"2: random positions, local traffic, device at the limit",physics,1.68194346673589e-05,0.336388693347178,-4.73158610078205
+3,"3: measured device EIRP",physics,1.51950692113267e-05,0.303901384226535,-5.17267321767452
+4,"4: UWB duty cycle",physics,1.51950692113267e-07,0.00303901384226535,-25.1726732176745
+B,"B: normal conditions (tracking-time basis, full criterion)",result,1.51950692113267e-07,0.00303901384226535,-25.1726732176745
+D1,"Decision 1: count over all time",decision,8.92468938022231e-09,0.000178493787604446,-37.4837689471178
+D2,"Decision 2: 20 dB apportionment",decision,6.80844743744746e-06,0.136168948748949,-8.65921915363315
