@@ -45,10 +45,11 @@ for j = 1:n
     text(ax, low(k), j, " " + lo_lbl(k) + " ", 'HorizontalAlignment', ifelse(low(k) <= high(k)), 'FontSize', 8);
     text(ax, high(k), j, " " + hi_lbl(k) + " ", 'HorizontalAlignment', ifelse(high(k) < low(k)), 'FontSize', 8);
 end
-xline(ax, base, 'k-', 'Base case', 'LineWidth', 1.2);
-xline(ax, opts.ref, 'r--', 'Allowance', 'LineWidth', 1.2);
+xline(ax, base, 'k-', 'Base case', 'LineWidth', 1.2, 'LabelVerticalAlignment', 'bottom', 'LabelOrientation', 'horizontal');
+xline(ax, opts.ref, 'r--', 'Allowance', 'LineWidth', 1.2, 'LabelVerticalAlignment', 'bottom', 'LabelOrientation', 'horizontal', ...
+    'LabelHorizontalAlignment', 'left');
+ylim(ax, [0 n + 0.6]);                                % room under the bars for the line labels
 yticks(ax, 1:n); yticklabels(ax, cellstr(names(ord)));
-ylim(ax, [0.4 n + 0.6]);
 xlabel(ax, opts.xlabel_str);
 title(ax, opts.title_str);
 if strlength(opts.file) > 0

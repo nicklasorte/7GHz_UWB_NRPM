@@ -20,7 +20,7 @@ arguments
 end
 v = max(br.ratio_dB, opts.floor_dB);
 n = height(br);
-fig = figure('Visible', 'off', 'Position', [100 100 1100 520]);
+fig = figure('Visible', 'off', 'Position', [100 100 1250 560]);
 theme(fig, 'light');
 ax = axes(fig); hold(ax, 'on'); grid(ax, 'on');
 col.physics = [0.20 0.45 0.75]; col.result = [0.15 0.15 0.15]; col.decision = [0.85 0.45 0.10]; col.start = [0.70 0.10 0.10];
@@ -41,16 +41,18 @@ for k = 1:n
     patch(ax, k + [-0.35 0.35 0.35 -0.35], [y0 y0 y1 y1], c, 'EdgeColor', 'none');
     lbl = sprintf('%+.0f dB', br.ratio_dB(k));
     if ~isfinite(br.ratio_dB(k)) || br.ratio_dB(k) < opts.floor_dB, lbl = sprintf('below %d dB', opts.floor_dB); end
-    text(ax, k, max(y0, y1) + 2, lbl, 'HorizontalAlignment', 'center', 'FontSize', 9);
+    if y1 >= y0, va = 'bottom'; dy = 1; else, va = 'top'; dy = -1; end   % label the end value, past the bar end
+    text(ax, k, y1 + dy, lbl, 'HorizontalAlignment', 'center', 'VerticalAlignment', va, 'FontSize', 9, 'FontWeight', 'bold');
 end
 yline(ax, 0, 'k--', 'Allowance (0.005% of time)', 'LabelHorizontalAlignment', 'left', 'LineWidth', 1.2);
 xticks(ax, 1:n);
-xticklabels(ax, cellstr(br.step + ": " + extractAfter(br.label, ": ")));
-xtickangle(ax, 25);
+xticklabels(ax, cellstr(br.short_label));
+xtickangle(ax, 0);
 ylabel(ax, 'Time above short-term criterion vs allowance (dB)');
-ylim(ax, [opts.floor_dB, max(v) + 8]);
+ylim(ax, [opts.floor_dB - 6, max(v) + 8]);
 xlim(ax, [0.4, n + 0.6]);
-title(ax, {char(title_str), 'Red: worst case. Blue: one assumption changed at a time. Black: normal conditions. Orange: decisions, measured from B.'});
+title(ax, char(title_str));
+subtitle(ax, 'Red: worst case. Blue: one assumption changed at a time. Black: normal conditions. Orange: decisions, each measured from B.');
 if strlength(opts.file) > 0
     exportgraphics(fig, opts.file, 'Resolution', 200);
 end
