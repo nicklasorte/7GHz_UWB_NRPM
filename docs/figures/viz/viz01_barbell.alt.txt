@@ -1,0 +1,1 @@
+Dumbbell chart with one row per station. For the NASA Wallops station, the worst case sits at +43 dB and normal conditions at -50 dB relative to the allowance; for CCNY, +43 dB and -25 dB. Small markers show the all-time basis and the 20 dB apportionment cases. Only the worst case is above the allowance line at 0 dB.

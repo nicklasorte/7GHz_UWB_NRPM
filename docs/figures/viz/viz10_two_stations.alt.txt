@@ -1,0 +1,1 @@
+Two-panel chart comparing Wallops and CCNY. Drone density is 140 times higher at CCNY, the single-drone footprint 2.3 times larger, and the dish tracks 0.53 times as much of the time. The normal-conditions result is -50 dB at Wallops and -25 dB at CCNY.

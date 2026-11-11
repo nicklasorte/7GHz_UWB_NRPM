@@ -1,0 +1,29 @@
+{
+  "theme": "ntia",
+  "page_inches": [
+    11.0,
+    7.0
+  ],
+  "dpi": 300,
+  "background": "#FFFFFF",
+  "marking": "DRAFT//PRE-DECISIONAL",
+  "font_sizes_pt": [
+    9.0,
+    9.5,
+    10.0,
+    10.5,
+    11.0,
+    12.0,
+    19.0
+  ],
+  "mark_colors": [
+    "#163353",
+    "#5674C4",
+    "#8A8D91"
+  ],
+  "accent": "#5674C4",
+  "context": "#8A8D91",
+  "alt": "Two-panel chart comparing Wallops and CCNY. Drone density is 140 times higher at CCNY, the single-drone footprint 2.3 times larger, and the dish tracks 0.53 times as much of the time. The normal-conditions result is -50 dB at Wallops and -25 dB at CCNY.",
+  "alt_supplied": true,
+  "lint": []
+}

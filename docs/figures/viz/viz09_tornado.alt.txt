@@ -1,0 +1,1 @@
+Tornado chart of six inputs around the Wallops normal-conditions result of -50 dB. The widest bar is the 20 dB apportionment, which reaches -34 dB. Every bar stays well left of the allowance at 0 dB, drawn on the same axis.

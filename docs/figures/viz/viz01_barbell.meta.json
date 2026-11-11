@@ -1,0 +1,30 @@
+{
+  "theme": "ntia",
+  "page_inches": [
+    11.0,
+    7.0
+  ],
+  "dpi": 300,
+  "background": "#FFFFFF",
+  "marking": "DRAFT//PRE-DECISIONAL",
+  "font_sizes_pt": [
+    9.0,
+    9.5,
+    10.0,
+    10.5,
+    11.0,
+    12.0,
+    19.0
+  ],
+  "mark_colors": [
+    "#163353",
+    "#5674C4",
+    "#6E4F92",
+    "#8A8D91"
+  ],
+  "accent": "#5674C4",
+  "context": "#8A8D91",
+  "alt": "Dumbbell chart with one row per station. For the NASA Wallops station, the worst case sits at +43 dB and normal conditions at -50 dB relative to the allowance; for CCNY, +43 dB and -25 dB. Small markers show the all-time basis and the 20 dB apportionment cases. Only the worst case is above the allowance line at 0 dB.",
+  "alt_supplied": true,
+  "lint": []
+}

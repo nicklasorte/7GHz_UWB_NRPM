@@ -1,0 +1,1 @@
+Dot strip chart of cited UWB activity factors from 0.006% to 6%, one row per source. A line at 7.3% marks the duty cycle that would reach the allowance at CCNY with the 20 dB apportionment, above every cited value. A dashed line at 1.2% marks the same case at a sustained peak density. At the NASA Wallops station, no duty cycle up to continuous transmission reaches the allowance.

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="792pt" height="504pt" viewBox="0 0 792 504" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>No single assumption brings the NASA station within 34 dB of the allowance</title>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>No single assumption brings the NASA station within 34 dB of the allowance</dc:title>
+    <dc:date>2026-11-11T12:59:22.753234</dc:date>
+    <dc:description>Tornado chart of six inputs around the Wallops normal-conditions result of -50 dB. The widest bar is the 20 dB apportionment, which reaches -34 dB. Every bar stays well left of the allowance at 0 dB, drawn on the same axis.</dc:description>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 504 
+L 792 504 
+L 792 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 205.92 428.4 
+L 744.48 428.4 
+L 744.48 166.32 
+L 205.92 166.32 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 219.908571 428.4 
+L 219.908571 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_2">
+      <defs>
+       <path id="m68841e3bd0" d="M 0 0 
+L 0 3.5 
+" style="stroke: #163353; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#m68841e3bd0" x="219.908571" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="219.908571" y="442.333594" transform="rotate(-0 219.908571 442.333594)">−70</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 289.851429 428.4 
+L 289.851429 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#m68841e3bd0" x="289.851429" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="289.851429" y="442.333594" transform="rotate(-0 289.851429 442.333594)">−60</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 359.794286 428.4 
+L 359.794286 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#m68841e3bd0" x="359.794286" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="359.794286" y="442.333594" transform="rotate(-0 359.794286 442.333594)">−50</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 429.737143 428.4 
+L 429.737143 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#m68841e3bd0" x="429.737143" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="429.737143" y="442.333594" transform="rotate(-0 429.737143 442.333594)">−40</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_9">
+      <path d="M 499.68 428.4 
+L 499.68 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#m68841e3bd0" x="499.68" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="499.68" y="442.333594" transform="rotate(-0 499.68 442.333594)">−30</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_11">
+      <path d="M 569.622857 428.4 
+L 569.622857 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_12">
+      <g>
+       <use xlink:href="#m68841e3bd0" x="569.622857" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="569.622857" y="442.333594" transform="rotate(-0 569.622857 442.333594)">−20</text>
+     </g>
+    </g>
+    <g id="xtick_7">
+     <g id="line2d_13">
+      <path d="M 639.565714 428.4 
+L 639.565714 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_14">
+      <g>
+       <use xlink:href="#m68841e3bd0" x="639.565714" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_7">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="639.565714" y="442.333594" transform="rotate(-0 639.565714 442.333594)">−10</text>
+     </g>
+    </g>
+    <g id="xtick_8">
+     <g id="line2d_15">
+      <path d="M 709.508571 428.4 
+L 709.508571 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #e6e6e6; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_16">
+      <g>
+       <use xlink:href="#m68841e3bd0" x="709.508571" y="428.4" style="fill: #163353; stroke: #163353; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="709.508571" y="442.333594" transform="rotate(-0 709.508571 442.333594)">0</text>
+     </g>
+    </g>
+    <g id="text_9">
+     <text style="font-size: 11px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="475.2" y="456.124766" transform="rotate(-0 475.2 456.124766)">dB relative to the short-term allowance</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_17"/>
+     <g id="text_10">
+      <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="202.42" y="405.452311" transform="rotate(-0 202.42 405.452311)">Device EIRP</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_18"/>
+     <g id="text_11">
+      <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="202.42" y="367.472573" transform="rotate(-0 202.42 367.472573)">Drone density</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_19"/>
+     <g id="text_12">
+      <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="202.42" y="329.489964" transform="rotate(-0 202.42 329.489964)">Time basis</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_20"/>
+     <g id="text_13">
+      <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="202.42" y="291.560676" transform="rotate(-0 202.42 291.560676)">Share of drones carrying UWB</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_21"/>
+     <g id="text_14">
+      <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="202.42" y="253.524747" transform="rotate(-0 202.42 253.524747)">UWB duty cycle</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_22"/>
+     <g id="text_15">
+      <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="202.42" y="215.539267" transform="rotate(-0 202.42 215.539267)">Apportionment</text>
+     </g>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 347.514238 412.257391 
+L 360.972889 412.257391 
+L 360.972889 391.366957 
+L 347.514238 391.366957 
+z
+" clip-path="url(#p5fa15cc4db)" style="fill: #8a8d91"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 357.856974 374.274783 
+L 412.283092 374.274783 
+L 412.283092 353.384348 
+L 357.856974 353.384348 
+z
+" clip-path="url(#p5fa15cc4db)" style="fill: #8a8d91"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 291.029797 336.292174 
+L 357.856974 336.292174 
+L 357.856974 315.401739 
+L 291.029797 315.401739 
+z
+" clip-path="url(#p5fa15cc4db)" style="fill: #8a8d91"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 287.914117 298.309565 
+L 357.856974 298.309565 
+L 357.856974 277.41913 
+L 287.914117 277.41913 
+z
+" clip-path="url(#p5fa15cc4db)" style="fill: #8a8d91"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 315.747178 260.326957 
+L 406.744933 260.326957 
+L 406.744933 239.436522 
+L 315.747178 239.436522 
+z
+" clip-path="url(#p5fa15cc4db)" style="fill: #8a8d91"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 357.856974 222.344348 
+L 474.721097 222.344348 
+L 474.721097 201.453913 
+L 357.856974 201.453913 
+z
+" clip-path="url(#p5fa15cc4db)" style="fill: #5674c4"/>
+   </g>
+   <g id="line2d_23">
+    <path d="M 357.856974 428.4 
+L 357.856974 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke: #163353; stroke-width: 1.2; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_24">
+    <path d="M 709.508571 428.4 
+L 709.508571 166.32 
+" clip-path="url(#p5fa15cc4db)" style="fill: none; stroke-dasharray: 5.18,2.24; stroke-dashoffset: 0; stroke: #163353; stroke-width: 1.4"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 205.92 428.4 
+L 744.48 428.4 
+" style="fill: none; stroke: #8a8d91; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="342.514238" y="404.083082" transform="rotate(-0 342.514238 404.083082)">Lowest measured</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #163353" x="365.972889" y="404.083082" transform="rotate(-0 365.972889 404.083082)">At the limit</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="352.856974" y="366.097876" transform="rotate(-0 352.856974 366.097876)">Average</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #163353" x="417.283092" y="366.100473" transform="rotate(-0 417.283092 366.100473)">Peak x6</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="286.029797" y="328.117865" transform="rotate(-0 286.029797 328.117865)">All time</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #163353" x="362.856974" y="328.117865" transform="rotate(-0 362.856974 328.117865)">Tracking time</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="282.914117" y="290.132658" transform="rotate(-0 282.914117 290.132658)">10%</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #163353" x="362.856974" y="290.132658" transform="rotate(-0 362.856974 290.132658)">100%</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="310.747178" y="252.15005" transform="rotate(-0 310.747178 252.15005)">0.25%</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #163353" x="411.744933" y="252.15005" transform="rotate(-0 411.744933 252.15005)">5%</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: end; fill: #163353" x="352.856974" y="214.167441" transform="rotate(-0 352.856974 214.167441)">None</text>
+   </g>
+   <g id="text_27">
+    <text style="font-size: 9.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #163353" x="479.721097" y="214.170039" transform="rotate(-0 479.721097 214.170039)">20 dB</text>
+   </g>
+   <g id="text_28">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="357.856974" y="181.052232" transform="rotate(-0 357.856974 181.052232)">Base case -50 dB</text>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: middle; fill: #163353" x="709.508571" y="181.052232" transform="rotate(-0 709.508571 181.052232)">Allowance</text>
+   </g>
+   <g id="text_30">
+    <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; fill: #163353" transform="translate(557.651866 341.838481)">34 dB of margin</text>
+    <text style="font-size: 10.5px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; fill: #163353" transform="translate(543.124952 352.964584)">in the worst single case</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 477.841789 363.829565 
+Q 592.116271 363.829565 706.390753 363.829565 
+" style="fill: none; stroke: #163353; stroke-linecap: round"/>
+    <path d="M 482.241789 366.029565 
+L 477.841789 363.829565 
+L 482.241789 361.629565 
+" style="fill: none; stroke: #163353; stroke-linecap: round"/>
+    <path d="M 701.990753 361.629565 
+L 706.390753 363.829565 
+L 701.990753 366.029565 
+" style="fill: none; stroke: #163353; stroke-linecap: round"/>
+   </g>
+  </g>
+  <g id="text_31">
+   <text style="font-weight: 700; font-size: 10px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #6e4f92" x="31.68" y="29.452461" transform="rotate(-0 31.68 29.452461)">DRAFT//PRE-DECISIONAL</text>
+  </g>
+  <g id="text_32">
+   <text style="font-weight: 700; font-size: 19px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; text-anchor: start; fill: #163353" x="31.68" y="57.187922" transform="rotate(-0 31.68 57.187922)">No single assumption brings the NASA station within 34 dB of the allowance</text>
+  </g>
+  <g id="text_33">
+   <text style="font-size: 12px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; fill: #163353" transform="translate(31.68 83.314289)">Wallops NEN 11.3 m, normal conditions (-50 dB relative to the short-term allowance). Each bar moves one input across its</text>
+   <text style="font-size: 12px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; fill: #163353" transform="translate(31.68 96.029836)">range and holds the others at the base case: AirTag-measured EIRP, 1% duty cycle, every drone carrying UWB, average</text>
+   <text style="font-size: 12px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; fill: #163353" transform="translate(31.68 108.745383)">density, tracking-time basis, no apportionment.</text>
+  </g>
+  <g id="text_34">
+   <text style="font-size: 9px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; fill: #163353" transform="translate(31.68 476.726396)">Source: nicklasorte/7GHz_UWB_NRPM, example_bridge_rev1.m, run of November 11, 2026 (docs/bridge_results/tornado_wallops.csv). Duty-cycle range from ECC Report 327</text>
+   <text style="font-size: 9px; font-family: 'Times New Roman', 'Times', 'Liberation Serif', 'DejaVu Serif', serif; fill: #163353" transform="translate(31.68 486.263057)">Table 18.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p5fa15cc4db">
+   <rect x="205.92" y="166.32" width="538.56" height="262.08"/>
+  </clipPath>
+ </defs>
+</svg>
