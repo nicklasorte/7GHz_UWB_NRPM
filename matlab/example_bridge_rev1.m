@@ -184,12 +184,13 @@ for s = 1:numel(stations)
     be = [duty_base * 10^(-ratio(duty_base, A(2), 1) / 10); duty_base * 10^(-ratio(duty_base, A(2), ps.frac_tracking) / 10); ...
           duty_base * 10^(-ratio(duty_base, A(4), 1) / 10)];
     cont = curves(:, end);
-    be_tbl = table(names_c, cont, 100 * be, be >= 1, 'VariableNames', ...
+    be_pct = 100 * be; be_pct(be >= 1) = NaN;          % NaN: no break-even; continuous transmission stays under
+    be_tbl = table(names_c, cont, be_pct, be >= 1, 'VariableNames', ...
         {'case', 'continuous_ratio_dB', 'break_even_duty_pct', 'continuous_stays_under'});
     fprintf('Duty-cycle break-even (share of drones carrying UWB %.0f%%, average density):\n', 100 * share_base); disp(be_tbl);
     writetable(be_tbl, fullfile(out_dir, "duty_break_even_" + st.tag + ".csv"));
     figd = figure('Visible', 'off', 'Position', [100 100 900 520]); theme(figd, 'light');
-    axd = axes(figd); hold(axd, 'on'); grid(axd, 'on'); set(axd, 'XScale', 'log');
+    axd = axes(figd); hold(axd, 'on'); %#ok<LAXES> one new figure per station grid(axd, 'on'); set(axd, 'XScale', 'log');
     sty = ["-", ":", "--"];
     for c = 1:3
         plot(axd, 100 * duty_sweep, curves(c, :), sty(c), 'LineWidth', 1.6, 'DisplayName', names_c(c));
@@ -206,7 +207,7 @@ for s = 1:numel(stations)
     summary(end+1, :) = {st.name, bdA.beamwidth_deg, ing.margin_bore_dB, median(bdA.dwell_s(low), 'omitnan'), ...
         max(bdA.dwell_s(low)), 100 * bdA.hover_frac_trk, 1000 * rg.mean_chord_km, A(2) * 1e6, rho, ...
         cbT.rho_allow_per_km2, br.ratio_dB(br.step == "B"), br.ratio_dB(br.step == "D1"), br.ratio_dB(br.step == "D2"), ...
-        median(bdM.dwell_s(low), 'omitnan'), cont(1), cont(3), 100 * be(3)}; %#ok<SAGROW> two stations
+        median(bdM.dwell_s(low), 'omitnan'), cont(1), cont(3), be_pct(3)}; %#ok<SAGROW> two stations
 end
 
 sum_tbl = cell2table(summary, 'VariableNames', {'station', 'beamwidth_deg', 'margin_bore_max_dB', 'dwell_median_s', ...
