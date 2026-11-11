@@ -10,9 +10,9 @@ function d = drone_density_faa_rev1(pop_density_per_km2, opts)
 %           FAA, Small Unmanned Aircraft Systems Survey Report 2025, Table 1:
 %           21,676,799 flight hours and 57,836,452 flights in calendar 2025
 %           (population-weighted national estimates).
-%   Step 2. Per resident: divide by the U.S. population, 341.8 million on
-%           July 1, 2025 (Census Bureau Vintage 2025; TODO confirm the exact
-%           figure against table NST-EST2025-POP).
+%   Step 2. Per resident: divide by the U.S. population, 341,784,857 on
+%           July 1, 2025 (Census Bureau Vintage 2025, via Cornell PAD,
+%           "V2025 State Highlights").
 %   Step 3. State adjustment: the state's flights per resident divided by
 %           the national flights per resident (FAA survey Table 6, Census
 %           V2025 state population). This assumes flight hours scale with
@@ -45,7 +45,7 @@ arguments
 end
 faa_hours_2025 = 21676799;        % FAA sUAS Survey Report 2025, Table 1
 faa_flights_2025 = 57836452;      % FAA sUAS Survey Report 2025, Table 1
-us_pop_2025 = 341.8e6;            % Census V2025, July 1, 2025 (TODO confirm exact value)
+us_pop_2025 = 341784857;         % Census V2025, July 1, 2025
 
 airborne_us = faa_hours_2025 / 8760;                                        % step 1
 per_person = airborne_us / us_pop_2025;                                     % step 2

@@ -19,6 +19,12 @@ function cc = ecc327_consistency_rev1(p, F, ps, f_mhz, opts)
 %   this is a consistency check, not a calibration: agreement in order of
 %   magnitude is the test.
 %
+%   The single-entry rows run twice: with the earth station at its own
+%   height (the device sits below the dish, so it is always well off-axis)
+%   and with the dish at the device height (horizon-level path, the likely
+%   worst case in ECC's single-entry geometry). The gap between the two
+%   shows how much the result depends on antenna height.
+%
 %   Name-value options: h_dev_m (device height, default 1.5), n_iter (2e3).
 arguments
     p struct
@@ -32,18 +38,20 @@ crit = eess_criteria_rev1(f_mhz, p);
 e10 = uwb_power_in_band_rev1(f_mhz, p.crit.ref_bw_MHz, p.uwb);
 lambda = physconst('LightSpeed') / (f_mhz * 1e6);
 d = [0.01:0.005:2, 2.01:0.01:20];
-[slant, el_d] = air_to_ground_geometry_rev1(d, p.es.h_m, opts.h_dev_m, p.prop.k_factor, p.prop.re_km);
-fsl = 20 * log10(4 * pi * slant * 1000 / lambda);
 rows = {};
-for el_pt = [p.es.el_long_deg p.es.el_short_deg]
-    g = es_gain_rev1(abs(el_d - el_pt), p.es.diam_m, f_mhz, p.es.eff, "single");
-    i_dBm = e10 - p.uwb.pol_loss_dB - fsl + g;
-    for c = ["long" "short"]
-        lim = crit.(c + "_dBm");
-        k = find(i_dBm > lim, 1, 'last');
-        if isempty(k), sep = 0; else, sep = d(min(k + 1, numel(d))); end
-        rows(end+1, :) = {sprintf("Single entry, 100%% duty, LOS, dish %g deg, %s-term", el_pt, c), ...
-            1000 * sep, "300-3600", "ECC Report 327 sec. 0.5.1"}; %#ok<AGROW> four rows
+for h_es = [p.es.h_m opts.h_dev_m]
+    [slant, el_d] = air_to_ground_geometry_rev1(d, h_es, opts.h_dev_m, p.prop.k_factor, p.prop.re_km);
+    fsl = 20 * log10(4 * pi * slant * 1000 / lambda);
+    for el_pt = [p.es.el_long_deg p.es.el_short_deg]
+        g = es_gain_rev1(abs(el_d - el_pt), p.es.diam_m, f_mhz, p.es.eff, "single");
+        i_dBm = e10 - p.uwb.pol_loss_dB - fsl + g;
+        for c = ["long" "short"]
+            lim = crit.(c + "_dBm");
+            k = find(i_dBm > lim, 1, 'last');
+            if isempty(k), sep = 0; else, sep = d(min(k + 1, numel(d))); end
+            rows(end+1, :) = {sprintf("Single entry, 100%% duty, LOS, dish %g m high at %g deg, %s-term", h_es, el_pt, c), ...
+                1000 * sep, "300-3600", "ECC Report 327 sec. 0.5.1"}; %#ok<AGROW> eight rows
+        end
     end
 end
 

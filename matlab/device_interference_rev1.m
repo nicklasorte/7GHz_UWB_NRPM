@@ -1,4 +1,4 @@
-function [i_mW, phi_deg, L_db] = device_interference_rev1(dev, pt, geo, F, ant, const_dB, clutter_f_ghz)
+function [i_mW, phi_deg, L_db] = device_interference_rev1(dev, pt, geo, F, ant, const_dB, clutter_f_ghz, short_rule)
 %DEVICE_INTERFERENCE_REV1 Interference power from each UWB device at the earth station antenna output.
 %   [i_mW, phi_deg, L_db] = DEVICE_INTERFERENCE_REV1(dev, pt, geo, F, ant, const_dB, clutter_f_ghz)
 %   evaluates one link per element. Shared by AGGREGATE_DRONE_MC_REV4 and
@@ -16,9 +16,12 @@ function [i_mW, phi_deg, L_db] = device_interference_rev1(dev, pt, geo, F, ant, 
 %        device end (NaN = no clutter, for example airborne drones)
 %
 %   Clutter uses the validated port github.com/nicklasorte/itu_p2108
-%   (p2108_terrestrial_rev1, exact inverse CCDF). Paths shorter than the
-%   model's 0.25 km minimum use the 0.25 km loss (an assumption; the
-%   Recommendation gives no value there).
+%   (p2108_terrestrial_rev1, exact inverse CCDF). The Recommendation gives
+%   no value for paths shorter than 0.25 km. short_rule sets the assumption:
+%     "zero" (default)  no clutter loss below 0.25 km (conservative)
+%     "hold"            the 0.25 km loss below 0.25 km
+%   The choice moves the long-term ground baseline by up to about 17 dB,
+%   because the nearest devices set that level.
 %
 %   Elevation and off-axis angle use the 4/3-Earth geometry of
 %   AIR_TO_GROUND_GEOMETRY_REV1 in a form that avoids atan2d round trips.
@@ -30,6 +33,7 @@ arguments
     ant struct
     const_dB (1,1) double
     clutter_f_ghz (1,1) double = NaN
+    short_rule (1,1) string {mustBeMember(short_rule, ["zero", "hold"])} = "zero"
 end
 theta = dev.r_km / geo.ae_km;
 r2 = geo.ae_km + dev.h_m / 1000;
@@ -44,7 +48,11 @@ phi_deg = acosd(min(max(cos_phi, -1), 1));
 g = es_gain_rev1(phi_deg, ant.diam_m, ant.f_mhz, ant.eff, ant.pattern);
 L_db = F(log10(max(dev.r_km, 0.02)), dev.h_m, dev.p_time);
 if isfinite(clutter_f_ghz)
-    L_db = L_db + p2108_terrestrial_rev1(clutter_f_ghz, max(dev.r_km, 0.25), dev.p_loc, q_inverse="exact");
+    L_ctt = p2108_terrestrial_rev1(clutter_f_ghz, max(dev.r_km, 0.25), dev.p_loc, q_inverse="exact");
+    if short_rule == "zero"
+        L_ctt(dev.r_km < 0.25) = 0;
+    end
+    L_db = L_db + L_ctt;
 end
 i_mW = exp((const_dB - L_db + g) * (log(10) / 10));
 end

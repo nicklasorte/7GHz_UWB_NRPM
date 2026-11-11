@@ -293,3 +293,20 @@ i_calc = val("UWB EIRP in the reference bandwidth at f") - val("EIRP reduction t
     - val("Polarization mismatch") - val("ITU-R P.528-5 basic transmission loss") + val("Dish gain toward the drone");
 verifyEqual(tc, val("Interference at the antenna output"), i_calc, 'AbsTol', 1e-9);
 end
+
+function test_clutter_short_path_rule(tc)
+% Below 0.25 km, "zero" adds no clutter loss; "hold" adds the 0.25 km loss. Beyond 0.25 km both agree.
+F = @(x, h, pt) 100 + 0 * x;                         % flat 100 dB basic loss stands in for P.528
+dev = struct('r_km', [0.1; 0.2; 0.5], 'az_rad', [0; 0; 0], 'h_m', [1.5; 1.5; 1.5], ...
+    'p_time', [50; 50; 50], 'p_loc', [50; 50; 50]);
+pt = struct('el_rad', deg2rad([5; 5; 5]), 'az_rad', [0; 0; 0]);
+geo = struct('ae_km', 8500, 'r1_km', 8500.02);
+ant = struct('diam_m', 2.4, 'f_mhz', 8160, 'eff', 0.6, 'pattern', "single");
+[~, ~, Lz] = device_interference_rev1(dev, pt, geo, F, ant, -30, 8.16, "zero");
+[~, ~, Lh] = device_interference_rev1(dev, pt, geo, F, ant, -30, 8.16, "hold");
+L25 = p2108_terrestrial_rev1(8.16, 0.25, 50, q_inverse="exact");
+verifyEqual(tc, Lz(1:2), [100; 100]);
+verifyEqual(tc, Lh(1:2), 100 + [L25; L25], 'AbsTol', 1e-12);
+verifyEqual(tc, Lz(3), Lh(3));
+verifyGreaterThan(tc, L25, 10);
+end

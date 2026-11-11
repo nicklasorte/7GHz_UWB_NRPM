@@ -144,7 +144,7 @@ cases = struct( ...
               "High: peak x3, all equipped, continuous", "Bound: Manhattan peak x6, all, continuous"}, ...
     'density', {pick_case(dens_nyc, 1, 0.1, 0.05), pick_case(dens_nyc, 3, 1, 0.05), ...
                 pick_case(dens_nyc, 3, 1, 1), pick_case(dens_man, 6, 1, 1)}, ...
-    'n_iter', {4e6, 4e6, 1e6, 2e5});
+    'n_iter', {4e6, 4e6, 1e6, 6e5});
 fprintf('Step 5 done (%.0f s)\n', toc(t_start));
 
 %% 6-8. Aggregate Monte Carlo, footprint check, time basis
@@ -179,8 +179,8 @@ for k = 1:2
         if isempty(v), continue, end
         y = (1:numel(v))' / o.n_iter;
         idx = unique(round(logspace(0, log10(numel(v)), 400)));
-        plot(ax, 10 * log10(v(idx)), 100 * y(idx), '-', 'LineWidth', 1.2, 'DisplayName', sprintf('%.2g/km^2, tracking time', pop.density_per_km2));
-        plot(ax, 10 * log10(v(idx)), 100 * y(idx) * trk, '--', 'LineWidth', 1.2, 'DisplayName', sprintf('%.2g/km^2, all time', pop.density_per_km2), ...
+        plot(ax, 10 * log10(v(idx)), 100 * y(idx) * trk, '-', 'LineWidth', 1.6, 'DisplayName', sprintf('%.2g/km^2, all time', pop.density_per_km2));
+        plot(ax, 10 * log10(v(idx)), 100 * y(idx), ':', 'LineWidth', 1.0, 'DisplayName', sprintf('%.2g/km^2, tracking time only', pop.density_per_km2), ...
             'Color', ax.Children(1).Color);
         fprintf('%s, %s done (%.0f s)\n', links(k).name, cases(c).label, toc(t_start));
     end
@@ -190,7 +190,8 @@ for k = 1:2
     title(ax, links(k).name); ylim(ax, [1e-6 100]); xlim(ax, [-200 -60]);
     if k == 2, legend(ax, 'Location', 'eastoutside', 'FontSize', 7); end
 end
-title(tl, 'CCNY: aggregate UWB drone interference, tracking-time basis (solid) and all-time basis (dashed)');
+title(tl, {'CCNY: aggregate UWB drone interference, percent of all time (solid)', ...
+    'Dotted: percent of tracking time only (the dish receives about 6% of the day for EESS, 4% for MetSat)'});
 exportgraphics(fig2, fullfile(out_dir, 'fig_ccny2_time_basis_ccdf.png'), 'Resolution', 200);
 agg_tbl = cell2table(agg_rows, 'VariableNames', {'link', 'case', 'active_per_km2', 'n_iter', 'tail_samples', ...
     'margin_long_dB', 'margin_short_dB', 'margin_short_lo_dB', 'margin_short_hi_dB', ...
@@ -217,15 +218,20 @@ for k = 1:2
     for pop = [hand indoor]
         o = aggregate_drone_mc_rev4(p, pop, ps{k}, F{k}, links(k).f_mhz, 'n_iter', pop.n_iter, 'chunk', 50, ...
             'pct_exceed', [crit.long_pct crit.short_pct], 'r_edges_km', edges);
+        oh = aggregate_drone_mc_rev4(p, pop, ps{k}, F{k}, links(k).f_mhz, 'n_iter', pop.n_iter, 'chunk', 50, ...
+            'pct_exceed', [crit.long_pct crit.short_pct], 'r_edges_km', edges, 'clutter_short', "hold");
         base_rows(end+1, :) = {links(k).name, pop.name, pop.density_per_km2, o.ci.level_db(1) - crit.long_dBm, ...
             o.ci.level_db_lo(1) - crit.long_dBm, o.ci.level_db_hi(1) - crit.long_dBm, ...
-            o.ci.level_db(2) - crit.short_dBm, 100 * o.ci.frac(2), o.ci.frac(2) * ps{k}.frac_tracking * min_per_year}; %#ok<SAGROW> four rows
+            o.ci.level_db(2) - crit.short_dBm, 100 * o.ci.frac(2), o.ci.frac(2) * ps{k}.frac_tracking * min_per_year, ...
+            oh.ci.level_db(1) - crit.long_dBm}; %#ok<SAGROW> four rows
         fprintf('Baseline %s, %s done (%.0f s)\n', links(k).name, pop.name, toc(t_start));
     end
 end
 base_tbl = cell2table(base_rows, 'VariableNames', {'link', 'population', 'active_per_km2', 'margin_long_dB', ...
-    'margin_long_lo_dB', 'margin_long_hi_dB', 'margin_short_dB', 'pct_trk_above_short', 'min_per_year_above_short'});
-disp('Ground UWB baseline at CCNY (ECC Report 327 urban densities via FiRa; validated P.2108):'); disp(base_tbl);
+    'margin_long_lo_dB', 'margin_long_hi_dB', 'margin_short_dB', 'pct_trk_above_short', 'min_per_year_above_short', ...
+    'margin_long_hold_dB'});
+disp(['Ground UWB baseline at CCNY (ECC Report 327 urban densities via FiRa; validated P.2108; ' ...
+    'no clutter below 0.25 km; last column holds the 0.25 km loss below 0.25 km):']); disp(base_tbl);
 writetable(base_tbl, fullfile(out_dir, 'ground_baseline.csv'));
 
 %% 10. Clutter-model swap at NEN WG1: what changed
@@ -252,12 +258,16 @@ swap_rows = {};
 crit = eess_criteria_rev1(8160, p_wg1);
 for pop = [hand indoor]
     o3 = aggregate_drone_mc_rev3(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', pop.n_iter, 'chunk', 50);
-    o4 = aggregate_drone_mc_rev4(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', pop.n_iter, 'chunk', 50);
-    swap_rows(end+1, :) = {pop.name, o3.pct_dBm(1, 1) - crit.long_dBm, o4.ci.level_db(1) - crit.long_dBm, ...
-        o4.ci.level_db_lo(1) - crit.long_dBm, o4.ci.level_db_hi(1) - crit.long_dBm}; %#ok<SAGROW> two rows
+    o4z = aggregate_drone_mc_rev4(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', pop.n_iter, 'chunk', 50, 'clutter_short', "zero");
+    o4h = aggregate_drone_mc_rev4(p_wg1, pop, ps_wg1, F_wg1, 8160, 'n_iter', pop.n_iter, 'chunk', 50, 'clutter_short', "hold");
+    swap_rows(end+1, :) = {pop.name, o3.pct_dBm(1, 1) - crit.long_dBm, ...
+        o4z.ci.level_db(1) - crit.long_dBm, o4z.ci.level_db_lo(1) - crit.long_dBm, o4z.ci.level_db_hi(1) - crit.long_dBm, ...
+        o4h.ci.level_db(1) - crit.long_dBm}; %#ok<SAGROW> two rows
 end
-swap_tbl = cell2table(swap_rows, 'VariableNames', {'population', 'margin_long_rev3_dB', 'margin_long_rev4_dB', 'rev4_lo_dB', 'rev4_hi_dB'});
-disp('WG1 ground baseline, long-term margin: old clutter (rev3) vs validated port (rev4):'); disp(swap_tbl);
+swap_tbl = cell2table(swap_rows, 'VariableNames', {'population', 'margin_long_rev3_dB', ...
+    'margin_long_rev4_zero_dB', 'rev4_zero_lo_dB', 'rev4_zero_hi_dB', 'margin_long_rev4_hold_dB'});
+disp(['WG1 ground baseline, long-term margin: rev3 (old formula, no clutter below 0.25 km), ' ...
+    'rev4 zero (validated port, same short-path rule), rev4 hold (0.25 km loss below 0.25 km):']); disp(swap_tbl);
 writetable(swap_tbl, fullfile(out_dir, 'wg1_clutter_swap.csv'));
 fprintf('Step 10 done (%.0f s)\n', toc(t_start));
 

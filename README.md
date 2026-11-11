@@ -6,7 +6,8 @@ DRAFT//PRE-DECISIONAL. Public sources only.
 
 ## Start here
 
-- [Working paper (Markdown)](docs/working_paper_uwb_ch9_eess_rev0.md), also as `docs/working_paper_uwb_ch9_eess_rev0.docx`
+- [Working paper, Rev 1 (Markdown)](docs/working_paper_uwb_ch9_eess_rev1.md), also as `docs/working_paper_uwb_ch9_eess_rev1.docx`: adds a New York City station example, FAA-based drone density, confidence intervals, both time bases, the validated P.2108 clutter model, and intermediate calculations for NASA review
+- [Working paper, Rev 0](docs/working_paper_uwb_ch9_eess_rev0.md)
 - [Assumptions register and NASA red-team review](docs/assumptions_and_red_team_rev0.md), also as `.docx`
 - [Results](docs/results.md), including the next-steps analysis (P.528, real passes, ground UWB baseline, mitigations, risk)
 - [Next-steps results addendum](docs/next_steps_results_rev0.md)
@@ -34,6 +35,7 @@ simplified_main_beam_rev1      % bounding LOS main-beam distances + pulse metric
 main_uwb_ch9_eess_rev1         % single-entry and aggregate Monte Carlo (about 5 minutes)
 red_team_sensitivity_rev1      % NASA-skeptic sensitivity cases for NEN WG1 (Wallops)
 next_steps_analysis_rev1       % P.528 loss, SGP4 pass statistics, ground UWB baseline, mitigation menu, risk (about 15 minutes)
+example_station_ccny_rev1      % site example: CCNY NOAA-CREST 2.4 m X-band station, New York City (about 20 minutes)
 runtests('tests/test_uwb_eess_rev1.m')
 ```
 
@@ -48,8 +50,17 @@ runtests('tests/test_uwb_eess_rev1.m')
 | `aggregate_drone_mc_rev2.m` | Monte Carlo with P.528 loss, random time percentage per device, real pointing, and device populations |
 | `aggregate_drone_mc_rev3.m` | Same model as rev2, about 1.6 times faster (Threefry generator, cheaper geometry), optional parfor |
 | `single_entry_p528_rev1.m` | Single-drone separation with P.528 loss |
-| `p2108_terrestrial_clutter_rev1.m` | ITU-R P.2108-1 sec. 3.2 clutter for ground UWB devices |
+| `p2108_terrestrial_clutter_rev1.m` | Superseded: early P.2108 sec. 3.2 reconstruction (caps distance at 2 km); rev4 uses the validated itu_p2108 port |
 | `next_steps_analysis_rev1.m` | Runs the next-steps analysis |
+| `example_station_ccny_rev1.m` | Site example at CCNY, New York City: passes, link budget, single-drone map, FAA density, aggregate with 95% intervals, footprint check, time-basis graph, ground baseline, clutter swap, ECC 327 and AirTag checks; outputs in `output/ccny/` |
+| `aggregate_drone_mc_rev4.m` | Monte Carlo with the validated P.2108 port (needs [itu_p2108](https://github.com/nicklasorte/itu_p2108) next to this repo), pattern by antenna size, and confidence intervals |
+| `device_interference_rev1.m` | Per-device link physics shared by the Monte Carlo and the footprint check |
+| `exceedance_footprint_rev1.m` | Single-device exceedance area and the Poisson cross-check |
+| `mc_tail_ci_rev1.m` | Order-statistic and Clopper-Pearson 95% intervals |
+| `drone_density_faa_rev1.m` | Active UWB drone density from FAA 2025 flight hours and Census population |
+| `link_budget_walkthrough_rev1.m` | Single-drone link budget, one row per step, with sources |
+| `es_gain_rev1.m`, `f699_gain_rev1.m` | Earth station pattern by size: SA.509-3, or F.699-5 for D/lambda <= 100 |
+| `ecc327_consistency_rev1.m` | Reruns ECC Report 327 scenarios for comparison with its published distances |
 | `uwb_power_in_band_rev1.m` | UWB EIRP in a victim bandwidth (IEEE mask or FCC envelope) |
 | `uwb_pulse_metrics_rev1.m` | Average, in-packet, and peak power; noise-like vs. pulse-resolved |
 | `main_beam_distance_rev1.m` | Free-space boresight distance and the height needed to be on boresight |

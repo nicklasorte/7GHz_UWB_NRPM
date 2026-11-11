@@ -26,6 +26,7 @@ function out = aggregate_drone_mc_rev4(p, pop, ps, F, f_mhz, opts)
 %
 %   Name-value options: n_iter, chunk, seed, pct_exceed, r_edges_km,
 %   parallel_flag (as rev3), pattern ("multiple" default), ci_level (0.95),
+%   clutter_short ("zero" default or "hold"; see DEVICE_INTERFERENCE_REV1),
 %   p2108_src (path to itu_p2108/src; default sibling clone).
 %
 %   Fields added to the rev3 output: ci (MC_TAIL_CI_REV1 at r = 0),
@@ -44,6 +45,7 @@ arguments
     opts.parallel_flag (1,1) double {mustBeMember(opts.parallel_flag, [0 1])} = 0
     opts.pattern (1,1) string {mustBeMember(opts.pattern, ["single", "multiple"])} = "multiple"
     opts.ci_level (1,1) double = 0.95
+    opts.clutter_short (1,1) string {mustBeMember(opts.clutter_short, ["zero", "hold"])} = "zero"
     opts.p2108_src (1,1) string = string(fullfile(fileparts(mfilename('fullpath')), '..', '..', 'itu_p2108', 'src'))
 end
 if pop.clutter && isempty(which('p2108_terrestrial_rev1'))
@@ -82,7 +84,7 @@ if pop.clutter, f_clut = f_mhz / 1000; end
 n_chunks = ceil(opts.n_iter / opts.chunk);
 chunk_agg = cell(n_chunks, 1);
 seed = opts.seed; chunk = opts.chunk; n_iter = opts.n_iter;
-args = {lambda_dev, r_max_km, pop, az_trk, el_trk, geo, F, ant, const_dB, f_clut, edges, n_r};
+args = {lambda_dev, r_max_km, pop, az_trk, el_trk, geo, F, ant, const_dB, f_clut, edges, n_r, opts.clutter_short};
 if opts.parallel_flag == 1
     parfor c = 1:n_chunks
         n_c = min(chunk, n_iter - (c - 1) * chunk);
@@ -111,12 +113,13 @@ out.n_iter = opts.n_iter;
 out.seed = opts.seed;
 out.pattern_src = pattern_src;
 out.f_mhz = f_mhz;
+out.clutter_short = opts.clutter_short;
 if opts.n_iter * min(opts.pct_exceed) / 100 < 1
     warning('aggregate_drone_mc_rev4:tail', 'n_iter too small to resolve the %.4g%% tail.', min(opts.pct_exceed));
 end
 end
 
-function agg = run_chunk(seed, c, n_c, lambda_dev, r_max_km, pop, az_trk, el_trk, geo, F, ant, const_dB, f_clut, edges, n_r)
+function agg = run_chunk(seed, c, n_c, lambda_dev, r_max_km, pop, az_trk, el_trk, geo, F, ant, const_dB, f_clut, edges, n_r, short_rule)
 rs = RandStream('Threefry', 'Seed', seed);          % counter-based; one substream per chunk, so serial == parallel
 rs.Substream = c;
 n_dev = poissinv(rand(rs, n_c, 1), lambda_dev);
@@ -136,7 +139,7 @@ else
 end
 pt.el_rad = el_trk(pick(it));
 pt.az_rad = az_trk(pick(it));
-i_mW = device_interference_rev1(dev, pt, geo, F, ant, const_dB, f_clut);
+i_mW = device_interference_rev1(dev, pt, geo, F, ant, const_dB, f_clut, short_rule);
 bin = discretize(dev.r_km, edges);
 acc = accumarray([it, bin], i_mW, [n_c, n_r]);
 agg = fliplr(cumsum(fliplr(acc), 2));               % column k: devices outside edges(k)
