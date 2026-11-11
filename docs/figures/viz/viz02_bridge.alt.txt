@@ -1,0 +1,1 @@
+Waterfall chart from +43 dB for one drone following the beam to -50 dB under normal conditions at the Wallops NEN station. The largest step, 55 dB, is going from a perfectly placed drone to random traffic. Counting over all time gives -60 dB; a 20 dB apportionment gives -34 dB. Both stay below the allowance at 0 dB.

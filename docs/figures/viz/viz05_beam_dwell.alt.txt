@@ -1,0 +1,1 @@
+Two panels. Left: the angle between the Wallops dish boresight and a hovering drone over one pass, dipping inside the exceedance cone for about 7 seconds. Right: histogram of the longest dwell in each of 556 passes over 30 days, with a median of 8.2 seconds.

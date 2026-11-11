@@ -1,0 +1,19 @@
+source,context,application,activity_pct,reference
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Physical access control,0.006,Table 1
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Parking management,0.05,Table 1
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Parking management (Table 18),0.25,Table 18
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Outdoor logistics,0.3,Table 1
+ECC Report 327 (2021),6-8.5 GHz UWB applications,In-vehicle (low),0.4,Tables 68 and 76
+ECC Report 327 (2021),6-8.5 GHz UWB applications,In-vehicle (high),1,Tables 68 and 76
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Indoor positioning,1,Table 6
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Vehicle-mounted fixed outdoor (rural),0.5,Table 4
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Vehicle-mounted fixed outdoor (suburban),2,Table 4
+ECC Report 327 (2021),6-8.5 GHz UWB applications,Vehicle-mounted fixed outdoor (urban),5,Table 4
+ECC Report 327 (2021),EESS and MetSat earth station aggregate studies,Generic indoor and outdoor (from ECC Report 64),5,Tables 67-80
+CEPT Report 9 (2005),First European 6-8.5 GHz study,Average activity factor (upper bound),5,Section 2.2.2 and Annex 2
+ECC Report 94 (2006),Low duty cycle mitigation 3.4-4.8 GHz,Sum of on-times per second,5,Sections 3 and 10
+ECC Report 94 (2006),Low duty cycle mitigation 3.4-4.8 GHz,Sum of on-times per hour,0.5,Sections 3 and 10
+FiRa simulation report (2025),U.S. channel 9 aggregate,Lowest value used,0.01,Main study (from ECC Report 327 Table 18)
+FiRa simulation report (2025),U.S. channel 9 aggregate,Highest value used,5,Main study (from ECC Report 327 Table 18)
+FiRa simulation report (2025),U.S. channel 9 aggregate,Outdoor vehicles (appendix),6,Appendix table
+FCC 26-66 NPRM (2026),Proposed new low-power device category,Under 1% in any 24 hours,1,Federal Register 2026-22337

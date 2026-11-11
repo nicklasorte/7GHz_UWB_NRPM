@@ -34,6 +34,7 @@ This paper does five things:
 - A consistency check against ECC Report 327 and measured channel 9 emissions from a shipping device.
 - A table of the intermediate calculations NASA can check, and those that need NASA data.
 - Rev 1.1: the assumption that drones can transmit, the duty cycles used in comparable studies in this band, the duty cycle at which drones would reach the allowance, and the distance inside which one drone exceeds each criterion, main beam and sidelobes, at the NASA NEN station at Wallops (see "Key assumptions: drones transmit, how often, and how close").
+- Rev 1.1: 10 figures for the barbell analysis (Figures 1, 9, and 11-18), built from the published run outputs by `python/viz/` (seven figures) and `matlab/viz/` (three figures). The figure code reads every number from `docs/bridge_results/`, so the figures and the tables can't disagree.
 
 The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz_UWB_NRPM`. Appendix A maps each equation to the code.
 
@@ -58,8 +59,10 @@ The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz
 - **Every study of UWB in this band assumes average activity of 5% or less.** ECC Report 327 uses 0.006%-5% by application, CEPT Report 9 assumes below 5%, Europe's low duty cycle rule caps transmission at 5% per second, and the NPRM proposes under 1% a day. One FiRa appendix table uses 6% for outdoor vehicles.
 - **At Wallops, no duty cycle reaches the allowance.** Every drone near the station could transmit continuously and stay under the short-term allowance, by at least 5.8 dB even at a sustained peak density with ECC's 20 dB apportionment.
 - **In Manhattan, the worst case needs a 7.3% duty cycle,** above every cited activity factor and more than seven times the NPRM's 1%, and only with the 20 dB apportionment. A sustained peak density six times the average would lower that to 1.2%.
-- **Distance: inside about 1.2 km in the main beam, or tens of meters off it.** One drone at 400 ft exceeds the short-term criterion on the Wallops boresight out to 5.6 km, but can only meet the boresight of a 5° pass within 1.16 km. One degree off boresight it must be within 300 m; at 5°, within 40 m.
+- **Distance: inside about 1.3 km in the main beam, or tens of meters off it.** One drone at 400 ft exceeds the short-term criterion on the Wallops boresight out to 5.6 km, but can only meet the boresight of a 5° pass within 1.28 km. One degree off boresight it must be within 300 m; at 5°, within 40 m.
 - **One drone at these duty cycles can't exceed the long-term criterion at any distance,** because that criterion allows 20% of the time. At 1% duty, using up the short-term allowance at Wallops would take about 2,100 passes with a drone moved to exactly the right spot in the main beam before each one.
+
+![Figure 1: The barbell. One drone following the beam at the device limit (worst case) against normal conditions (measured AirTag EIRP, 1% duty cycle, FAA-derived density, every drone carrying UWB), in dB relative to the short-term allowance. Small markers: the all-time basis and the 20 dB apportionment.](figures/viz/viz01_barbell.png)
 
 These results are threshold distances against ITU-R sharing criteria. They aren't a finding of harmful interference as defined in 47 CFR 2.1, which depends on actual service degradation.
 
@@ -126,7 +129,7 @@ EESS s-E                                 [8025 =================================
                                          Aqua 8160, Terra/Landsat 8212.5
 ```
 
-![Figure 1: UWB channel 9 EIRP in a 10 MHz reference bandwidth across 7.7-8.4 GHz, IEEE mask and FCC envelope, with the MetSat and EESS bands shaded.](figures/fig1_uwb_eirp_vs_freq.png)
+![Figure 2: UWB channel 9 EIRP in a 10 MHz reference bandwidth across 7.7-8.4 GHz, IEEE mask and FCC envelope, with the MetSat and EESS bands shaded.](figures/fig1_uwb_eirp_vs_freq.png)
 
 ## What NASA is likely concerned about
 
@@ -275,7 +278,7 @@ All distances use the in-channel EIRP of -31.3 dBm per 10 MHz and 3 dB polarizat
 | NASA NEN | 30.3 dB | 38.6 dB |
 | Landsat at EROS | 29.3 dB | 37.5 dB |
 
-![Figure 2: Interference from one UWB drone on boresight versus distance for the three victim systems, with the ITU-R criteria and the Part 107 boresight limits.](figures/fig4_main_beam_distance.png)
+![Figure 3: Interference from one UWB drone on boresight versus distance for the three victim systems, with the ITU-R criteria and the Part 107 boresight limits.](figures/fig4_main_beam_distance.png)
 
 ## Interpretation
 
@@ -295,7 +298,7 @@ One drone hovers in the dish azimuth at a set altitude while the dish points at 
 | 60 m | 0.96 km | 0.34 km | 0.14 km |
 | 121.92 m | 1.71 km | 0.63 km | 0.25 km |
 
-![Figure 3: One drone at 121.92 m in the dish azimuth, SA.509-3 single-entry pattern, NEN 11.3 m antenna, 8100 MHz, for three pointing elevations.](figures/fig2_single_entry.png)
+![Figure 4: One drone at 121.92 m in the dish azimuth, SA.509-3 single-entry pattern, NEN 11.3 m antenna, 8100 MHz, for three pointing elevations.](figures/fig2_single_entry.png)
 
 At 7800 MHz (MetSat, same antenna), the long-term separation at 121.92 m is 1.53 km at 5°.
 
@@ -310,7 +313,7 @@ Each Monte Carlo iteration draws a Poisson number of active drones, uniform in a
 | 0.1 | 0.3 km | -26.6 dB | +4.0 dB | -45.3 dBm/MHz |
 | 1 | 1.3 km | -15.3 dB | +15.0 dB | -56.3 dBm/MHz |
 
-![Figure 4: Aggregate interference minus criterion versus geofence radius for four active drone densities; long term (left) and short term (right).](figures/fig3_aggregate_margin_vs_radius.png)
+![Figure 5: Aggregate interference minus criterion versus geofence radius for four active drone densities; long term (left) and short term (right).](figures/fig3_aggregate_margin_vs_radius.png)
 
 Negative margin means the criterion is met. The short-term criterion governs at every density. The aggregate runs use the 1 ms average EIRP; using in-packet power for the short-term test adds up to 7.3 dB to the short-term margins.
 
@@ -394,7 +397,7 @@ P.528 matches free space within 0.1 dB at these ranges, as it should for a short
 
 ## Step 4: Single-drone interference map
 
-![Figure 5: One drone at 400 ft around the CCNY dish pointed north at 5°. Color shows interference minus the long-term criterion; the black contour is the long-term criterion and the red contour the short-term criterion.](figures/fig_ccny1_single_drone_map.png)
+![Figure 6: One drone at 400 ft around the CCNY dish pointed north at 5°. Color shows interference minus the long-term criterion; the black contour is the long-term criterion and the red contour the short-term criterion.](figures/fig_ccny1_single_drone_map.png)
 
 A drone at 400 ft exceeds the short-term criterion over 0.001 km² and the long-term criterion over 0.06 km², both in a narrow sliver along the dish azimuth. Elsewhere, interference is 20-60 dB below the criteria.
 
@@ -472,9 +475,9 @@ The Poisson prediction falls inside the Monte Carlo 95% interval in the Mid and 
 
 ## Step 8: Time basis
 
-The criteria are percentages of time, and it matters whether "time" means all time or only the time the dish is receiving. Figure 6 shows both. The all-time curves (solid) are the tracking-time curves (dotted) scaled down by the share of time the dish tracks, about 6% (EESS) and 4% (MetSat).
+The criteria are percentages of time, and it matters whether "time" means all time or only the time the dish is receiving. Figure 7 shows both. The all-time curves (solid) are the tracking-time curves (dotted) scaled down by the share of time the dish tracks, about 6% (EESS) and 4% (MetSat).
 
-![Figure 6: Aggregate UWB drone interference at CCNY for the four density cases, as a percentage of all time (solid) and of tracking time only (dotted). Stars mark the criteria.](figures/fig_ccny2_time_basis_ccdf.png)
+![Figure 7: Aggregate UWB drone interference at CCNY for the four density cases, as a percentage of all time (solid) and of tracking time only (dotted). Stars mark the criteria.](figures/fig_ccny2_time_basis_ccdf.png)
 
 In minutes per year, the High case puts the EESS link above the short-term criterion for about 1.7 minutes. The 0.005% criterion allows 26 minutes per year if counted over all time, or about 1.5 minutes per year if counted over tracking time only. The choice of basis, not the propagation or density model, is what decides the High case. This paper makes no choice between the bases. It's a question for the joint assumptions agreement.
 
@@ -495,9 +498,9 @@ Under the conservative short-path rule, the ground devices already legal today c
 
 ## Step 10: What the validated clutter model changed
 
-Rev 0 used a reconstruction of P.2108 section 3.2 that capped the distance at 2 km. The validated port follows the NTIA reference: min(L(2 km), L(d)). The two differ by up to 1.02 dB below 2 km and 0.034 dB beyond, at high location percentages (Figure 7).
+Rev 0 used a reconstruction of P.2108 section 3.2 that capped the distance at 2 km. The validated port follows the NTIA reference: min(L(2 km), L(d)). The two differ by up to 1.02 dB below 2 km and 0.034 dB beyond, at high location percentages (Figure 8).
 
-![Figure 7: Rev 0 clutter formula minus the validated P.2108 port, at 8.16 GHz.](figures/fig_ccny3_clutter_swap.png)
+![Figure 8: Rev 0 clutter formula minus the validated P.2108 port, at 8.16 GHz.](figures/fig_ccny3_clutter_swap.png)
 
 The step separates the formula fix from the short-path assumption, at the NEN Wallops station:
 
@@ -623,6 +626,8 @@ ECC Report 327 explains the low values: the market moved from the high-data-rate
 
 **The paper's duty-cycle assumption:** the base case uses 1%, from the NPRM's proposed limit. Results are shown across the cited range (0.05%, 0.3%, 1%, and 5%) and at continuous transmission (100%) as a bound no study in this band uses for average activity.
 
+![Figure 9: Cited UWB activity factors in the 6-8.5 GHz studies (docs/duty_cycle_citations.csv), against the duty cycle that would reach the short-term allowance at CCNY with the 20 dB apportionment (7.3%) and at a sustained peak density (1.2%). At Wallops, no duty cycle reaches the allowance.](figures/viz/viz07_duty_evidence.png)
+
 ## Result: the duty cycle at which drones would reach the allowance
 
 The share of time above the short-term criterion grows in proportion to the duty cycle, so each case has a break-even duty cycle at which it reaches the allowance. These results assume every drone carries UWB (a bound, since there is no public data on the share), the AirTag's measured EIRP, and local drone density from FAA and Census data (`docs/bridge_results/duty_break_even_*.csv`).
@@ -646,11 +651,17 @@ The values are dB relative to the allowance: negative is under.
 
 **The caveat is sustained peak density.** If drone traffic in Manhattan held six times its annual average around the clock, the apportioned case would break even at 1.2%: still above the NPRM's 1%, but inside ECC's range. A sustained peak is a bound: the criteria are percentages of a year, and the annual average is the density that matches them.
 
-![Figure 8: Time above the short-term criterion against the UWB duty cycle at CCNY, from 0.1% to continuous transmission, on both time bases and with the 20 dB apportionment. The vertical lines mark the NPRM's 1% and ECC's 5%.](figures/fig_duty_sweep_ccny.png)
+![Figure 10: Time above the short-term criterion against the UWB duty cycle at CCNY, from 0.1% to continuous transmission, on both time bases and with the 20 dB apportionment. The vertical lines mark the NPRM's 1% and ECC's 5%.](figures/fig_duty_sweep_ccny.png)
 
 ## Result: how close one drone has to be
 
 For one drone at 400 ft, at the AirTag's measured EIRP, with 3 dB polarization loss and P.528 median loss, the table gives the slant distance inside which the drone exceeds each criterion whenever it transmits, by its angle off the dish boresight (`docs/bridge_results/threshold_distance_*.csv`). Distance doesn't depend on duty cycle.
+
+Figures 11 and 12 show what the main-beam distance means on the ground at Wallops. Seen from above, one drone at 400 ft exceeds the short-term criterion during a 5° pass only inside a region 119 m long and 10 m wide, 1,221 m to 1,339 m out along the pointing azimuth. Seen from the side, that region is where the beam passes through the drone band below the 400 ft ceiling: the beam centerline crosses 400 ft at 1.28 km, and the exceedance region leaves the band at 1.33 km. For a 10° pass, it leaves at 0.66 km.
+
+![Figure 11: Plan view of the short-term exceedance region for one drone at 400 ft around the Wallops NEN WG1 dish pointed north at 5°. Dashed: the region if a 20 dB apportionment applied.](figures/viz/viz03_plan_view.png)
+
+![Figure 12: Side view along the pointing azimuth. Filled: where one drone exceeds the short-term criterion for a 5° pass (blue) and a 10° pass (gray); the band is the Part 107 ceiling of 400 ft. Vertical scale exaggerated.](figures/viz/viz04_side_view.png)
 
 | Off-axis angle | Wallops gain | Wallops short-term | Wallops long-term | CCNY gain | CCNY short-term | CCNY long-term |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -666,14 +677,16 @@ For one drone at 400 ft, at the AirTag's measured EIRP, with 3 dB polarization l
 
 Patterns: ITU-R SA.509-3 at Wallops (D/λ about 308) and ITU-R F.699-5 at CCNY (D/λ about 65). Rev 0 reported a 42 km main-beam bound at the regulatory limit in free space; this table uses the measured EIRP and P.528 loss.
 
-![Figure 9: Distance inside which one drone exceeds each criterion, by angle off the boresight of the Wallops NEN dish. The red line is the farthest point at which a 400 ft drone can meet the boresight of a 5° pass.](figures/fig_threshold_distance_wallops.png)
+![Figure 13: Distance inside which one drone exceeds each criterion, by angle off the boresight of the Wallops NEN dish. The marked point is the farthest a 400 ft drone can meet the boresight of a 5° pass (1.28 km). The MATLAB version is figures/fig_threshold_distance_wallops.png.](figures/viz/viz06_threshold_distance.png)
 
 Four things follow from this table:
 
-- **Main beam: the distance is out of reach beyond about 1.2 km.** The short-term distance on boresight is 5.6 km at Wallops, but a drone at 400 ft can only meet the boresight of a 5° pass out to 1.16 km; farther out, the beam passes above it. Inside 1.16 km, any drone in the main beam exceeds the short-term criterion while it transmits.
+- **Main beam: the distance is out of reach beyond about 1.3 km.** The short-term distance on boresight is 5.6 km at Wallops, but a drone at 400 ft can only meet the boresight of a 5° pass out to 1.28 km; farther out, the beam passes above it. Inside 1.28 km, any drone in the main beam exceeds the short-term criterion while it transmits.
 - **Sidelobes: the distance collapses within a few degrees.** One degree off boresight, a drone must be within about 300 m. At 5°, within 40-50 m. Beyond 20°, within 10 m.
 - **The long-term criterion is out of reach for one drone at the cited duty cycles.** It allows 20% of the time. A drone that transmits less than 20% of the time can't exceed it alone at any distance. Only the short-term criterion is in play.
 - **The beam moves.** The dish tracks the satellite, so a drone that is in the main beam at one moment isn't a few seconds later. At Wallops, a hovering drone at the best spot stays in the exceedance cone for about 8 seconds per pass (median over 556 passes in 30 days).
+
+![Figure 14: Left: the angle between the Wallops dish boresight and a hovering drone over one pass, with the window inside the exceedance cone shaded. Right: the longest dwell in each of 556 passes over 30 days (median 8.2 s).](figures/viz/viz05_beam_dwell.png)
 
 ## Result: how long a drone has to stay that close
 
@@ -689,11 +702,27 @@ The short-term allowance is 0.005% of the time. Dividing by the duty cycle gives
 
 At CCNY, the tracking-time values are about half these, because the dish tracks two satellites instead of four.
 
-Combining the two gives the main-beam case in plain terms. At a 1% duty cycle, a drone at Wallops would need about 17,500 seconds in the main beam during passes. The beam stays on a well-placed hovering drone for about 8 seconds per pass, so it would take about 2,100 passes with the drone moved to exactly the right spot before each one (derived). At 18.5 passes a day, that's about 115 days of perfect positioning, every pass, at 400 ft within about 1.2 km of the dish. At 5%, it's about 430 passes, or 23 days.
+![Figure 15: Time a year one drone must spend inside the short-term distance, in the direction the dish points, to use up the allowance at Wallops, by duty cycle (log scale).](figures/viz/viz08_hours_to_allowance.png)
 
-**The answer at the NASA station:** a drone with a typical UWB device, at the duty cycles every study in this band assumes, causes interference above the ITU-R criteria only inside a main-beam region within about 1.2 km of the dish, or within tens of meters off the beam. It would have to hold that position, in the direction of the satellite, across thousands of passes a year to use up the short-term allowance, and it can't exceed the long-term criterion at all.
+Combining the two gives the main-beam case in plain terms. At a 1% duty cycle, a drone at Wallops would need about 17,500 seconds in the main beam during passes. The beam stays on a well-placed hovering drone for about 8 seconds per pass, so it would take about 2,100 passes with the drone moved to exactly the right spot before each one (derived). At 18.5 passes a day, that's about 115 days of perfect positioning, every pass, at 400 ft within about 1.3 km of the dish. At 5%, it's about 430 passes, or 23 days.
+
+**The answer at the NASA station:** a drone with a typical UWB device, at the duty cycles every study in this band assumes, causes interference above the ITU-R criteria only inside a main-beam region within about 1.3 km of the dish, or within tens of meters off the beam. It would have to hold that position, in the direction of the satellite, across thousands of passes a year to use up the short-term allowance, and it can't exceed the long-term criterion at all.
 
 """
+## Result: from the worst case to normal conditions
+
+The barbell (Figure 1) has two ends. The bridge in Figure 16 walks from one to the other at Wallops, one change at a time: from +43 dB for one drone following the beam at the device limit to -50 dB under normal conditions. The largest step, 55 dB, is going from a perfectly placed drone to random traffic. The two policy decisions are measured from normal conditions: counting over all time instead of tracking time gives -60 dB, and a 20 dB apportionment gives -34 dB. Both stay below the allowance.
+
+![Figure 16: The bridge at Wallops: each step from the worst case to normal conditions, in dB relative to the short-term allowance, with the two decisions (time basis and apportionment) measured from normal conditions. The MATLAB version is figures/fig_bridge_wallops.png.](figures/viz/viz02_bridge.png)
+
+Figure 17 ranks the inputs that could move the normal-conditions result. The widest bar is the 20 dB apportionment, which reaches -34 dB. No single input brings the result near the allowance.
+
+![Figure 17: Six inputs varied one at a time around the Wallops normal-conditions result of -50 dB, on the same axis as the allowance.](figures/viz/viz09_tornado.png)
+
+Figure 18 shows why the same model gives a different answer in Manhattan. Drone density is 140 times higher at CCNY, the single-drone footprint is 2.3 times larger, and the dish tracks about half as much of the time. The normal-conditions result is -50 dB at Wallops and -25 dB at CCNY.
+
+![Figure 18: The drivers of the normal-conditions result at Wallops and CCNY: density, footprint, and tracking share, and the result in dB relative to the allowance.](figures/viz/viz10_two_stations.png)
+
 # What else is needed
 
 | Item | Why it matters | Possible source |

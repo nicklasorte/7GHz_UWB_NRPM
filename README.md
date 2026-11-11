@@ -77,3 +77,12 @@ runtests('tests/test_uwb_eess_rev1.m')
 | `aggregate_drone_mc_rev1.m` | Poisson Monte Carlo aggregate vs. geofence radius |
 | `required_exclusion_radius_rev1.m` | Smallest passing radius |
 | `eess_criteria_rev1.m` | ITU-R SA.1026-5 / SA.1027-6 criteria lookup |
+
+## Figures for the barbell analysis
+
+The 10 figures in Working Paper Rev 1.1 are in `docs/figures/viz/` (PNG, PDF, alt text). The plan is in `docs/dataviz_plan_rev0.md`.
+
+- Python figures 1, 2, 6, 7, 8, 9, and 10: `pip install -r python/viz/requirements.txt`, then `python python/viz/run_all.py` from the repository root.
+- MATLAB figures 3, 4, and 5: `matlab -batch "run('matlab/viz/run_all_viz_rev1.m')"`. Requires `itu_p528` cloned next to this repository.
+
+Every figure reads its numbers from `docs/bridge_results/`, written by `matlab/example_bridge_rev1.m`.
