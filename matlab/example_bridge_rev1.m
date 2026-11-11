@@ -177,16 +177,23 @@ for s = 1:numel(stations)
     disp(tor); writetable(tor, fullfile(out_dir, "tornado_" + st.tag + ".csv"));
 
     %% 9. Duty-cycle sweep and break-even duty cycle
-    ratio = @(duty, area, basis) 10 * log10(max(duty * (1 - exp(-rho * share_base * area)) * basis / (crit.short_pct / 100), realmin));
-    curves = [ratio(duty_sweep, A(2), 1); ratio(duty_sweep, A(2), ps.frac_tracking); ratio(duty_sweep, A(4), 1)];
+    ratio = @(duty, area, basis, pk) 10 * log10(max(duty * (1 - exp(-rho * pk * share_base * area)) * basis / (crit.short_pct / 100), realmin));
+    curves = [ratio(duty_sweep, A(2), 1, 1); ratio(duty_sweep, A(2), ps.frac_tracking, 1); ratio(duty_sweep, A(4), 1, 1)];
     names_c = ["Tracking-time basis, full criterion"; "All-time basis, full criterion"; "Tracking-time basis, 20 dB apportionment"];
-    % ratio is linear in duty, so the break-even duty is base / ratio; above 1 means continuous transmission stays under
-    be = [duty_base * 10^(-ratio(duty_base, A(2), 1) / 10); duty_base * 10^(-ratio(duty_base, A(2), ps.frac_tracking) / 10); ...
-          duty_base * 10^(-ratio(duty_base, A(4), 1) / 10)];
-    cont = curves(:, end);
+    % ratio is linear in duty, so the break-even duty is base / ratio; above 1 means continuous transmission stays under.
+    % Rows 4-6 repeat rows 1-3 at a sustained peak-hour density (peak_range(2) times the annual average).
+    areas = [A(2); A(2); A(4)]; bases = [1; ps.frac_tracking; 1];
+    pk = [ones(3, 1); repmat(peak_range(2), 3, 1)];
+    areas = [areas; areas]; bases = [bases; bases];
+    be = zeros(6, 1); cont = zeros(6, 1);
+    for c = 1:6
+        be(c) = duty_base * 10^(-ratio(duty_base, areas(c), bases(c), pk(c)) / 10);
+        cont(c) = ratio(1, areas(c), bases(c), pk(c));
+    end
     be_pct = 100 * be; be_pct(be >= 1) = NaN;          % NaN: no break-even; continuous transmission stays under
-    be_tbl = table(names_c, cont, be_pct, be >= 1, 'VariableNames', ...
-        {'case', 'continuous_ratio_dB', 'break_even_duty_pct', 'continuous_stays_under'});
+    dens_lbl = [repmat("Annual average", 3, 1); repmat(sprintf("Sustained peak (x%g)", peak_range(2)), 3, 1)];
+    be_tbl = table(dens_lbl, [names_c; names_c], cont, be_pct, be >= 1, 'VariableNames', ...
+        {'density', 'case', 'continuous_ratio_dB', 'break_even_duty_pct', 'continuous_stays_under'});
     fprintf('Duty-cycle break-even (share of drones carrying UWB %.0f%%, average density):\n', 100 * share_base); disp(be_tbl);
     writetable(be_tbl, fullfile(out_dir, "duty_break_even_" + st.tag + ".csv"));
     figd = figure('Visible', 'off', 'Position', [100 100 900 520]); theme(figd, 'light');
@@ -211,13 +218,13 @@ for s = 1:numel(stations)
     summary(end+1, :) = {st.name, bdA.beamwidth_deg, ing.margin_bore_dB, median(bdA.dwell_s(low), 'omitnan'), ...
         max(bdA.dwell_s(low)), 100 * bdA.hover_frac_trk, 1000 * rg.mean_chord_km, A(2) * 1e6, rho, ...
         cbT.rho_allow_per_km2, br.ratio_dB(br.step == "B"), br.ratio_dB(br.step == "D1"), br.ratio_dB(br.step == "D2"), ...
-        median(bdM.dwell_s(low), 'omitnan'), cont(1), cont(3), be_pct(3)}; %#ok<SAGROW> two stations
+        median(bdM.dwell_s(low), 'omitnan'), cont(1), cont(3), be_pct(3), be_pct(6)}; %#ok<SAGROW> two stations
 end
 
 sum_tbl = cell2table(summary, 'VariableNames', {'station', 'beamwidth_deg', 'margin_bore_max_dB', 'dwell_median_s', ...
     'dwell_max_s', 'hover_pct_trk', 'mean_chord_m', 'footprint_meas_m2', 'rho_air_per_km2', 'rho_allow_per_km2', ...
     'B_ratio_dB', 'B_all_time_ratio_dB', 'B_app20_ratio_dB', 'dwell_median_meas_s', ...
-    'continuous_ratio_dB', 'continuous_app20_ratio_dB', 'break_even_duty_app20_pct'});
+    'continuous_ratio_dB', 'continuous_app20_ratio_dB', 'break_even_duty_app20_pct', 'break_even_duty_app20_peak_pct'});
 disp('Summary:'); disp(sum_tbl);
 writetable(sum_tbl, fullfile(out_dir, 'bridge_summary.csv'));
 fprintf('Done in %.0f s. Outputs in %s\n', toc(t_start), out_dir);
