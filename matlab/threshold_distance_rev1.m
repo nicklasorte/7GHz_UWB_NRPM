@@ -7,10 +7,10 @@ function td = threshold_distance_rev1(p, F, f_mhz, opts)
 %
 %     EIRP_10 - L_pol - L_shield + G(phi) - L_b(d) = criterion          (1)
 %
-%   where L_b is the ITU-R P.528-5 basic transmission loss at opts.p_time
-%   percent of time (free-space loss below 20 m, where P.528 isn't
-%   tabulated). Inside d, the drone exceeds the criterion level whenever
-%   it transmits.
+%   where d is the slant distance and L_b is free-space loss below 1 km
+%   (where P.528 matches free space within 0.1 dB) and the ITU-R P.528-5
+%   basic transmission loss at opts.p_time percent of time beyond it.
+%   Inside d, the drone exceeds the criterion level whenever it transmits.
 %
 %   Distance comes from power, not duty cycle. The duty cycle sets how
 %   long a drone must stay inside d to use up the time allowance; see
@@ -71,12 +71,20 @@ phi(isnan(phi)) = half3;                             % NaN in the list means "th
 [phi, order] = sort(phi);
 gain = es_gain_rev1(phi, p.es.diam_m, f_mhz, p.es.eff, opts.pattern);
 
-% Loss versus distance: free space below 20 m, P.528 from 20 m to 200 km
+% Loss versus slant distance d. The P.528 table is indexed by ground
+% distance with the drone at h_drone_m, so at short range its geometry
+% doesn't match a slant distance: 20 m of ground distance at 400 ft is
+% about 112 m of path. Below 1 km the path is short line of sight and
+% P.528 equals free space within 0.1 dB (checked in the CCNY link budget),
+% so free space at the slant distance is used there; from 1 km out, P.528
+% at the matching ground distance.
 d = logspace(log10(0.001), log10(200), 8000);
 lambda = physconst('LightSpeed') / (f_mhz * 1e6);
 L = 20 * log10(4 * pi * d * 1000 / lambda);
-m = d >= 0.02;
-L(m) = F(log10(d(m)), repmat(opts.h_drone_m, 1, nnz(m)), repmat(opts.p_time, 1, nnz(m)));
+dh_km = (opts.h_drone_m - p.es.h_m) / 1000;
+ground = sqrt(max(d.^2 - dh_km^2, 0));
+m = d >= 1 & ground >= 0.02;
+L(m) = F(log10(ground(m)), repmat(opts.h_drone_m, 1, nnz(m)), repmat(opts.p_time, 1, nnz(m)));
 L = cummax(L);                                       % monotone in distance, so the inverse is single-valued
 [L_u, il] = unique(L, 'stable');
 d_u = d(il);
