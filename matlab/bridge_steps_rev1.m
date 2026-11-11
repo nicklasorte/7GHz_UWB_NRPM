@@ -27,8 +27,9 @@ function br = bridge_steps_rev1(ing)
 %     3  Measured device EIRP
 %     4  UWB duty cycle
 %     B  = step 4 (normal conditions, tracking-time basis, full criterion)
-%     D1 Decision: count over all time instead of tracking time
-%     D2 Decision: 20 dB apportionment (moves toward interference)
+%     D1 Decision: count over all time instead of tracking time (from B)
+%     D2 Decision: 20 dB apportionment, tracking-time basis (from B; moves
+%        toward interference)
 %
 %   Fractions use the Poisson form 1 - exp(-rho * share * area) and then
 %   multiply by the duty cycle, which treats transmissions as independent
@@ -52,7 +53,7 @@ f(4) = 1 - exp(-rho * ing.area_meas_km2);
 f(5) = ing.duty * f(4);
 f(6) = f(5);
 f(7) = f(6) * ing.tracking_frac;                      % share of all time, against an all-time allowance
-f(8) = ing.duty * (1 - exp(-rho * ing.area_app_km2)) * ing.tracking_frac;
+f(8) = ing.duty * (1 - exp(-rho * ing.area_app_km2));   % from B: tracking-time basis, apportioned criterion
 step = ["A"; "1"; "2"; "3"; "4"; "B"; "D1"; "D2"];
 label = ["A: one drone follows the beam, at the limit, continuous (hypothetical)"; ...
          "1: hovers at the ideal spot; the tracking beam sweeps past"; ...

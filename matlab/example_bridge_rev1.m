@@ -46,6 +46,7 @@ share_base = 1;                    % share of drones carrying channel 9 UWB: no 
 share_range = [0.1 1];
 peak_range = [1 6];                % annual average to a sustained peak-hour bound
 speeds = [2.2 6.7 13.4];           % m/s: 5, 15, and 30 mph, the ASSURE A83 telemetry speed bins
+n_per_call = 4e6; n_calls = 10;    % footprint samples: 4e7 per case, for hundreds of hits in a sliver-shaped region
 v = victim_systems_rev2();
 stations = struct( ...
     'name', {"NEN WG1 Wallops (NASA, 11.3 m)", "CCNY Manhattan (2.4 m)"}, ...
@@ -57,7 +58,7 @@ stations = struct( ...
     'norad', {[27424 25994 39084 49260], [27424 25994]}, ...
     'pop_per_km2', {33859 / (450 * 2.589988), 8584629 / 778.2}, ...  % Accomack County 2025 / 450 sq mi; NYC (see density_nyc.csv)
     'state_flights', {1646290, 1366899}, 'state_pop', {8.88e6, 20002427}, ...
-    'r_sample_km', {8, 3}, 'r_sample_app_km', {40, 15});
+    'r_sample_km', {2, 1.5}, 'r_sample_app_km', {5, 8});   % just past the farthest hits, so samples land in the sliver
 % Wallops: FAA survey Table 6 (Virginia 1,646,290 flights); Virginia 8.88 million (Weldon Cooper Center, July 1, 2025);
 % Accomack County 33,859 (Census, 2025 county totals) over 450 sq mi of land.
 
@@ -107,17 +108,17 @@ for s = 1:numel(stations)
         'r_max_km', 60, 'eirp_offset_dB', 0, 'extra_loss_db', 0, 'clutter', false);
     offs = [0, eirp_meas_dB, eirp_low_dB, eirp_meas_dB - app_dB];
     rs = [st.r_sample_km, st.r_sample_km, st.r_sample_km, st.r_sample_app_km];
-    A = zeros(1, 4); hit = zeros(1, 4);
+    A = zeros(1, 4); A_lo = A; A_hi = A; hit = A; nh = A;
     for k = 1:4
         pop = drone; pop.eirp_offset_dB = offs(k);
-        fpk = exceedance_footprint_rev1(p, pop, ps, F, f_mhz, 'n', 4e6, 'r_sample_km', rs(k));
-        A(k) = fpk.area_short_km2; hit(k) = fpk.r_hit_max_km;
-        if fpk.r_hit_max_km > 0.8 * rs(k)
-            warning('example_bridge_rev1:sample', 'Footprint %d: farthest hit %.1f km is near the %.1f km sample radius.', k, fpk.r_hit_max_km, rs(k));
+        [A(k), A_lo(k), A_hi(k), nh(k), hit(k)] = footprint_reps(p, pop, ps, F, f_mhz, rs(k), n_per_call, n_calls);
+        if hit(k) > 0.8 * rs(k)
+            warning('example_bridge_rev1:sample', 'Footprint %d: farthest hit %.2f km is near the %.2f km sample radius.', k, hit(k), rs(k));
         end
     end
     fp_tbl = table(["At the limit"; "Measured (AirTag worst)"; "Measured (AirTag lowest)"; "Measured, 20 dB apportionment"], ...
-        -offs(:), A(:) * 1e6, hit(:), 'VariableNames', {'device', 'eirp_vs_limit_dB', 'footprint_m2', 'farthest_hit_km'});
+        -offs(:), A(:) * 1e6, A_lo(:) * 1e6, A_hi(:) * 1e6, nh(:), hit(:), ...
+        'VariableNames', {'device', 'eirp_vs_limit_dB', 'footprint_m2', 'footprint_lo_m2', 'footprint_hi_m2', 'hits', 'farthest_hit_km'});
     disp(fp_tbl); writetable(fp_tbl, fullfile(out_dir, "footprints_" + st.tag + ".csv"));
 
     %% 5. Local density
@@ -178,3 +179,21 @@ disp('Summary:'); disp(sum_tbl);
 writetable(sum_tbl, fullfile(out_dir, 'bridge_summary.csv'));
 fprintf('Done in %.0f s. Outputs in %s\n', toc(t_start), out_dir);
 diary off;
+
+function [A, A_lo, A_hi, k_tot, r_far] = footprint_reps(p, pop, ps, F, f_mhz, r_s, n, n_calls)
+%FOOTPRINT_REPS Single-drone short-term footprint from repeated independent calls, with a 95% interval.
+k_tot = 0; r_far = 0; area_disk = pi * r_s^2;
+for c = 1:n_calls
+    fp = exceedance_footprint_rev1(p, pop, ps, F, f_mhz, 'n', n, 'r_sample_km', r_s, 'seed', p.mc.seed + 100 + c);
+    k_tot = k_tot + round(fp.p1_short * fp.n);
+    r_far = max(r_far, fp.r_hit_max_km);
+end
+N = n * n_calls;
+A = area_disk * k_tot / N;
+if k_tot == 0
+    A_lo = 0; A_hi = area_disk * (1 - 0.025^(1 / N));
+else
+    A_lo = area_disk * betainv(0.025, k_tot, N - k_tot + 1);
+    A_hi = area_disk * betainv(0.975, k_tot + 1, N - k_tot);
+end
+end

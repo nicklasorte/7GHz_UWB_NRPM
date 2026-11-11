@@ -347,7 +347,7 @@ verifyEqual(tc, br.frac_above(2), 1e-3);
 verifyEqual(tc, br.frac_above(3), 1 - exp(-0.01 * 2e-3), 'RelTol', 1e-12);
 verifyEqual(tc, br.frac_above(5), 0.01 * (1 - exp(-0.01 * 1.8e-3)), 'RelTol', 1e-12);
 verifyEqual(tc, br.frac_above(7), br.frac_above(6) * 0.05, 'RelTol', 1e-12);
-verifyEqual(tc, br.frac_above(8), 0.01 * (1 - exp(-0.01 * 0.2)) * 0.05, 'RelTol', 1e-12);
+verifyEqual(tc, br.frac_above(8), 0.01 * (1 - exp(-0.01 * 0.2)), 'RelTol', 1e-12);      % measured from B, not from D1
 verifyEqual(tc, br.ratio_dB(1), 10 * log10(1 / 5e-5), 'AbsTol', 1e-9);
 verifyError(tc, @() bridge_steps_rev1(rmfield(ing, 'duty')), 'bridge_steps_rev1:missing');
 end
