@@ -1,0 +1,1 @@
+Map around the Wallops NEN WG1 dish with its pointing azimuth to the north and a zoom panel. One drone at 400 feet exceeds the short-term criterion only inside a region 119 m long and 10 m wide, from 1221 m to 1339 m north of the dish. A dashed outline shows the larger region under a 20 dB apportionment.

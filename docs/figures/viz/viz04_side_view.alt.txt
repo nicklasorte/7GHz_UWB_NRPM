@@ -1,0 +1,1 @@
+Side-view cross-section along the pointing azimuth of the Wallops NEN dish. The region where one drone exceeds the short-term criterion follows the beam upward. For a 5 degree pass it leaves the band below the 400 ft drone ceiling at 1.33 km; for a 10 degree pass, at 0.66 km.
