@@ -190,17 +190,21 @@ for s = 1:numel(stations)
     fprintf('Duty-cycle break-even (share of drones carrying UWB %.0f%%, average density):\n', 100 * share_base); disp(be_tbl);
     writetable(be_tbl, fullfile(out_dir, "duty_break_even_" + st.tag + ".csv"));
     figd = figure('Visible', 'off', 'Position', [100 100 900 520]); theme(figd, 'light');
-    axd = axes(figd); hold(axd, 'on'); %#ok<LAXES> one new figure per station grid(axd, 'on'); set(axd, 'XScale', 'log');
+    axd = axes(figd); %#ok<LAXES> one new figure per station
+    hold(axd, 'on'); grid(axd, 'on'); set(axd, 'XScale', 'log');
     sty = ["-", ":", "--"];
     for c = 1:3
         plot(axd, 100 * duty_sweep, curves(c, :), sty(c), 'LineWidth', 1.6, 'DisplayName', names_c(c));
     end
     yline(axd, 0, 'r-', 'Allowance', 'LineWidth', 1.2, 'HandleVisibility', 'off');
-    xline(axd, 100 * duty_base, 'k-.', 'NPRM 1%', 'HandleVisibility', 'off');
-    xline(axd, 100 * duty_range(2), 'k:', 'ECC 5%', 'HandleVisibility', 'off');
+    xline(axd, 100 * duty_base, 'k-.', 'NPRM 1%', 'HandleVisibility', 'off', 'LabelOrientation', 'horizontal', 'LabelVerticalAlignment', 'bottom');
+    xline(axd, 100 * duty_range(2), 'k:', 'ECC 5%', 'HandleVisibility', 'off', 'LabelOrientation', 'horizontal', 'LabelVerticalAlignment', 'bottom');
+    xline(axd, 100, 'k-', 'Continuous', 'HandleVisibility', 'off', 'LabelOrientation', 'horizontal', 'LabelVerticalAlignment', 'bottom', ...
+        'LabelHorizontalAlignment', 'left');
     xlabel(axd, 'UWB duty cycle while airborne (%)'); ylabel(axd, 'Time above short-term criterion vs allowance (dB)');
     title(axd, "If drones can transmit: duty cycle up to continuous, " + st.name);
     subtitle(axd, sprintf('Measured device EIRP, every drone carrying UWB, average local density (%.2g per km^2)', rho));
+    xlim(axd, [0.1 100]);
     legend(axd, 'Location', 'northwest');
     exportgraphics(figd, fullfile(out_dir, "fig_duty_sweep_" + st.tag + ".png"), 'Resolution', 200);
 
