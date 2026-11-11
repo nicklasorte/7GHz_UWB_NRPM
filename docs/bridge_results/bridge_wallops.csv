@@ -1,17 +1,9 @@
 step,label,short_label,kind,frac_above,ratio_to_allowance,ratio_dB
-A,"A: one drone follows the beam, at the limit, continuous (hypothetical)","A: on boresight,
-follows the beam",physics,1,20000,43.0102999566398
-1,"1: hovers at the ideal spot; the tracking beam sweeps past","1: hovers; beam
-sweeps past",physics,0.0161036471286267,322.072942572534,25.0795424116546
-2,"2: random positions, local traffic, device at the limit","2: random position,
-local traffic",physics,5.19781649943596e-08,0.00103956329988719,-29.8314906096962
-3,"3: measured device EIRP","3: measured
-device EIRP",physics,4.69106559153332e-08,0.000938213118306663,-30.2769849894336
-4,"4: UWB duty cycle","4: duty cycle
-(1%)",physics,4.69106559153332e-10,9.38213118306663e-06,-50.2769849894336
-B,"B: normal conditions (tracking-time basis, full criterion)","B: normal
-conditions",result,4.69106559153332e-10,9.38213118306663e-06,-50.2769849894336
-D1,"Decision 1: count over all time","D1: count over
-all time",decision,5.19777639789959e-11,1.03955527957992e-06,-59.831524115964
-D2,"Decision 2: 20 dB apportionment","D2: 20 dB
-apportionment",decision,2.19848217675178e-08,0.000439696435350356,-33.5684705522165
+A,"A: one drone follows the beam, at the limit, continuous (hypothetical)","A: on boresight,\newline follows the beam",physics,1,20000,43.0102999566398
+1,"1: hovers at the ideal spot; the tracking beam sweeps past","1: hovers; beam\newline sweeps past",physics,0.0161036471286267,322.072942572534,25.0795424116546
+2,"2: random positions, local traffic, device at the limit","2: random position,\newline local traffic",physics,5.19781649943596e-08,0.00103956329988719,-29.8314906096962
+3,"3: measured device EIRP","3: measured\newline device EIRP",physics,4.69106559153332e-08,0.000938213118306663,-30.2769849894336
+4,"4: UWB duty cycle","4: duty cycle\newline (1%)",physics,4.69106559153332e-10,9.38213118306663e-06,-50.2769849894336
+B,"B: normal conditions (tracking-time basis, full criterion)","B: normal\newline conditions",result,4.69106559153332e-10,9.38213118306663e-06,-50.2769849894336
+D1,"Decision 1: count over all time","D1: count over\newline all time",decision,5.19777639789959e-11,1.03955527957992e-06,-59.831524115964
+D2,"Decision 2: 20 dB apportionment","D2: 20 dB\newline apportionment",decision,2.19848217675178e-08,0.000439696435350356,-33.5684705522165
