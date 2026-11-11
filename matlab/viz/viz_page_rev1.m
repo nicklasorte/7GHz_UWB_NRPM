@@ -21,13 +21,24 @@ arguments
 end
 c = viz_colors_rev1();
 font = 'Times New Roman';
-annotation(fig, 'textbox', [0.035 0.935 0.9 0.05], 'String', 'DRAFT//PRE-DECISIONAL', 'EdgeColor', 'none', ...
+if isprop(fig, 'Theme'), theme(fig, 'light'); end   % MATLAB R2025a+ follows the desktop dark theme otherwise
+ax_all = findall(fig, 'Type', 'axes');
+for k = 1:numel(ax_all)
+    ax_all(k).Color = 'w';
+    ax_all(k).Title.Color = c.text;
+end
+gx_all = findall(fig, 'Type', 'geoaxes');
+for k = 1:numel(gx_all)
+    gx_all(k).TickLabelColor = c.text; gx_all(k).AxisColor = c.text;
+    gx_all(k).LatitudeLabel.Color = c.text; gx_all(k).LongitudeLabel.Color = c.text;
+end
+annotation(fig, 'textbox', [0.035 0.935 0.9 0.05], 'String', 'DRAFT//PRE-DECISIONAL', 'EdgeColor', 'none', 'Interpreter', 'none', ...
     'FontName', font, 'FontSize', 10, 'FontWeight', 'bold', 'Color', c.alert, 'VerticalAlignment', 'top');
-annotation(fig, 'textbox', [0.035 0.80 0.93 0.13], 'String', headline, 'EdgeColor', 'none', 'FontName', font, ...
+annotation(fig, 'textbox', [0.035 0.80 0.93 0.13], 'String', headline, 'EdgeColor', 'none', 'Interpreter', 'none', 'FontName', font, ...
     'FontSize', 19, 'FontWeight', 'bold', 'Color', c.text, 'VerticalAlignment', 'top', 'FitBoxToText', 'off');
-annotation(fig, 'textbox', [0.035 0.70 0.90 0.10], 'String', subhead, 'EdgeColor', 'none', 'FontName', font, ...
+annotation(fig, 'textbox', [0.035 0.70 0.90 0.10], 'String', subhead, 'EdgeColor', 'none', 'Interpreter', 'none', 'FontName', font, ...
     'FontSize', 12, 'Color', c.text, 'VerticalAlignment', 'top');
-annotation(fig, 'textbox', [0.035 0.005 0.93 0.06], 'String', source, 'EdgeColor', 'none', 'FontName', font, ...
+annotation(fig, 'textbox', [0.035 0.005 0.93 0.06], 'String', source, 'EdgeColor', 'none', 'Interpreter', 'none', 'FontName', font, ...
     'FontSize', 9, 'Color', c.text, 'VerticalAlignment', 'bottom');
 if ~isfolder(out_dir), mkdir(out_dir); end
 base = fullfile(out_dir, stem);
