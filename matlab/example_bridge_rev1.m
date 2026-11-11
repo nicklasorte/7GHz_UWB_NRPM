@@ -239,7 +239,7 @@ for s = 1:numel(stations)
     plot(axt, pp, 1000 * td.d_short_km, '-o', 'LineWidth', 1.6, 'DisplayName', 'Short-term criterion (0.005%)');
     plot(axt, pp, 1000 * td.d_long_km, '--s', 'LineWidth', 1.4, 'DisplayName', 'Long-term criterion (20%; one drone can''t exceed it below 20% duty)');
     plot(axt, pp, 1000 * tdA.d_short_km, ':^', 'LineWidth', 1.4, 'DisplayName', 'Short-term, 20 dB apportionment');
-    xline(axt, td.half_beamwidth_deg, 'k-.', 'Main beam edge (3 dB)', 'HandleVisibility', 'off', 'LabelOrientation', 'horizontal', ...
+    xline(axt, td.half_beamwidth_deg, 'k-.', 'Main beam edge (3 dB)', 'HandleVisibility', 'off', 'LabelOrientation', 'aligned', ...
         'LabelVerticalAlignment', 'bottom');
     yline(axt, 1000 * d_reach, 'r-', sprintf('400 ft drone meets a 5%s boresight at %.2f km', char(176), d_reach), 'HandleVisibility', 'off', ...
         'LabelHorizontalAlignment', 'left');
@@ -247,7 +247,7 @@ for s = 1:numel(stations)
     ylabel(axt, 'Distance inside which one drone exceeds the criterion (m)');
     title(axt, "How close one drone has to be: " + st.name);
     subtitle(axt, 'Measured device EIRP, P.528 median loss, drone at 400 ft. Distance doesn''t depend on duty cycle.');
-    legend(axt, 'Location', 'southwest');
+    legend(axt, 'Location', 'northeast');
     exportgraphics(figt, fullfile(out_dir, "fig_threshold_distance_" + st.tag + ".png"), 'Resolution', 200);
 
     summary(end+1, :) = {st.name, bdA.beamwidth_deg, ing.margin_bore_dB, median(bdA.dwell_s(low), 'omitnan'), ...

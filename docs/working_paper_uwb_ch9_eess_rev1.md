@@ -1,14 +1,14 @@
 ---
 title: "UWB Channel 9 Drones and Federal Space-to-Earth Receivers in 7737.6-8236.8 MHz"
-subtitle: "Working Paper, Rev 1"
-date: "November 10, 2026"
+subtitle: "Working Paper, Rev 1.1"
+date: "November 11, 2026"
 ---
 
 ```
 DRAFT - PRE-DECISIONAL AND DELIBERATIVE
 Prepared with AI assistance. Reviewer: [CONFIRM]
 Rule text as of: 2026-11-07
-Analysis run: 2026-11-10
+Analysis run: 2026-11-10 (CCNY), 2026-11-11 (Wallops and CCNY bridge, duty cycle, and distance)
 Public and cleared sources only.
 ```
 
@@ -33,6 +33,7 @@ This paper does five things:
 - The validated ITU-R P.2108 port for ground devices, with its effect separated into the formula fix and the short-path assumption.
 - A consistency check against ECC Report 327 and measured channel 9 emissions from a shipping device.
 - A table of the intermediate calculations NASA can check, and those that need NASA data.
+- Rev 1.1: the assumption that drones can transmit, the duty cycles used in comparable studies in this band, the duty cycle at which drones would reach the allowance, and the distance inside which one drone exceeds each criterion, main beam and sidelobes, at the NASA NEN station at Wallops (see "Key assumptions: drones transmit, how often, and how close").
 
 The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz_UWB_NRPM`. Appendix A maps each equation to the code.
 
@@ -51,6 +52,14 @@ The analysis is implemented in MATLAB in the public repository `nicklasorte/7GHz
 - **Two assumptions decide the close cases.** On an all-time basis, the edge case is above the short-term criterion for 1.7 minutes a year, against 26 allowed. On a tracking-time basis it slightly exceeds. If UWB gets only 1% of the allowance (ECC Report 327's 20 dB apportionment), the 5% activity case exceeds the EESS short-term criterion by 3.9 dB and needs a 0.5 km geofence.
 - **The method reproduces ECC Report 327.** With ECC's own earth station inputs, the model gives 595 m against ECC's 600 m. The differences from ECC are assumptions (apportionment and antenna height), not method.
 - **Ground devices already legal today come closer to the long-term criterion than drones do:** within 9-15 dB at CCNY, against at least 12.9 dB for every drone case. A shipping channel 9 device, the AirTag, measures within 0.5 dB of the average limit, so modeling every drone at the limit isn't a large source of conservatism.
+
+**Rev 1.1, assuming drones can transmit (NASA NEN station at Wallops, 11.3 m):**
+
+- **Every study of UWB in this band assumes average activity of 5% or less.** ECC Report 327 uses 0.006%-5% by application, CEPT Report 9 assumes below 5%, Europe's low duty cycle rule caps transmission at 5% per second, and the NPRM proposes under 1% a day. One FiRa appendix table uses 6% for outdoor vehicles.
+- **At Wallops, no duty cycle reaches the allowance.** Every drone near the station could transmit continuously and stay under the short-term allowance, by at least 5.8 dB even at a sustained peak density with ECC's 20 dB apportionment.
+- **In Manhattan, the worst case needs a 7.3% duty cycle,** above every cited activity factor and more than seven times the NPRM's 1%, and only with the 20 dB apportionment. A sustained peak density six times the average would lower that to 1.2%.
+- **Distance: inside about 1.2 km in the main beam, or tens of meters off it.** One drone at 400 ft exceeds the short-term criterion on the Wallops boresight out to 5.6 km, but can only meet the boresight of a 5° pass within 1.16 km. One degree off boresight it must be within 300 m; at 5°, within 40 m.
+- **One drone at these duty cycles can't exceed the long-term criterion at any distance,** because that criterion allows 20% of the time. At 1% duty, using up the short-term allowance at Wallops would take about 2,100 passes with a drone moved to exactly the right spot in the main beam before each one.
 
 These results are threshold distances against ITU-R sharing criteria. They aren't a finding of harmful interference as defined in 47 CFR 2.1, which depends on actual service degradation.
 
@@ -585,6 +594,106 @@ The steps above are the intermediate calculations behind every result in this se
 | Effect of UWB pulses on the demodulator | Not done | Laboratory measurement through the actual receiver (see the ITS test plan) |
 | Minutes per year above each criterion, per station | Done for CCNY (step 8) | Station-by-station runs with NASA inputs |
 
+# Key assumptions: drones transmit, how often, and how close
+
+The research question is at what point a drone, operating under normal conditions with a typical UWB device, causes interference to a NASA receiver. Two inputs decide the answer: how often the drone transmits (duty cycle) and how close it is (distance). They act separately. Distance comes from power: it's the distance inside which one drone's interference exceeds the criterion level whenever it transmits. Duty cycle comes from time: it sets how long a drone must stay inside that distance to use up the time allowance. This section states both assumptions, cites the duty cycles used in comparable studies in this band, and gives the results for the NASA NEN station at Wallops (WG1, 11.3 m) and, for comparison, the CCNY station in Manhattan (2.4 m).
+
+The code is `matlab/example_bridge_rev1.m` (steps 9 and 10) and `matlab/threshold_distance_rev1.m`. The results are in `docs/bridge_results/` from the November 11, 2026 run.
+
+## Assumption 1: drones are allowed to transmit
+
+Today, 47 CFR 15.521(a) prohibits UWB operation aboard an aircraft, and the drone UWB products found are built so the drone only receives (see `docs/research_drone_uwb_operations_rev0.md`). This paper assumes the prohibition is lifted for drones. The NPRM asks "whether UWB-based autonomous drone navigation and landing systems should be permitted," and lists "altitude limits, power restrictions, and duty cycle limits" as possible conditions.[^nprm] The analysis takes that question as answered yes, with no duty-cycle limit specific to drones.
+
+## Assumption 2: duty cycle, from the studies in this band
+
+Every compatibility study of UWB in the 6-8.5 GHz band found for this paper models average activity at or below 5%, with one exception: one appendix table of the FiRa report uses 6% for outdoor vehicles.[^fira] The only higher value is 100%, used in single-entry worst cases.
+
+| Source | Context | Duty cycle or activity factor |
+| --- | --- | --- |
+| ECC Report 327 (2021), Tables 1, 6, and 18[^ecc327] | UWB applications in 6-8.5 GHz, based on IEEE 802.15.4z | Physical access control 0.006%; parking management 0.05% (0.25% in Table 18); outdoor logistics 0.3%; in-vehicle 0.4%-1%; indoor positioning 1%; vehicle-mounted fixed outdoor 0.5% (rural), 2% (suburban), and 5% (urban) |
+| ECC Report 327, Tables 67-80[^ecc327] | Aggregate studies into EESS, MetSat, and space research earth stations | The same application values, plus 5% for generic indoor and outdoor devices carried over from ECC Report 64 |
+| ECC Report 327, section 0.5.1[^ecc327] | Single-entry studies into EESS and MetSat earth stations | 100% (worst case) |
+| CEPT Report 9 (2005)[^cept9] | First European study of 6-8.5 GHz | Average activity factor assumed below 5% |
+| ECC Report 94 (2006)[^ecc94] | Low duty cycle mitigation, 3.4-4.8 GHz | Sum of on-times below 5% per second and 0.5% per hour; each burst at most 5 ms |
+| FiRa Consortium simulation report (2025)[^fira] | U.S. channel 9 aggregate interference, from ECC Report 327 Table 18 | 0.01% to 5% in the main study, treated as the probability of transmission; 6% for outdoor vehicles in one appendix table |
+| FCC 26-66, NPRM (2026)[^nprm] | Proposed new low-power UWB device category | "Under one percent in any 24-hour period" |
+| 47 CFR 15.519(a)(1)[^cfr519] | U.S. hand-held UWB rule today | No percentage limit; a device transmits "only when it is sending information to an associated receiver" and stops within 10 seconds without an acknowledgment |
+
+ECC Report 327 explains the low values: the market moved from the high-data-rate UWB assumed in 2005 to low-data-rate ranging and location under IEEE 802.15.4z, which "leads to a significant reduction of the assumed activity factors."[^ecc327]
+
+**The paper's duty-cycle assumption:** the base case uses 1%, from the NPRM's proposed limit. Results are shown across the cited range (0.05%, 0.3%, 1%, and 5%) and at continuous transmission (100%) as a bound no study in this band uses for average activity.
+
+## Result: the duty cycle at which drones would reach the allowance
+
+The share of time above the short-term criterion grows in proportion to the duty cycle, so each case has a break-even duty cycle at which it reaches the allowance. These results assume every drone carries UWB (a bound, since there is no public data on the share), the AirTag's measured EIRP, and local drone density from FAA and Census data (`docs/bridge_results/duty_break_even_*.csv`).
+
+| Station | Density | Basis | At continuous transmission | Break-even duty cycle |
+| --- | --- | --- | --- | --- |
+| Wallops (NASA) | Annual average | Tracking time, full criterion | -30.3 dB | None: stays under at 100% |
+| Wallops (NASA) | Annual average | All time, full criterion | -39.8 dB | None |
+| Wallops (NASA) | Annual average | Tracking time, 20 dB apportionment | -13.6 dB | None |
+| Wallops (NASA) | Sustained peak, 6 times average | Tracking time, 20 dB apportionment | -5.8 dB | None |
+| CCNY | Annual average | Tracking time, full criterion | -5.2 dB | None |
+| CCNY | Annual average | Tracking time, 20 dB apportionment | +11.3 dB | **7.3%** |
+| CCNY | Sustained peak, 6 times average | Tracking time, full criterion | +2.6 dB | 55% |
+| CCNY | Sustained peak, 6 times average | Tracking time, 20 dB apportionment | +19.1 dB | 1.2% |
+
+The values are dB relative to the allowance: negative is under.
+
+**At the NASA station, no duty cycle reaches the allowance.** Every drone near Wallops could transmit continuously and stay under it, by at least 5.8 dB even at a sustained peak density with ECC's 20 dB apportionment.
+
+**At CCNY, the only case that reaches the allowance at annual-average density needs a 7.3% duty cycle.** That's above every average activity factor in the studies cited above (5% in ECC's work, 6% in one FiRa appendix table), above the European low duty cycle limit of 5% per second, and more than seven times the NPRM's proposed 1%. It also needs the 20 dB apportionment, a policy choice this paper doesn't make.
+
+**The caveat is sustained peak density.** If drone traffic in Manhattan held six times its annual average around the clock, the apportioned case would break even at 1.2%: still above the NPRM's 1%, but inside ECC's range. A sustained peak is a bound: the criteria are percentages of a year, and the annual average is the density that matches them.
+
+![Figure 8: Time above the short-term criterion against the UWB duty cycle at CCNY, from 0.1% to continuous transmission, on both time bases and with the 20 dB apportionment. The vertical lines mark the NPRM's 1% and ECC's 5%.](figures/fig_duty_sweep_ccny.png)
+
+## Result: how close one drone has to be
+
+For one drone at 400 ft, at the AirTag's measured EIRP, with 3 dB polarization loss and P.528 median loss, the table gives the slant distance inside which the drone exceeds each criterion whenever it transmits, by its angle off the dish boresight (`docs/bridge_results/threshold_distance_*.csv`). Distance doesn't depend on duty cycle.
+
+| Off-axis angle | Wallops gain | Wallops short-term | Wallops long-term | CCNY gain | CCNY short-term | CCNY long-term |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0° (main beam, boresight) | 57.5 dBi | 5.6 km | 38 km | 44.0 dBi | 1.2 km | 8.3 km |
+| 3 dB edge of the main beam (0.11° at Wallops; 0.53° at CCNY) | 54.5 dBi | 3.9 km | 27.5 km | 41.0 dBi | 840 m | 5.9 km |
+| 0.5° (first sidelobes) | 39.5 dBi | 710 m | 5.0 km | 41.4 dBi (main beam) | 870 m | 6.1 km |
+| 1° | 32.0 dBi | 300 m | 2.1 km | 33.4 dBi | 350 m | 2.5 km |
+| 2° | 24.5 dBi | 125 m | 890 m | 26.3 dBi | 155 m | 1.1 km |
+| 5° | 14.5 dBi | 40 m | 280 m | 16.4 dBi | 49 m | 350 m |
+| 10° | 7.0 dBi | 17 m | 120 m | 8.8 dBi | 21 m | 150 m |
+| 20° | -0.5 dBi | 7 m | 50 m | 1.3 dBi | 9 m | 62 m |
+| 48° and beyond (back lobes) | -10 to -5 dBi | 2-4 m | 17-30 m | -8.2 dBi | 3 m | 21 m |
+
+Patterns: ITU-R SA.509-3 at Wallops (D/λ about 308) and ITU-R F.699-5 at CCNY (D/λ about 65). Rev 0 reported a 42 km main-beam bound at the regulatory limit in free space; this table uses the measured EIRP and P.528 loss.
+
+![Figure 9: Distance inside which one drone exceeds each criterion, by angle off the boresight of the Wallops NEN dish. The red line is the farthest point at which a 400 ft drone can meet the boresight of a 5° pass.](figures/fig_threshold_distance_wallops.png)
+
+Four things follow from this table:
+
+- **Main beam: the distance is out of reach beyond about 1.2 km.** The short-term distance on boresight is 5.6 km at Wallops, but a drone at 400 ft can only meet the boresight of a 5° pass out to 1.16 km; farther out, the beam passes above it. Inside 1.16 km, any drone in the main beam exceeds the short-term criterion while it transmits.
+- **Sidelobes: the distance collapses within a few degrees.** One degree off boresight, a drone must be within about 300 m. At 5°, within 40-50 m. Beyond 20°, within 10 m.
+- **The long-term criterion is out of reach for one drone at the cited duty cycles.** It allows 20% of the time. A drone that transmits less than 20% of the time can't exceed it alone at any distance. Only the short-term criterion is in play.
+- **The beam moves.** The dish tracks the satellite, so a drone that is in the main beam at one moment isn't a few seconds later. At Wallops, a hovering drone at the best spot stays in the exceedance cone for about 8 seconds per pass (median over 556 passes in 30 days).
+
+## Result: how long a drone has to stay that close
+
+The short-term allowance is 0.005% of the time. Dividing by the duty cycle gives the time a drone must spend inside the short-term distance, in the direction the dish is pointing, to use it up (`docs/bridge_results/hours_to_allowance_*.csv`).
+
+| Duty cycle | Source | Wallops, tracking-time basis | Wallops, all-time basis | Can one drone exceed the long-term criterion? |
+| --- | --- | --- | --- | --- |
+| 0.05% | ECC parking | 97 hours a year | 877 hours a year | No |
+| 0.3% | ECC logistics | 16 hours | 146 hours | No |
+| 1% | NPRM; ECC indoor | 4.9 hours | 44 hours | No |
+| 5% | ECC maximum | 58 minutes | 8.8 hours | No |
+| 100% | Bound | 2.9 minutes | 26 minutes | Yes |
+
+At CCNY, the tracking-time values are about half these, because the dish tracks two satellites instead of four.
+
+Combining the two gives the main-beam case in plain terms. At a 1% duty cycle, a drone at Wallops would need about 17,500 seconds in the main beam during passes. The beam stays on a well-placed hovering drone for about 8 seconds per pass, so it would take about 2,100 passes with the drone moved to exactly the right spot before each one (derived). At 18.5 passes a day, that's about 115 days of perfect positioning, every pass, at 400 ft within about 1.2 km of the dish. At 5%, it's about 430 passes, or 23 days.
+
+**The answer at the NASA station:** a drone with a typical UWB device, at the duty cycles every study in this band assumes, causes interference above the ITU-R criteria only inside a main-beam region within about 1.2 km of the dish, or within tens of meters off the beam. It would have to hold that position, in the direction of the satellite, across thousands of passes a year to use up the short-term allowance, and it can't exceed the long-term criterion at all.
+
+"""
 # What else is needed
 
 | Item | Why it matters | Possible source |
@@ -710,6 +819,8 @@ All assumptions, with links and the questions NASA can answer, are in *Assumptio
 - Whether ECC Report 64 addresses 8 GHz EESS.
 - CCNY antenna height above ground, aperture efficiency, and dome loss (assumed 20 m, 0.6, and 0 dB).
 - Whether NASA accepts a 20 dB apportionment of the SA.1027-6 criteria to UWB, as ECC Report 327 used.
+- Duty cycles of drone-borne UWB: no measured data exist, because drones don't transmit UWB today; the assumption rests on the activity factors in ECC Report 327, CEPT Report 9, the FiRa report, and the NPRM.
+- The share of drones that would carry channel 9 UWB (assumed 100%, a bound).
 - Pulsed-interference tolerance data for the Landsat and JPSS demodulators.
 
 # Flags
@@ -719,7 +830,7 @@ All assumptions, with links and the questions NASA can answer, are in *Assumptio
 - The CCNY station is a university (NOAA-CREST) site, not a NASA facility. It is used only as a public example; any finding about it may need coordination with CUNY and NOAA.
 - Whether ITU-R average-power criteria suffice for impulsive interference into wideband EESS receivers may need interagency technical agreement.
 
-[^nprm]: FCC, *Modernization of Ultra-Wideband Technology Rules*, Notice of Proposed Rulemaking, ET Docket No. 26-245 (RM-11844, RM-12014) (rel. Oct. 1, 2026); circulation draft at https://docs.fcc.gov/public/attachments/DOC-424842A1.pdf. [CITE: FCC item number.]
+[^nprm]: FCC, *Modernization of Ultra-Wideband Technology Rules*, Notice of Proposed Rulemaking, ET Docket No. 26-245 (RM-11844, RM-12014) (rel. Oct. 1, 2026); FCC 26-66, Federal Register public inspection document 2026-22337, https://public-inspection.federalregister.gov/2026-22337.pdf; circulation draft at https://docs.fcc.gov/public/attachments/DOC-424842A1.pdf.
 [^lw]: Latham & Watkins, *FCC Proposes UWB Rules Overhaul That Could Broaden Use for Drones*, https://www.lw.com/en/insights/fcc-proposes-uwb-rules-overhaul-that-could-broaden-use-for-drones.
 [^ecc1203]: ECC Decision (12)03, *The harmonised conditions for UWB applications onboard aircraft* (approved Nov. 2, 2012; corrected Mar. 6, 2020), https://docdb.cept.org/download/1522.
 [^ecc175]: ECC Report 175, *Co-existence study considering UWB applications inside aircraft and existing radio services in the frequency bands from 3.1 GHz to 4.8 GHz and from 6.0 GHz to 8.5 GHz* (Mar. 2012), https://docdb.cept.org/download/674.
@@ -738,3 +849,6 @@ All assumptions, with links and the questions NASA can answer, are in *Assumptio
 [^fira]: FiRa Consortium, *UWB Simulation Report* (Roberson and Associates, 2025), summarizing ECC Report 327 Tables 1 and 18, https://www.firaconsortium.org/sites/default/files/2025-11/FiRa%20Ultra-Wideband%20Simulation%20Report.pdf.
 [^ecc327]: ECC Report 327, *Technical studies to assess the feasibility of UWB applications in the 6-8.5 GHz band* (Oct. 2021), section 0.5.1, https://docdb.cept.org/download/3511.
 [^airtag]: UL, *Test report 12791034-E2V3*, Apple AirTag, FCC ID BCGA2187, sections 8.1-8.2, https://fcc.report/FCC-ID/BCGA2187/5130980.pdf.
+[^cept9]: CEPT Report 9, *Report from CEPT to the European Commission in response to the Mandate to: Harmonise radio spectrum use for Ultra-Wideband Systems in the European Union* (October 28, 2005), sections 2.2.2 and Annex 2, https://docdb.cept.org/download/9.
+[^ecc94]: ECC Report 94, *Technical Requirements for UWB LDC Devices to Ensure the Protection of FWA Systems* (December 2006), sections 3 and 10, https://docdb.cept.org/download/421.
+[^cfr519]: 47 CFR 15.519(a)(1), *Technical requirements for hand held UWB systems*, as published in the 2021 Code of Federal Regulations, https://www.govinfo.gov/content/pkg/CFR-2021-title47-vol1/pdf/CFR-2021-title47-vol1-part15.pdf.
