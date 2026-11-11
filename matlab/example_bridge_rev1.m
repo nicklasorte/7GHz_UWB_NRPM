@@ -21,6 +21,15 @@
 %     6. Bookend B and the crossing budget
 %     7. Bridge table and waterfall chart
 %     8. Ranking (tornado) chart around Bookend B
+%     9. Duty-cycle sweep, from 0.1% to continuous transmission, and the
+%        duty cycle at which each case reaches the allowance
+%
+%   Assumption: drones are allowed to transmit UWB. 47 CFR 15.521(a)
+%   prohibits it today; the analysis takes the NPRM question (FCC 26-66)
+%   as answered yes, with no duty-cycle limit, so it sweeps the duty cycle
+%   all the way to continuous transmission while airborne. The 1% base
+%   case is the NPRM's proposed limit for its new device category, which
+%   may not apply to drones.
 %
 %   Outputs go to ../output/bridge/. Requires itu_p528 cloned next to
 %   this repo, and network access to CelesTrak if a TLE file is missing.
@@ -42,6 +51,7 @@ eirp_low_dB = 43.45 - 41.3;        % AirTag lowest average EIRP below the limit 
 app_dB = 20;                       % ECC Report 327 sec. 5.5 apportionment for UWB (decision, not physics)
 duty_base = 0.01;                  % FCC 26-66 (ET Docket 26-245) proposed new-category duty cycle: under 1% in any 24 hours
 duty_range = [0.0025 0.05];        % ECC Report 327 Table 18 activity factors 0.25%-5% (via FiRa)
+duty_sweep = logspace(-3, 0, 61);  % 0.1% to continuous transmission while airborne
 share_base = 1;                    % share of drones carrying channel 9 UWB: no public data; 100% bounds it
 share_range = [0.1 1];
 peak_range = [1 6];                % annual average to a sustained peak-hour bound
@@ -166,15 +176,43 @@ for s = 1:numel(stations)
         'file', fullfile(out_dir, "fig_tornado_" + st.tag + ".png"));
     disp(tor); writetable(tor, fullfile(out_dir, "tornado_" + st.tag + ".csv"));
 
+    %% 9. Duty-cycle sweep and break-even duty cycle
+    ratio = @(duty, area, basis) 10 * log10(max(duty * (1 - exp(-rho * share_base * area)) * basis / (crit.short_pct / 100), realmin));
+    curves = [ratio(duty_sweep, A(2), 1); ratio(duty_sweep, A(2), ps.frac_tracking); ratio(duty_sweep, A(4), 1)];
+    names_c = ["Tracking-time basis, full criterion"; "All-time basis, full criterion"; "Tracking-time basis, 20 dB apportionment"];
+    % ratio is linear in duty, so the break-even duty is base / ratio; above 1 means continuous transmission stays under
+    be = [duty_base * 10^(-ratio(duty_base, A(2), 1) / 10); duty_base * 10^(-ratio(duty_base, A(2), ps.frac_tracking) / 10); ...
+          duty_base * 10^(-ratio(duty_base, A(4), 1) / 10)];
+    cont = curves(:, end);
+    be_tbl = table(names_c, cont, 100 * be, be >= 1, 'VariableNames', ...
+        {'case', 'continuous_ratio_dB', 'break_even_duty_pct', 'continuous_stays_under'});
+    fprintf('Duty-cycle break-even (share of drones carrying UWB %.0f%%, average density):\n', 100 * share_base); disp(be_tbl);
+    writetable(be_tbl, fullfile(out_dir, "duty_break_even_" + st.tag + ".csv"));
+    figd = figure('Visible', 'off', 'Position', [100 100 900 520]); theme(figd, 'light');
+    axd = axes(figd); hold(axd, 'on'); grid(axd, 'on'); set(axd, 'XScale', 'log');
+    sty = ["-", ":", "--"];
+    for c = 1:3
+        plot(axd, 100 * duty_sweep, curves(c, :), sty(c), 'LineWidth', 1.6, 'DisplayName', names_c(c));
+    end
+    yline(axd, 0, 'r-', 'Allowance', 'LineWidth', 1.2, 'HandleVisibility', 'off');
+    xline(axd, 100 * duty_base, 'k-.', 'NPRM 1%', 'HandleVisibility', 'off');
+    xline(axd, 100 * duty_range(2), 'k:', 'ECC 5%', 'HandleVisibility', 'off');
+    xlabel(axd, 'UWB duty cycle while airborne (%)'); ylabel(axd, 'Time above short-term criterion vs allowance (dB)');
+    title(axd, "If drones can transmit: duty cycle up to continuous, " + st.name);
+    subtitle(axd, sprintf('Measured device EIRP, every drone carrying UWB, average local density (%.2g per km^2)', rho));
+    legend(axd, 'Location', 'northwest');
+    exportgraphics(figd, fullfile(out_dir, "fig_duty_sweep_" + st.tag + ".png"), 'Resolution', 200);
+
     summary(end+1, :) = {st.name, bdA.beamwidth_deg, ing.margin_bore_dB, median(bdA.dwell_s(low), 'omitnan'), ...
         max(bdA.dwell_s(low)), 100 * bdA.hover_frac_trk, 1000 * rg.mean_chord_km, A(2) * 1e6, rho, ...
         cbT.rho_allow_per_km2, br.ratio_dB(br.step == "B"), br.ratio_dB(br.step == "D1"), br.ratio_dB(br.step == "D2"), ...
-        median(bdM.dwell_s(low), 'omitnan')}; %#ok<SAGROW> two stations
+        median(bdM.dwell_s(low), 'omitnan'), cont(1), cont(3), 100 * be(3)}; %#ok<SAGROW> two stations
 end
 
 sum_tbl = cell2table(summary, 'VariableNames', {'station', 'beamwidth_deg', 'margin_bore_max_dB', 'dwell_median_s', ...
     'dwell_max_s', 'hover_pct_trk', 'mean_chord_m', 'footprint_meas_m2', 'rho_air_per_km2', 'rho_allow_per_km2', ...
-    'B_ratio_dB', 'B_all_time_ratio_dB', 'B_app20_ratio_dB', 'dwell_median_meas_s'});
+    'B_ratio_dB', 'B_all_time_ratio_dB', 'B_app20_ratio_dB', 'dwell_median_meas_s', ...
+    'continuous_ratio_dB', 'continuous_app20_ratio_dB', 'break_even_duty_app20_pct'});
 disp('Summary:'); disp(sum_tbl);
 writetable(sum_tbl, fullfile(out_dir, 'bridge_summary.csv'));
 fprintf('Done in %.0f s. Outputs in %s\n', toc(t_start), out_dir);
