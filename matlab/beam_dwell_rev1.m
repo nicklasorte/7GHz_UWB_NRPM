@@ -119,8 +119,8 @@ dwell(ok & margin <= 0) = 0;
 % Per-pass worst placement
 ids = unique(pass_id(pass_id > 0));
 np = numel(ids);
-pass = table('Size', [np 6], 'VariableTypes', {'double', 'datetime', 'double', 'double', 'double', 'double'}, ...
-    'VariableNames', {'sat_idx', 'start', 'duration_s', 'max_el_deg', 'max_dwell_s', 'el_at_max_dwell_deg'});
+pass = table(zeros(np, 1), repmat(ps.t(1), np, 1), zeros(np, 1), zeros(np, 1), zeros(np, 1), zeros(np, 1), ...
+    'VariableNames', {'sat_idx', 'start', 'duration_s', 'max_el_deg', 'max_dwell_s', 'el_at_max_dwell_deg'});   % start inherits the time zone of ps.t
 dt = median(diff(t_s));
 for j = 1:np
     m = find(pass_id == ids(j));

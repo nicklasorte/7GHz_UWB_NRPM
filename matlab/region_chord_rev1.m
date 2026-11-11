@@ -13,7 +13,7 @@ function rg = region_chord_rev1(x_km, y_km, Z, level)
 %   A drone crossing the region on a random straight path at speed v stays
 %   inside for mean_chord_km / v on average.
 %
-%   Built-ins used: contourc for the contour length, polyarea is not used
+%   Built-ins used: contourc on Z for the contour length; polyarea is not used
 %   for the area because the contour of a gridded field can self-touch;
 %   the cell count is exact on the grid.
 arguments
@@ -34,7 +34,7 @@ if rg.area_km2 == 0
     rg.mean_chord_km = 0; rg.length_km = 0; rg.width_km = 0;
     return
 end
-C = contourc(x_km, y_km, double(mask), [0.5 0.5]);
+C = contourc(x_km, y_km, Z, [level level]);         % contour of the field itself: smooth, not the cell staircase
 k = 1;
 while k < size(C, 2)
     nv = C(2, k);
