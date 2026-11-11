@@ -46,6 +46,7 @@ for k = 1:n
 end
 yline(ax, 0, 'k--', 'Allowance (0.005% of time)', 'LabelHorizontalAlignment', 'left', 'LineWidth', 1.2);
 xticks(ax, 1:n);
+ax.TickLabelInterpreter = 'tex';                     % short labels break lines with \newline
 xticklabels(ax, cellstr(br.short_label));
 xtickangle(ax, 0);
 ylabel(ax, 'Time above short-term criterion vs allowance (dB)');
