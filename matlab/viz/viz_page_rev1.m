@@ -29,7 +29,8 @@ for k = 1:numel(ax_all)
 end
 gx_all = findall(fig, 'Type', 'geoaxes');
 for k = 1:numel(gx_all)
-    gx_all(k).TickLabelColor = c.text; gx_all(k).AxisColor = c.text;
+    gx_all(k).AxisColor = c.text;
+    gx_all(k).LatitudeAxis.TickLabelColor = c.text; gx_all(k).LongitudeAxis.TickLabelColor = c.text;
     gx_all(k).LatitudeLabel.Color = c.text; gx_all(k).LongitudeLabel.Color = c.text;
 end
 annotation(fig, 'textbox', [0.035 0.935 0.9 0.05], 'String', 'DRAFT//PRE-DECISIONAL', 'EdgeColor', 'none', 'Interpreter', 'none', ...
