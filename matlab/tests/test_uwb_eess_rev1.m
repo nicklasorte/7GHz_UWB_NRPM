@@ -258,6 +258,7 @@ ant = struct('diam_m', 11.3, 'f_mhz', 8160, 'eff', 0.6, 'pattern', "multiple");
 i0 = device_interference_rev1(dev, pt, geo, F, ant, -30);
 i1 = device_interference_rev1(dev, pt, geo, F, ant, -30, 8.16);
 expect = p2108_terrestrial_rev1(8.16, max(dev.r_km, 0.25), dev.p_loc, q_inverse="exact");
+expect(dev.r_km < 0.25) = 0;                         % default short-path rule: no clutter below 0.25 km
 verifyEqual(tc, 10*log10(i0 ./ i1), expect, 'AbsTol', 1e-9);
 end
 
